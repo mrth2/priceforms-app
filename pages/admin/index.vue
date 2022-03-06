@@ -1,37 +1,14 @@
 <script setup lang="ts">
+import type { IUser } from '~~/types/user';
+
 definePageMeta({
   layout: 'admin'
 })
 // console.log(useNuxtApp())
-const graphql = useStrapiGraphQL()
-onMounted(async () => {
-  const formSubmissions = await graphql(`
-  query {
-    formSubmissions {
-      data {
-        id
-        attributes {
-          user {
-            email
-          }
-          form {
-            title
-            introBanner
-            thankyouBanner
-          }
-          category {
-            title
-            flows {
-              title
-            }
-          }
-        }
-      }
-    }
-  }
-`)
-  console.log(formSubmissions)
-})
+const { find, findOne } = useStrapi4()
+
+const { data } = await useAsyncData('form-submissions', () => find<IUser>('form-submissions'))
+console.log(data.value)
 
 const people = [
   {

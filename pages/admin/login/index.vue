@@ -39,7 +39,7 @@ const subdomain = computed(() => {
         <img
           class="mx-auto h-12 w-auto"
           src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-          alt="Workflow"
+          alt="PriceForms"
         />
         <h2 class="mt-6 text-center text-3xl font-semibold text-gray-900">
           Sign in to
