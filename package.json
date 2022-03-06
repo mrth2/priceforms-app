@@ -6,6 +6,8 @@
     "start": "node .output/server/index.mjs"
   },
   "devDependencies": {
+    "@nuxtjs/strapi": "npm:@nuxtjs/strapi-edge@latest",
     "nuxt3": "latest"
-  }
+  },
+  "dependencies": {}
 }
