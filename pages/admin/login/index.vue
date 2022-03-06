@@ -22,9 +22,13 @@ const onSubmit = async () => {
   }
   loading.value = false
 }
-const subdomain = ref('')
-onMounted(() => {
-  subdomain.value = useSubdomain()
+const subdomain = computed(() => {
+  try {
+    return useSubdomain()
+  }
+  catch (e) {
+    return ''
+  }
 })
 </script>
 
