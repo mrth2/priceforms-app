@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'admin',
-  title: 'Dashboard'
+  title: 'Forms'
 })
 </script>

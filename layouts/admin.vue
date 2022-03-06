@@ -55,8 +55,8 @@ const navigation = [
 const currentNavigation = computed(() => navigation.find(nav => route.matched.some(({ path }) => path === nav.href)))
 const userNavigation = [
   { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" }
+  { name: "Settings", href: "/admin/settings" },
+  { name: "Sign out", href: "/admin/logout" }
 ];
 
 const sidebarOpen = ref(false)
@@ -246,7 +246,7 @@ const sidebarOpen = ref(false)
       <main class="flex-1">
         <div class="py-6">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-            <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
+            <h1 class="text-2xl font-semibold text-gray-900">{{ route.meta.title }}</h1>
           </div>
           <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
             <div class="py-4">
