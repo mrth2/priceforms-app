@@ -1,9 +1,8 @@
 <script setup lang="ts">
-definePageMeta({
-  layout: 'admin'
-})
 const { logout } = useStrapiAuth()
 logout()
+const router = useRouter()
+router.push('/admin/login')
 </script>
 <template>
   <div></div>

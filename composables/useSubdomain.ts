@@ -1,7 +1,5 @@
-export default function () {
-  if (typeof window !== 'undefined' && window.location) {
-    const host = window.location.host.split('.')
-    return host[1] ? host[0] : null
-  }
-  return null
+export const useSubDomain = () => {
+  const host = window.location.host
+  const hostFragments = host.split('.')
+  return hostFragments[1] ? hostFragments[0] : null
 }

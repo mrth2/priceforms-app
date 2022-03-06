@@ -24,7 +24,7 @@ const onSubmit = async () => {
 }
 const subdomain = computed(() => {
   try {
-    return useSubdomain()
+    return useNuxtApp().$useSubdomain()
   }
   catch (e) {
     return ''
