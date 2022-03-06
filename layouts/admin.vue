@@ -31,12 +31,11 @@ const route = useRoute()
 const user = useStrapiUser() as Ref<IUser>
 function requireFormOwner() {
   if (!user.value) {
-    router.push('/admin/login')
+    return router.push('/admin/login')
   }
   const subDomain = useSubDomain()
   if (!user.value.isOwner || !user.value.ownedForms.length || !user.value.ownedForms.includes(subDomain)) {
-    router.push('/')
-    return
+    return router.push('/')
   }
   verified.value = true
 }
@@ -108,13 +107,13 @@ const sidebarOpen = ref(false)
                 </button>
               </div>
             </TransitionChild>
-            <div class="flex-shrink-0 flex items-center px-4">
+            <NuxtLink to="/" class="flex-shrink-0 flex items-center px-4">
               <img
                 class="h-8 w-auto"
                 src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
                 alt="PriceForms"
               />
-            </div>
+            </NuxtLink>
             <div class="mt-5 flex-1 h-0 overflow-y-auto">
               <nav class="px-2 space-y-1">
                 <a
@@ -144,13 +143,13 @@ const sidebarOpen = ref(false)
     <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div class="flex-1 flex flex-col min-h-0 bg-gray-800">
-        <div class="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900">
+        <NuxtLink to="/" class="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900">
           <img
             class="h-8 w-auto"
             src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
             alt="PriceForms"
           />
-        </div>
+        </NuxtLink>
         <div class="flex-1 flex flex-col overflow-y-auto">
           <nav class="flex-1 px-2 py-4 space-y-1">
             <a
