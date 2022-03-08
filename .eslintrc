@@ -5,6 +5,8 @@
     "sourceType": "module"
   },
   "extends": [
-    "@nuxtjs/eslint-config-typescript"
+    "@nuxtjs/eslint-config-typescript",
+    "prettier/vue",
+    "plugin:prettier/recommended"
   ]
 }
