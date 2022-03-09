@@ -5,7 +5,7 @@ definePageMeta({
   layout: 'admin',
   title: 'Submissions',
 })
-const { find, findOne } = useStrapi4()
+const { find } = useStrapi4()
 
 const { data } = await useAsyncData('form-submissions', () => find<IUser>('form-submissions'))
 console.log(data.value)
