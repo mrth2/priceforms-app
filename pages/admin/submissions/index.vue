@@ -38,7 +38,14 @@ const submissions = computed(() =>
     },
   }))
 );
-console.log(submissions.value);
+
+function getStatusClass(item) {
+  return {
+    "bg-cyan-100 text-cyan-800": item.status === "register",
+    "bg-blue-100 text-blue-800": item.status === "partial",
+    "bg-green-100 text-green-800": item.status === "complete",
+  };
+}
 </script>
 
 <template>
@@ -69,7 +76,8 @@ console.log(submissions.value);
                   <div class="flex items-center">
                     <div class="flex-shrink-0 h-10 w-10">
                       <div
-                        class="h-10 w-10 rounded-full border border-gray-300 bg-blue-100 flex items-center justify-center font-medium tracking-tight"
+                        class="h-10 w-10 rounded-full border border-gray-300 flex items-center justify-center font-medium tracking-tight"
+                        :class="getStatusClass(item)"
                         alt="user"
                       >
                         {{ item.user.firstName.charAt(0) }}
@@ -98,12 +106,7 @@ console.log(submissions.value);
                 <td class="row">
                   <span
                     class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize"
-                    :class="{
-                      'bg-cyan-100 text-cyan-800': item.status === 'register',
-                      'bg-blue-100 text-blue-800': item.status === 'partial',
-                      'bg-green-100 text-green-800':
-                        item.status === 'completed',
-                    }"
+                    :class="getStatusClass(item)"
                   >
                     {{ item.status }}
                   </span>

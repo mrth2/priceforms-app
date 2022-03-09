@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Ref } from 'nuxt3/dist/app/compat/capi';
-import { IUser } from '~~/types/user';
+import { Ref } from "nuxt3/dist/app/compat/capi";
+import { IUser } from "~~/types/user";
 import {
   Dialog,
   DialogOverlay,
@@ -9,7 +9,7 @@ import {
   MenuItem,
   MenuItems,
   TransitionChild,
-  TransitionRoot
+  TransitionRoot,
 } from "@headlessui/vue";
 import {
   BellIcon,
@@ -20,29 +20,33 @@ import {
   HomeIcon,
   MenuAlt2Icon,
   UsersIcon,
-  XIcon
+  XIcon,
 } from "@heroicons/vue/outline";
 import { SearchIcon } from "@heroicons/vue/solid";
 
-const verified = ref(false)
+const verified = ref(false);
 
-const router = useRouter()
-const route = useRoute()
-const user = useStrapiUser() as Ref<IUser>
+const router = useRouter();
+const route = useRoute();
+const user = useStrapiUser() as Ref<IUser>;
 function requireFormOwner() {
   if (!user.value) {
-    return router.push('/admin/login')
+    return router.push("/admin/login");
   }
-  const subDomain = useSubDomain()
-  if (!user.value.isOwner || !user.value.ownedForms.length || !user.value.ownedForms.includes(subDomain)) {
-    return router.push('/')
+  const subDomain = useSubDomain();
+  if (
+    !user.value.isOwner ||
+    !user.value.ownedForms.length ||
+    !user.value.ownedForms.includes(subDomain)
+  ) {
+    return router.push("/");
   }
-  verified.value = true
+  verified.value = true;
 }
 onMounted(() => {
-  requireFormOwner()
-  watch(user, requireFormOwner)
-})
+  requireFormOwner();
+  watch(user, requireFormOwner);
+});
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: HomeIcon },
@@ -52,20 +56,26 @@ const navigation = [
   { name: "Payments", href: "/admin/payments", icon: CashIcon },
   { name: "Settings", href: "/admin/settings", icon: CogIcon },
 ];
-const currentNavigation = computed(() => navigation.find(nav => route.matched.some(({ path }) => path === nav.href)))
+const currentNavigation = computed(() =>
+  navigation.find((nav) => route.matched.some(({ path }) => path === nav.href))
+);
 const userNavigation = [
   { name: "Your Profile", href: "#" },
   { name: "Settings", href: "/admin/settings" },
-  { name: "Sign out", href: "/admin/logout" }
+  { name: "Sign out", href: "/admin/logout" },
 ];
 
-const sidebarOpen = ref(false)
+const sidebarOpen = ref(false);
 </script>
 
 <template>
   <div>
     <TransitionRoot as="template" :show="sidebarOpen">
-      <Dialog as="div" class="fixed inset-0 flex z-40 md:hidden" @close="sidebarOpen = false">
+      <Dialog
+        as="div"
+        class="fixed inset-0 flex z-40 md:hidden"
+        @close="sidebarOpen = false"
+      >
         <TransitionChild
           as="template"
           enter="transition-opacity ease-linear duration-300"
@@ -86,7 +96,9 @@ const sidebarOpen = ref(false)
           leave-from="translate-x-0"
           leave-to="-translate-x-full"
         >
-          <div class="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-gray-800">
+          <div
+            class="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-gray-800"
+          >
             <TransitionChild
               as="template"
               enter="ease-in-out duration-300"
@@ -120,11 +132,21 @@ const sidebarOpen = ref(false)
                   v-for="item in navigation"
                   :key="item.name"
                   :href="item.href"
-                  :class="[item.name === currentNavigation.name ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'group flex items-center px-2 py-2 text-base font-medium rounded-md']"
+                  :class="[
+                    item.name === currentNavigation.name
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                    'group flex items-center px-2 py-2 text-base font-medium rounded-md',
+                  ]"
                 >
                   <component
                     :is="item.icon"
-                    :class="[item.name === currentNavigation.name ? 'text-gray-300' : 'text-gray-400 group-hover:text-gray-300', 'mr-4 flex-shrink-0 h-6 w-6']"
+                    :class="[
+                      item.name === currentNavigation.name
+                        ? 'text-gray-300'
+                        : 'text-gray-400 group-hover:text-gray-300',
+                      'mr-4 flex-shrink-0 h-6 w-6',
+                    ]"
                     aria-hidden="true"
                   />
                   {{ item.name }}
@@ -143,7 +165,10 @@ const sidebarOpen = ref(false)
     <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div class="flex-1 flex flex-col min-h-0 bg-gray-800">
-        <NuxtLink to="/" class="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900">
+        <NuxtLink
+          to="/"
+          class="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900"
+        >
           <img
             class="h-8 w-auto"
             src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
@@ -156,11 +181,21 @@ const sidebarOpen = ref(false)
               v-for="item in navigation"
               :key="item.name"
               :href="item.href"
-              :class="[item.name === currentNavigation.name ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'group flex items-center px-2 py-2 text-sm font-medium rounded-md']"
+              :class="[
+                item.name === currentNavigation.name
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                'group flex items-center px-2 py-2 text-sm font-medium rounded-md',
+              ]"
             >
               <component
                 :is="item.icon"
-                :class="[item.name === currentNavigation.name ? 'text-gray-300' : 'text-gray-400 group-hover:text-gray-300', 'mr-3 flex-shrink-0 h-6 w-6']"
+                :class="[
+                  item.name === currentNavigation.name
+                    ? 'text-gray-300'
+                    : 'text-gray-400 group-hover:text-gray-300',
+                  'mr-3 flex-shrink-0 h-6 w-6',
+                ]"
                 aria-hidden="true"
               />
               {{ item.name }}
@@ -183,8 +218,12 @@ const sidebarOpen = ref(false)
           <div class="flex-1 flex">
             <form class="w-full flex md:ml-0" action="#" method="GET">
               <label for="search-field" class="sr-only">Search</label>
-              <div class="relative w-full text-gray-400 focus-within:text-gray-600">
-                <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none">
+              <div
+                class="relative w-full text-gray-400 focus-within:text-gray-600"
+              >
+                <div
+                  class="absolute inset-y-0 left-0 flex items-center pointer-events-none"
+                >
                   <SearchIcon class="h-5 w-5" aria-hidden="true" />
                 </div>
                 <input
@@ -228,13 +267,21 @@ const sidebarOpen = ref(false)
                 leave-to-class="transform opacity-0 scale-95"
               >
                 <MenuItems
-                  class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                  class="origin-top-right absolute right-0 mt-2 w-48 rounded-md py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-200 !shadow-lg"
                 >
-                  <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
+                  <MenuItem
+                    v-for="item in userNavigation"
+                    :key="item.name"
+                    v-slot="{ active }"
+                  >
                     <a
                       :href="item.href"
-                      :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
-                    >{{ item.name }}</a>
+                      :class="[
+                        active ? 'bg-gray-100' : '',
+                        'block px-4 py-2 text-sm text-gray-700',
+                      ]"
+                      >{{ item.name }}</a
+                    >
                   </MenuItem>
                 </MenuItems>
               </transition>
@@ -246,12 +293,16 @@ const sidebarOpen = ref(false)
       <main class="flex-1">
         <div class="py-6">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-            <h1 class="text-2xl font-semibold text-gray-900">{{ route.meta.title }}</h1>
+            <h1 class="text-2xl font-semibold text-gray-900">
+              {{ route.meta.title }}
+            </h1>
           </div>
           <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
             <div class="py-4">
               <slot v-if="verified">
-                <div class="border-4 border-dashed border-gray-200 rounded-lg h-96" />
+                <div
+                  class="border-4 border-dashed border-gray-200 rounded-lg h-96"
+                />
               </slot>
             </div>
           </div>
