@@ -292,12 +292,15 @@ const sidebarOpen = ref(false);
 
       <main class="flex-1">
         <div class="py-6">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-            <h1 class="text-2xl font-semibold text-gray-900">
+          <div class="mx-auto px-4 sm:px-6 md:px-8">
+            <h1 class="text-3xl font-bold text-gray-900">
               {{ route.meta.title }}
             </h1>
+            <p v-if="route.meta.description" class="mt-4 text-sm text-gray-700">
+              {{ route.meta.description }}
+            </p>
           </div>
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+          <div class="mx-auto px-4 sm:px-6 md:px-8">
             <div class="py-4">
               <slot v-if="verified">
                 <div
@@ -311,3 +314,5 @@ const sidebarOpen = ref(false);
     </div>
   </div>
 </template>
+
+<style scoped lang="postcss"></style>

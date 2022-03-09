@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { ArrowNarrowDownIcon } from "@heroicons/vue/outline";
+import SubmissionsFilter from "~~/components/admin/submissions/SubmissionsFilter.vue";
 definePageMeta({
   layout: "admin",
   title: "Submissions",
+  description: "Filter submissions by status, type, or date.",
 });
 const { find } = useStrapi4();
 
@@ -18,25 +21,78 @@ const { data } = await useAsyncData("form-submissions", () =>
       "updatedAt",
     ],
     populate: ["form", "category", "user"],
+    pagination: {
+      page: 1,
+      pageSize: 10,
+    },
   })
 );
+
+const sortAsc = ref(true);
+type SortField = "updated" | "status" | "name" | "progress";
+const sortBy = ref<SortField>("updated");
+function sortClasses(type: SortField) {
+  return {
+    "transform -rotate-180": sortAsc.value,
+    current: sortBy.value === type,
+  };
+}
+
 const submissions = computed(() =>
-  data.value.data.map((s) => ({
-    id: s.id,
-    ...s.attributes,
-    category: {
-      id: s.attributes.category.data.id,
-      ...s.attributes.category.data.attributes,
-    },
-    form: {
-      id: s.attributes.form.data.id,
-      ...s.attributes.form.data.attributes,
-    },
-    user: {
-      id: s.attributes.user.data.id,
-      ...s.attributes.user.data.attributes,
-    },
-  }))
+  data.value.data
+    .map((s) => ({
+      id: s.id,
+      ...s.attributes,
+      category: {
+        id: s.attributes.category.data.id,
+        ...s.attributes.category.data.attributes,
+      },
+      form: {
+        id: s.attributes.form.data.id,
+        ...s.attributes.form.data.attributes,
+      },
+      user: {
+        id: s.attributes.user.data.id,
+        ...s.attributes.user.data.attributes,
+        fullName: `${s.attributes.user.data.attributes.firstName} ${s.attributes.user.data.attributes.lastName}`,
+      },
+    }))
+    .sort((a, b) => {
+      // sort by updatedAt
+      if (sortBy.value === "updated") {
+        if (sortAsc.value) {
+          return (
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          );
+        } else {
+          return (
+            new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+          );
+        }
+      }
+      // sort by status name
+      if (sortBy.value === "status") {
+        if (sortAsc.value) {
+          return a.status.localeCompare(b.status);
+        } else {
+          return b.status.localeCompare(a.status);
+        }
+      }
+      // sort by progress
+      if (sortBy.value === "progress") {
+        if (sortAsc.value) {
+          return b.progress - a.progress;
+        } else {
+          return a.progress - b.progress;
+        }
+      }
+      // sort by user name
+      if (sortAsc.value) {
+        return a.user.fullName.localeCompare(b.user.fullName);
+      } else {
+        return b.user.fullName.localeCompare(a.user.fullName);
+      }
+    })
 );
 
 function getStatusClass(item) {
@@ -50,7 +106,8 @@ function getStatusClass(item) {
 
 <template>
   <div class="flex flex-col">
-    <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+    <SubmissionsFilter />
+    <div class="scroller -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
         <div
           class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"
@@ -58,13 +115,73 @@ function getStatusClass(item) {
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th scope="col" class="heading">Name</th>
+                <th
+                  scope="col"
+                  class="heading sortable"
+                  @click="
+                    () => {
+                      sortAsc = !sortAsc;
+                      sortBy = 'name';
+                    }
+                  "
+                >
+                  Name
+                  <ArrowNarrowDownIcon
+                    class="sort-icon"
+                    :class="sortClasses('name')"
+                  />
+                </th>
                 <th scope="col" class="heading">Form</th>
-                <th scope="col" class="heading">Status</th>
-                <th scope="col" class="heading">Progress</th>
-                <th scope="col" class="heading">Stoped At</th>
+                <th
+                  scope="col"
+                  class="heading sortable"
+                  @click="
+                    () => {
+                      sortAsc = !sortAsc;
+                      sortBy = 'status';
+                    }
+                  "
+                >
+                  Status
+                  <ArrowNarrowDownIcon
+                    class="sort-icon"
+                    :class="sortClasses('status')"
+                  />
+                </th>
                 <th scope="col" class="heading">Price</th>
-                <th scope="col" class="heading">Last Updated</th>
+                <th
+                  scope="col"
+                  class="heading sortable"
+                  @click="
+                    () => {
+                      sortAsc = !sortAsc;
+                      sortBy = 'progress';
+                    }
+                  "
+                >
+                  Progress
+                  <ArrowNarrowDownIcon
+                    class="sort-icon"
+                    :class="sortClasses('progress')"
+                  />
+                </th>
+                <th scope="col" class="heading">Stoped At</th>
+                <th
+                  scope="col"
+                  class="heading sortable"
+                  @click="
+                    () => {
+                      sortAsc = !sortAsc;
+                      sortBy = 'updated';
+                    }
+                  "
+                >
+                  Last Updated
+                  <ArrowNarrowDownIcon
+                    class="sort-icon"
+                    :class="sortClasses('updated')"
+                  />
+                </th>
                 <th scope="col" class="relative px-6 py-3">
                   <span class="sr-only">Edit</span>
                 </th>
@@ -86,8 +203,7 @@ function getStatusClass(item) {
                     </div>
                     <div class="ml-4">
                       <div class="text-sm font-medium text-gray-900">
-                        {{ item.user.firstName }}
-                        {{ item.user.lastName }}
+                        {{ item.user.fullName }}
                       </div>
                       <div class="text-sm text-gray-500">
                         {{ item.user.email }}
@@ -111,14 +227,14 @@ function getStatusClass(item) {
                     {{ item.status }}
                   </span>
                 </td>
-                <td class="row">{{ item.progress }}%</td>
-                <td class="row !text-[10px] !whitespace-normal w-16 capitalize">
-                  {{ item.stopAt.toLowerCase() || "Just signed up" }}
-                </td>
                 <td class="row text-sm">
                   {{ item.minPrice }} ~ {{ item.maxPrice }} ({{
                     item.currency
                   }})
+                </td>
+                <td class="row">{{ item.progress }}%</td>
+                <td class="row !text-[10px] !whitespace-normal w-16 capitalize">
+                  {{ item.stopAt.toLowerCase() || "Just signed up" }}
                 </td>
                 <td class="row">
                   {{ $dateFormat(item.updatedAt) }}
@@ -140,6 +256,22 @@ function getStatusClass(item) {
 <style scoped lang="postcss">
 .heading {
   @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-max whitespace-nowrap;
+
+  &.sortable {
+    @apply flex flex-row gap-1.5 cursor-pointer;
+  }
+
+  .sort-icon {
+    @apply w-4 h-4 opacity-0;
+    &.current {
+      @apply opacity-100 !important;
+    }
+  }
+  &:hover {
+    .sort-icon {
+      @apply opacity-100;
+    }
+  }
 }
 .row {
   @apply px-6 py-4 whitespace-nowrap text-sm text-gray-500;
