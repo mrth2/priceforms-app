@@ -1,0 +1,60 @@
+@font-face {
+  font-family: "Muli";
+  src: url('./Muli.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Muli";
+  src: url('./Muli-Light.ttf');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Muli";
+  src: url('./Muli-LightItalic.ttf');
+  font-weight: 200;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Muli";
+  src: url('./Muli-ExtraLight.ttf');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Muli";
+  src: url('./Muli-ExtraLightItalic.ttf');
+  font-weight: 300;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Muli";
+  src: url('./Muli-SemiBold.ttf');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Muli";
+  src: url('./Muli-Semi-BoldItalic.ttf');
+  font-weight: 600;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Muli";
+  src: url('./Muli-Bold.ttf');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Muli";
+  src: url('./Muli-BoldItalic.ttf');
+  font-weight: 700;
+  font-style: italic;
+}
+@font-face {
+  font-family: "Muli";
+  src: url('./Muli-ExtraBold.ttf');
+  font-weight: 800;
+  font-style: normal;
+}
