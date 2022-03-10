@@ -132,21 +132,41 @@ const pagination = computed<{
   pageSize: number;
   total: number;
 }>(() => data.value.meta?.pagination);
-const SHOW_PAGES = 3;
 const pages = computed(() => {
-  const result = [];
-  const { page: current, pageCount: count } = pagination.value;
-  if (current <= SHOW_PAGES) {
-    return [...Array.from(Array(count + 1).keys()).slice(1)];
-  } else if (current > SHOW_PAGES) {
-    return [
-      ...Array.from(Array(SHOW_PAGES).keys()).map((i) => current - i),
-      current,
-      ...Array.from(Array(SHOW_PAGES).keys()).map((i) => current + i + 1),
-    ];
-  }
-  return result;
+  let { page: current, pageCount: count } = pagination.value;
+  return generatePagination(current, count);
 });
+
+function generatePagination(c: number, m: number) {
+  var current = c,
+    last = m,
+    delta = 2,
+    left = current - delta,
+    right = current + delta + 1,
+    range = [],
+    rangeWithDots = [],
+    l: number;
+
+  for (let i = 1; i <= last; i++) {
+    if (i == 1 || i == last || (i >= left && i < right)) {
+      range.push(i);
+    }
+  }
+
+  for (let i of range) {
+    if (l) {
+      if (i - l === 2) {
+        rangeWithDots.push(l + 1);
+      } else if (i - l !== 1) {
+        rangeWithDots.push("...");
+      }
+    }
+    rangeWithDots.push(i);
+    l = i;
+  }
+
+  return rangeWithDots;
+}
 
 function getStatusClass(item) {
   return {
@@ -248,7 +268,11 @@ function getStatusClass(item) {
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <!-- show content -->
+            <tbody
+              v-if="submissions.length"
+              class="bg-white divide-y divide-gray-200"
+            >
               <tr v-for="item in submissions" :key="item.id">
                 <td class="row">
                   <div class="flex items-center">
@@ -307,6 +331,14 @@ function getStatusClass(item) {
                 </td>
               </tr>
             </tbody>
+            <!-- no content -->
+            <tbody v-else>
+              <tr>
+                <td colspan="8" class="text-center py-8">
+                  <div class="text-gray-500">No submissions found.</div>
+                </td>
+              </tr>
+            </tbody>
           </table>
           <div v-else class="loader">
             <Spinner />
@@ -314,12 +346,12 @@ function getStatusClass(item) {
         </div>
       </div>
     </div>
-
+    <!-- pagination -->
     <nav class="page-nav">
       <div class="-mt-px w-0 flex-1 flex">
         <a
           href="#"
-          class="border-t-2 border-transparent pt-4 pr-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
+          class="border-t-2 border-transparent pr-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
           :class="{ 'opacity-50': filters.page <= 1 }"
           @click="filters.page > 1 && (filters.page = filters.page - 1)"
         >
@@ -330,7 +362,9 @@ function getStatusClass(item) {
           Previous
         </a>
       </div>
-      <div class="hidden md:-mt-px md:flex">
+      <div
+        class="hidden md:-mt-px md:flex max-w-md overflow-x-auto scroller scroller--sm"
+      >
         <template v-for="item in pages" :key="item">
           <a
             href="#"
@@ -345,7 +379,7 @@ function getStatusClass(item) {
       <div class="-mt-px w-0 flex-1 flex justify-end">
         <a
           href="#"
-          class="border-t-2 border-transparent pt-4 pl-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
+          class="border-t-2 border-transparent pl-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
           :class="{ 'opacity-50': filters.page >= pagination.pageCount }"
           @click="
             filters.page < pagination.pageCount &&
