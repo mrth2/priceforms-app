@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import startCase from "lodash/startCase";
 import {
   ArrowNarrowDownIcon,
   ArrowNarrowLeftIcon,
@@ -201,12 +202,12 @@ function exportCSV<T>(
 function exportSubmissions(type: "csv" | "pdf") {
   const table = submissions.value.map((submission) => ({
     id: submission.id,
-    form: submission.form.title,
+    form: startCase(submission.form.subDomain),
     category: submission.category.title,
     name: submission.user.fullName,
     email: submission.user.email,
     phone: submission.user.phone,
-    status: submission.status,
+    status: startCase(submission.status),
     progress: submission.progress,
     stopAt: submission.stopAt,
     createdAt: $dateFormat(submission.createdAt, false, true),
@@ -229,7 +230,6 @@ function exportSubmissions(type: "csv" | "pdf") {
     return exportCSV(table, headers, "submissions");
   } else {
     const rows = table.map((kw) => Object.values(kw));
-    console.log(rows);
 
     const doc = new jsPDF({
       orientation: "landscape",
