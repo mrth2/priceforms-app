@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { saveAs } from "file-saver";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import {
   ArrowNarrowDownIcon,
   ArrowNarrowLeftIcon,
@@ -198,41 +199,48 @@ function exportCSV<T>(
 }
 
 function exportSubmissions(type: "csv" | "pdf") {
+  const table = submissions.value.map((submission) => ({
+    id: submission.id,
+    form: submission.form.title,
+    category: submission.category.title,
+    name: submission.user.fullName,
+    email: submission.user.email,
+    phone: submission.user.phone,
+    status: submission.status,
+    progress: submission.progress,
+    stopAt: submission.stopAt,
+    createdAt: $dateFormat(submission.createdAt, false, true),
+    updatedAt: $dateFormat(submission.updatedAt, false, true),
+  }));
+  const headers = [
+    "ID",
+    "Form",
+    "Case",
+    "Name",
+    "Email",
+    "Phone",
+    "Status",
+    "Progress",
+    "Stop At",
+    "Created At",
+    "Updated At",
+  ];
   if (type === "csv") {
-    return exportCSV(
-      submissions.value.map((submission) => ({
-        id: submission.id,
-        form: submission.form.title,
-        category: submission.category.title,
-        name: submission.user.fullName,
-        email: submission.user.email,
-        phone: submission.user.phone,
-        status: submission.status,
-        progress: submission.progress,
-        stopAt: submission.stopAt,
-        createdAt: $dateFormat(submission.createdAt, false, true),
-        updatedAt: $dateFormat(submission.updatedAt, false, true),
-      })),
-      [
-        "ID",
-        "Form",
-        "Case",
-        "Name",
-        "Email",
-        "Phone",
-        "Status",
-        "Progress",
-        "Stop At",
-        "Created At",
-        "Updated At",
-      ],
-      "submissions"
-    );
+    return exportCSV(table, headers, "submissions");
+  } else {
+    const rows = table.map((kw) => Object.values(kw));
+    console.log(rows);
+
+    const doc = new jsPDF({
+      orientation: "landscape",
+    });
+    autoTable(doc, {
+      head: [headers],
+      body: rows,
+      theme: "grid",
+    });
+    doc.save("submissions.pdf");
   }
-  const file = new File(submissions.value, `submissions.${type}`, {
-    type: `application/${type}`,
-  });
-  saveAs(file);
 }
 </script>
 
