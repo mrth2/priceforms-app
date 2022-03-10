@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { saveAs } from "file-saver";
 import {
   ArrowNarrowDownIcon,
   ArrowNarrowLeftIcon,
@@ -12,6 +13,9 @@ definePageMeta({
   title: "Submissions",
   description: "View submissions from your form!",
 });
+
+const { $dateFormat } = useNuxtApp();
+
 const { find } = useStrapi4();
 
 const filters = reactive({
@@ -175,6 +179,61 @@ function getStatusClass(item) {
     "bg-green-100 text-green-800": item.status === "complete",
   };
 }
+
+function exportCSV<T>(
+  data: Array<T>,
+  headers: string[],
+  fileName: string
+): void {
+  const rows = [...[headers], ...data.map((kw) => Object.values(kw))];
+  const csvContent =
+    "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n");
+  const encodeUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodeUri);
+  link.setAttribute("download", `${fileName}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function exportSubmissions(type: "csv" | "pdf") {
+  if (type === "csv") {
+    return exportCSV(
+      submissions.value.map((submission) => ({
+        id: submission.id,
+        form: submission.form.title,
+        category: submission.category.title,
+        name: submission.user.fullName,
+        email: submission.user.email,
+        phone: submission.user.phone,
+        status: submission.status,
+        progress: submission.progress,
+        stopAt: submission.stopAt,
+        createdAt: $dateFormat(submission.createdAt, false, true),
+        updatedAt: $dateFormat(submission.updatedAt, false, true),
+      })),
+      [
+        "ID",
+        "Form",
+        "Case",
+        "Name",
+        "Email",
+        "Phone",
+        "Status",
+        "Progress",
+        "Stop At",
+        "Created At",
+        "Updated At",
+      ],
+      "submissions"
+    );
+  }
+  const file = new File(submissions.value, `submissions.${type}`, {
+    type: `application/${type}`,
+  });
+  saveAs(file);
+}
 </script>
 
 <template>
@@ -184,6 +243,7 @@ function getStatusClass(item) {
       @change-status="filters.status = $event"
       :limit="filters.limit"
       @change-limit="filters.limit = $event"
+      @export="exportSubmissions($event)"
     />
     <div class="scroller scroller--sm -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">

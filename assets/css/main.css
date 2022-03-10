@@ -31,4 +31,12 @@
   .scroller--black::-webkit-scrollbar-track {
     @apply !bg-black;
   }
+
+  .btn {
+    @apply text-white font-bold py-1 px-4 rounded text-sm leading-5;
+    
+    &.btn-primary {
+      @apply bg-blue-900 hover:bg-blue-700;
+    }
+  }
 }

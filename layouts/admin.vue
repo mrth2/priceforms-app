@@ -54,8 +54,6 @@ onMounted(async () => {
       form.value = {
         ...data.forms.data[0],
       };
-      console.log(form.value);
-      console.log(logo.value);
     }
   });
 });

@@ -16,7 +16,7 @@ import {
   TransitionChild,
   TransitionRoot,
 } from "@headlessui/vue";
-import { XIcon } from "@heroicons/vue/outline";
+import { XIcon, DownloadIcon } from "@heroicons/vue/outline";
 import { ChevronDownIcon } from "@heroicons/vue/solid";
 
 type StatusOption = "register" | "partial" | "complete";
@@ -33,7 +33,7 @@ const props = withDefaults(
     limit: 10,
   }
 );
-const emit = defineEmits(["change-status", "change-limit"]);
+const emit = defineEmits(["change-status", "change-limit", "export"]);
 const filterStatus = computed(() => ({
   id: "status",
   name: "status",
@@ -196,7 +196,7 @@ const open = ref(false);
       <h2 id="filter-heading" class="sr-only">Filters</h2>
 
       <div class="relative z-10 bg-white border-b border-gray-200 pb-4">
-        <div class="mx-auto flex items-center justify-between">
+        <div class="mx-auto flex items-center justify-start gap-4">
           <button
             type="button"
             class="inline-block text-sm font-medium text-gray-700 hover:text-gray-900 sm:hidden"
@@ -271,6 +271,7 @@ const open = ref(false);
               </PopoverGroup>
             </div>
           </div>
+          |
           <!-- per page -->
           <div class="hidden sm:block">
             <div class="flow-root">
@@ -308,7 +309,7 @@ const open = ref(false);
                         as="div"
                         v-for="option in limits"
                         :key="option"
-                        class="flex items-center justify-center cursor-pointer text-sm px-4 py-2 hover:bg-indigo-200"
+                        class="filter-option"
                         @click="emit('change-limit', option)"
                       >
                         {{ option }}
@@ -318,6 +319,43 @@ const open = ref(false);
                 </Popover>
               </PopoverGroup>
             </div>
+          </div>
+          <div class="ml-auto">
+            <PopoverGroup>
+              <Popover>
+                <PopoverButton as="button" class="btn btn-primary">
+                  Download
+                  <DownloadIcon class="w-4 h-4 inline-block mb-1" />
+                </PopoverButton>
+                <transition
+                  enter-active-class="transition ease-out duration-100"
+                  enter-from-class="transform opacity-0 scale-95"
+                  enter-to-class="transform opacity-100 scale-100"
+                  leave-active-class="transition ease-in duration-75"
+                  leave-from-class="transform opacity-100 scale-100"
+                  leave-to-class="transform opacity-0 scale-95"
+                >
+                  <PopoverPanel
+                    class="origin-top-right absolute right-0 mt-2 bg-white rounded-md shadow-2xl py-2 border border-gray-300 focus:outline-none"
+                  >
+                    <PopoverButton
+                      as="div"
+                      class="filter-option"
+                      @click="emit('export', 'pdf')"
+                    >
+                      Save as PDF
+                    </PopoverButton>
+                    <PopoverButton
+                      as="div"
+                      class="filter-option"
+                      @click="emit('export', 'csv')"
+                    >
+                      Save as CSV
+                    </PopoverButton>
+                  </PopoverPanel>
+                </transition>
+              </Popover>
+            </PopoverGroup>
           </div>
         </div>
       </div>
@@ -375,3 +413,9 @@ const open = ref(false);
     </section>
   </div>
 </template>
+
+<style scoped lang="postcss">
+.filter-option {
+  @apply flex items-center justify-center cursor-pointer text-sm px-4 py-2 hover:bg-indigo-200;
+}
+</style>
