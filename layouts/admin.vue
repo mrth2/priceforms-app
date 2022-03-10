@@ -43,10 +43,48 @@ function requireFormOwner() {
   }
   verified.value = true;
 }
-onMounted(() => {
+
+const form = ref(null);
+onMounted(async () => {
   requireFormOwner();
   watch(user, requireFormOwner);
+
+  await fetchForm().then(({ data }) => {
+    if (data.forms.data.length) {
+      form.value = {
+        ...data.forms.data[0],
+      };
+      console.log(form.value);
+      console.log(logo.value);
+    }
+  });
 });
+
+const logo = computed(() =>
+  form.value?.attributes?.logo?.data?.attributes?.url
+);
+
+const graphql = useStrapiGraphQL();
+async function fetchForm() {
+  return await graphql(`
+    query Form {
+      forms(filters: {subDomain: {eq: "${useSubDomain()}"}}) {
+        data {
+          id
+          attributes {
+            logo {
+              data {
+                attributes {
+                  url
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `);
+}
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: HomeIcon },
@@ -120,11 +158,7 @@ const sidebarOpen = ref(false);
               </div>
             </TransitionChild>
             <NuxtLink to="/" class="flex-shrink-0 flex items-center px-4">
-              <img
-                class="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
-                alt="PriceForms"
-              />
+              <img class="h-16 max-w-full w-auto" :src="logo" alt="PriceForms" />
             </NuxtLink>
             <div class="mt-5 flex-1 h-0 overflow-y-auto">
               <nav class="px-2 space-y-1">
@@ -167,13 +201,9 @@ const sidebarOpen = ref(false);
       <div class="flex-1 flex flex-col min-h-0 bg-gray-800">
         <NuxtLink
           to="/"
-          class="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900"
+          class="flex items-center h-24 flex-shrink-0 px-4 bg-gray-900"
         >
-          <img
-            class="h-8 w-auto"
-            src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
-            alt="PriceForms"
-          />
+          <img class="h-16 max-w-full w-auto" :src="logo" alt="PriceForms" />
         </NuxtLink>
         <div class="flex-1 flex flex-col overflow-y-auto">
           <nav class="flex-1 px-2 py-4 space-y-1">
