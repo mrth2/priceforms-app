@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { ArrowNarrowDownIcon } from "@heroicons/vue/outline";
+import {
+  ArrowNarrowDownIcon,
+  ArrowNarrowLeftIcon,
+  ArrowNarrowRightIcon,
+} from "@heroicons/vue/outline";
+import { PaginationByPage } from "@nuxtjs/strapi/dist/runtime/types";
 import SubmissionsFilter from "~~/components/admin/submissions/SubmissionsFilter.vue";
 import Spinner from "~~/components/icon/Spinner.vue";
 definePageMeta({
@@ -13,11 +18,13 @@ const filters = reactive({
   status: ["register", "partial", "complete"] as Array<
     "register" | "partial" | "complete"
   >,
+  limit: 10,
+  page: 1,
 });
 const loading = ref(true);
 async function fetchData() {
   loading.value = true;
-  const result = await find<{ data: any }>("form-submissions", {
+  const result = await find<{ data: any; meta: any }>("form-submissions", {
     fields: [
       "status",
       "progress",
@@ -35,8 +42,8 @@ async function fetchData() {
     },
     populate: ["form", "category", "user"],
     pagination: {
-      page: 1,
-      pageSize: 10,
+      page: filters.page,
+      pageSize: filters.limit,
     },
   });
   loading.value = false;
@@ -119,6 +126,28 @@ const submissions = computed(() =>
     })
 );
 
+const pagination = computed<{
+  page: number;
+  pageCount: number;
+  pageSize: number;
+  total: number;
+}>(() => data.value.meta?.pagination);
+const SHOW_PAGES = 3;
+const pages = computed(() => {
+  const result = [];
+  const { page: current, pageCount: count } = pagination.value;
+  if (current <= SHOW_PAGES) {
+    return [...Array.from(Array(count + 1).keys()).slice(1)];
+  } else if (current > SHOW_PAGES) {
+    return [
+      ...Array.from(Array(SHOW_PAGES).keys()).map((i) => current - i),
+      current,
+      ...Array.from(Array(SHOW_PAGES).keys()).map((i) => current + i + 1),
+    ];
+  }
+  return result;
+});
+
 function getStatusClass(item) {
   return {
     "bg-cyan-100 text-cyan-800": item.status === "register",
@@ -133,8 +162,10 @@ function getStatusClass(item) {
     <SubmissionsFilter
       :status="filters.status"
       @change-status="filters.status = $event"
+      :limit="filters.limit"
+      @change-limit="filters.limit = $event"
     />
-    <div class="scroller -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+    <div class="scroller scroller--sm -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
         <div
           class="shadow overflow-hidden border border-gray-200 sm:rounded-lg"
@@ -263,7 +294,7 @@ function getStatusClass(item) {
                   }})
                 </td>
                 <td class="row">{{ item.progress }}%</td>
-                <td class="row !text-[10px] !whitespace-normal w-16 capitalize">
+                <td class="row !text-xs !whitespace-normal w-16 capitalize">
                   {{ item.stopAt.toLowerCase() || "Just signed up" }}
                 </td>
                 <td class="row">
@@ -283,6 +314,52 @@ function getStatusClass(item) {
         </div>
       </div>
     </div>
+
+    <nav class="page-nav">
+      <div class="-mt-px w-0 flex-1 flex">
+        <a
+          href="#"
+          class="border-t-2 border-transparent pt-4 pr-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
+          :class="{ 'opacity-50': filters.page <= 1 }"
+          @click="filters.page > 1 && (filters.page = filters.page - 1)"
+        >
+          <ArrowNarrowLeftIcon
+            class="mr-3 h-5 w-5 text-gray-400"
+            aria-hidden="true"
+          />
+          Previous
+        </a>
+      </div>
+      <div class="hidden md:-mt-px md:flex">
+        <template v-for="item in pages" :key="item">
+          <a
+            href="#"
+            class="page"
+            :class="{ active: item === filters.page }"
+            @click="!isNaN(parseInt(item)) && (filters.page = item)"
+          >
+            {{ item }}
+          </a>
+        </template>
+      </div>
+      <div class="-mt-px w-0 flex-1 flex justify-end">
+        <a
+          href="#"
+          class="border-t-2 border-transparent pt-4 pl-1 inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300"
+          :class="{ 'opacity-50': filters.page >= pagination.pageCount }"
+          @click="
+            filters.page < pagination.pageCount &&
+              (filters.page = filters.page + 1)
+          "
+        >
+          Next
+          <ArrowNarrowRightIcon
+            class="ml-3 h-5 w-5 text-gray-400"
+            aria-hidden="true"
+          />
+        </a>
+      </div>
+    </nav>
   </div>
 </template>
 
@@ -316,6 +393,17 @@ function getStatusClass(item) {
 
     circle {
       @apply stroke-2;
+    }
+  }
+}
+.page-nav {
+  @apply mt-4 border-t border-gray-200 px-4 flex items-center justify-between sm:px-0;
+
+  .page {
+    @apply border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 border-t-2 px-4 py-2 inline-flex items-center text-sm font-medium;
+
+    &.active {
+      @apply border-indigo-500 text-indigo-600 bg-indigo-200;
     }
   }
 }

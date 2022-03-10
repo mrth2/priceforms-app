@@ -20,15 +20,20 @@ import { XIcon } from "@heroicons/vue/outline";
 import { ChevronDownIcon } from "@heroicons/vue/solid";
 
 type StatusOption = "register" | "partial" | "complete";
-const props = defineProps<{
-  status: Array<StatusOption>;
-  form?: string;
-  progress?: {
-    min: number;
-    max: number;
-  };
-}>();
-const emit = defineEmits(["change-status"]);
+const props = withDefaults(
+  defineProps<{
+    status: Array<StatusOption>;
+    limit?: number;
+    progress?: {
+      min: number;
+      max: number;
+    };
+  }>(),
+  {
+    limit: 10,
+  }
+);
+const emit = defineEmits(["change-status", "change-limit"]);
 const filterStatus = computed(() => ({
   id: "status",
   name: "status",
@@ -37,19 +42,19 @@ const filterStatus = computed(() => ({
       value: "register" as StatusOption,
       label: "Register",
       checked: props.status.includes("register"),
-      color: "bg-cyan-200",
+      color: "!bg-cyan-200 text-cyan-800",
     },
     {
       value: "partial" as StatusOption,
       label: "Partial",
       checked: props.status.includes("partial"),
-      color: "bg-blue-200",
+      color: "!bg-blue-200 text-blue-800",
     },
     {
       value: "complete" as StatusOption,
       label: "Complete",
       checked: props.status.includes("complete"),
-      color: "bg-green-200",
+      color: "!bg-green-200 text-green-800",
     },
   ],
 }));
@@ -79,6 +84,8 @@ const activeStatusFilter = computed(() => {
   });
   return result;
 });
+
+const limits = [5, 10, 20, 50, 100, 200];
 
 const open = ref(false);
 </script>
@@ -166,6 +173,7 @@ const open = ref(false);
                         type="checkbox"
                         :checked="option.checked"
                         class="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
+                        @change="updateFilter(filterStatus.id, option.value)"
                       />
                       <label
                         :for="`filter-mobile-${filterStatus.id}-${optionIdx}`"
@@ -197,6 +205,7 @@ const open = ref(false);
             Filters
           </button>
 
+          <!-- filter by status -->
           <div class="hidden sm:block">
             <div class="flow-root">
               <PopoverGroup
@@ -262,6 +271,54 @@ const open = ref(false);
               </PopoverGroup>
             </div>
           </div>
+          <!-- per page -->
+          <div class="hidden sm:block">
+            <div class="flow-root">
+              <PopoverGroup
+                class="-mx-4 flex items-center divide-x divide-gray-200"
+              >
+                <Popover class="px-4 relative inline-block text-left">
+                  <PopoverButton
+                    class="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900"
+                  >
+                    <span class="capitalize"> Per page: </span>
+                    <span
+                      class="ml-1.5 rounded py-0.5 px-1.5 bg-gray-200 text-xs font-semibold text-gray-700 tabular-nums"
+                    >
+                      {{ limit }}
+                    </span>
+                    <ChevronDownIcon
+                      class="flex-shrink-0 -mr-1 ml-1 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                      aria-hidden="true"
+                    />
+                  </PopoverButton>
+
+                  <transition
+                    enter-active-class="transition ease-out duration-100"
+                    enter-from-class="transform opacity-0 scale-95"
+                    enter-to-class="transform opacity-100 scale-100"
+                    leave-active-class="transition ease-in duration-75"
+                    leave-from-class="transform opacity-100 scale-100"
+                    leave-to-class="transform opacity-0 scale-95"
+                  >
+                    <PopoverPanel
+                      class="origin-top-right absolute right-0 mt-2 bg-white rounded-md shadow-2xl py-2 border border-gray-300 focus:outline-none"
+                    >
+                      <PopoverButton
+                        as="div"
+                        v-for="option in limits"
+                        :key="option"
+                        class="flex items-center justify-center cursor-pointer text-sm px-4 py-2 hover:bg-indigo-200"
+                        @click="emit('change-limit', option)"
+                      >
+                        {{ option }}
+                      </PopoverButton>
+                    </PopoverPanel>
+                  </transition>
+                </Popover>
+              </PopoverGroup>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -285,7 +342,7 @@ const open = ref(false);
               <span
                 v-for="status in activeStatusFilter"
                 :key="status.value"
-                class="m-1 inline-flex rounded-full border border-gray-200 items-center py-1 pl-3 pr-2 text-xs font-medium bg-white text-gray-900"
+                class="m-1 inline-flex rounded-full border border-gray-200 items-center py-1 pl-3 pr-2 text-xs font-semibold"
                 :class="[status.color]"
               >
                 <span>{{ status.label }}</span>
