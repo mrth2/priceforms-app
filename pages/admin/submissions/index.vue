@@ -208,7 +208,7 @@ function exportSubmissions(type: "csv" | "pdf") {
     email: submission.user.email,
     phone: submission.user.phone,
     status: startCase(submission.status),
-    progress: submission.progress,
+    progress: submission.progress + '%',
     stopAt: submission.stopAt,
     createdAt: $dateFormat(submission.createdAt, false, true),
     updatedAt: $dateFormat(submission.updatedAt, false, true),
