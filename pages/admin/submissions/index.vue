@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import { ArrowNarrowDownIcon } from "@heroicons/vue/outline";
 import SubmissionsFilter from "~~/components/admin/submissions/SubmissionsFilter.vue";
+import Spinner from "~~/components/icon/Spinner.vue";
 definePageMeta({
   layout: "admin",
   title: "Submissions",
-  description: "Filter submissions by status, type, or date.",
+  description: "View submissions from your form!",
 });
 const { find } = useStrapi4();
 
-const { data } = await useAsyncData("form-submissions", () =>
-  find<{ data: any }>("form-submissions", {
+const filters = reactive({
+  status: ["register", "partial", "complete"] as Array<
+    "register" | "partial" | "complete"
+  >,
+});
+const loading = ref(true);
+async function fetchData() {
+  loading.value = true;
+  const result = await find<{ data: any }>("form-submissions", {
     fields: [
       "status",
       "progress",
@@ -20,12 +28,28 @@ const { data } = await useAsyncData("form-submissions", () =>
       "createdAt",
       "updatedAt",
     ],
+    filters: {
+      status: {
+        $in: filters.status.length ? filters.status : [],
+      },
+    },
     populate: ["form", "category", "user"],
     pagination: {
       page: 1,
       pageSize: 10,
     },
-  })
+  });
+  loading.value = false;
+  return result;
+}
+
+const { data } = await useAsyncData("form-submissions", fetchData);
+watch(
+  filters,
+  async () => {
+    data.value = await fetchData();
+  },
+  { deep: true }
 );
 
 const sortAsc = ref(true);
@@ -106,13 +130,19 @@ function getStatusClass(item) {
 
 <template>
   <div class="flex flex-col">
-    <SubmissionsFilter />
+    <SubmissionsFilter
+      :status="filters.status"
+      @change-status="filters.status = $event"
+    />
     <div class="scroller -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
         <div
-          class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"
+          class="shadow overflow-hidden border border-gray-200 sm:rounded-lg"
         >
-          <table class="min-w-full divide-y divide-gray-200">
+          <table
+            v-if="!loading"
+            class="min-w-full divide-y divide-gray-200 border-gray-400"
+          >
             <thead class="bg-gray-50">
               <tr>
                 <th
@@ -247,6 +277,9 @@ function getStatusClass(item) {
               </tr>
             </tbody>
           </table>
+          <div v-else class="loader">
+            <Spinner />
+          </div>
         </div>
       </div>
     </div>
@@ -275,5 +308,15 @@ function getStatusClass(item) {
 }
 .row {
   @apply px-6 py-4 whitespace-nowrap text-sm text-gray-500;
+}
+.loader {
+  @apply min-h-[400px] flex items-center justify-center;
+  :deep(svg) {
+    @apply text-gray-400 w-12 h-12;
+
+    circle {
+      @apply stroke-2;
+    }
+  }
 }
 </style>
