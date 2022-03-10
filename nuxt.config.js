@@ -18,6 +18,6 @@ export default defineNuxtConfig({
     postcss: {
       postcssOptions: require('./postcss.config.js'),
     },
-    transpile: ['@headlessui/vue']
+    transpile: ['@headlessui/vue', '@heroicons/vue'],
   }
 })
