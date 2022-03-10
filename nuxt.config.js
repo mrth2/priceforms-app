@@ -17,6 +17,7 @@ export default defineNuxtConfig({
   build: {
     postcss: {
       postcssOptions: require('./postcss.config.js'),
-    }
+    },
+    transpile: ['@headlessui/vue']
   }
 })
