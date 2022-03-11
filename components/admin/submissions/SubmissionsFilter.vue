@@ -219,6 +219,55 @@ const open = ref(false);
             Filters
           </button>
 
+          <!-- per page -->
+          <div class="hidden sm:block">
+            <div class="flow-root">
+              <PopoverGroup
+                class="-mx-4 flex items-center divide-x divide-gray-200"
+              >
+                <Popover class="px-4 relative inline-block text-left">
+                  <PopoverButton
+                    class="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900"
+                  >
+                    <span class="capitalize"> Per page: </span>
+                    <span
+                      class="ml-1.5 rounded py-0.5 px-1.5 bg-gray-200 text-xs font-semibold text-gray-700 tabular-nums"
+                    >
+                      {{ limit }}
+                    </span>
+                    <ChevronDownIcon
+                      class="flex-shrink-0 -mr-1 ml-1 h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                      aria-hidden="true"
+                    />
+                  </PopoverButton>
+
+                  <transition
+                    enter-active-class="transition ease-out duration-100"
+                    enter-from-class="transform opacity-0 scale-95"
+                    enter-to-class="transform opacity-100 scale-100"
+                    leave-active-class="transition ease-in duration-75"
+                    leave-from-class="transform opacity-100 scale-100"
+                    leave-to-class="transform opacity-0 scale-95"
+                  >
+                    <PopoverPanel
+                      class="origin-top-right absolute right-0 mt-2 bg-white rounded-md shadow-2xl py-2 border border-gray-300 focus:outline-none"
+                    >
+                      <PopoverButton
+                        as="div"
+                        v-for="option in limits"
+                        :key="option"
+                        class="filter-option"
+                        @click="emit('change-limit', option)"
+                      >
+                        {{ option }}
+                      </PopoverButton>
+                    </PopoverPanel>
+                  </transition>
+                </Popover>
+              </PopoverGroup>
+            </div>
+          </div>
+          |
           <!-- filter by status -->
           <div class="hidden sm:block">
             <div class="flow-root">
@@ -279,55 +328,6 @@ const open = ref(false);
                           </label>
                         </div>
                       </form>
-                    </PopoverPanel>
-                  </transition>
-                </Popover>
-              </PopoverGroup>
-            </div>
-          </div>
-          |
-          <!-- per page -->
-          <div class="hidden sm:block">
-            <div class="flow-root">
-              <PopoverGroup
-                class="-mx-4 flex items-center divide-x divide-gray-200"
-              >
-                <Popover class="px-4 relative inline-block text-left">
-                  <PopoverButton
-                    class="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900"
-                  >
-                    <span class="capitalize"> Per page: </span>
-                    <span
-                      class="ml-1.5 rounded py-0.5 px-1.5 bg-gray-200 text-xs font-semibold text-gray-700 tabular-nums"
-                    >
-                      {{ limit }}
-                    </span>
-                    <ChevronDownIcon
-                      class="flex-shrink-0 -mr-1 ml-1 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                      aria-hidden="true"
-                    />
-                  </PopoverButton>
-
-                  <transition
-                    enter-active-class="transition ease-out duration-100"
-                    enter-from-class="transform opacity-0 scale-95"
-                    enter-to-class="transform opacity-100 scale-100"
-                    leave-active-class="transition ease-in duration-75"
-                    leave-from-class="transform opacity-100 scale-100"
-                    leave-to-class="transform opacity-0 scale-95"
-                  >
-                    <PopoverPanel
-                      class="origin-top-right absolute right-0 mt-2 bg-white rounded-md shadow-2xl py-2 border border-gray-300 focus:outline-none"
-                    >
-                      <PopoverButton
-                        as="div"
-                        v-for="option in limits"
-                        :key="option"
-                        class="filter-option"
-                        @click="emit('change-limit', option)"
-                      >
-                        {{ option }}
-                      </PopoverButton>
                     </PopoverPanel>
                   </transition>
                 </Popover>
