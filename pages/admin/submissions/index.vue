@@ -7,7 +7,7 @@ import {
   ArrowNarrowLeftIcon,
   ArrowNarrowRightIcon,
 } from "@heroicons/vue/outline";
-import { PaginationByPage } from "@nuxtjs/strapi/dist/runtime/types";
+import { Strapi4RequestParams } from "@nuxtjs/strapi/dist/runtime/types";
 import SubmissionsFilter from "~~/components/admin/submissions/SubmissionsFilter.vue";
 import Spinner from "~~/components/icon/Spinner.vue";
 definePageMeta({
@@ -24,13 +24,14 @@ const filters = reactive({
   status: ["register", "partial", "complete"] as Array<
     "register" | "partial" | "complete"
   >,
+  dates: [],
   limit: 10,
   page: 1,
 });
 const loading = ref(true);
 async function fetchData() {
   loading.value = true;
-  const result = await find<{ data: any; meta: any }>("form-submissions", {
+  const params = {
     fields: [
       "status",
       "progress",
@@ -51,7 +52,17 @@ async function fetchData() {
       page: filters.page,
       pageSize: filters.limit,
     },
-  });
+  } as Strapi4RequestParams;
+  if (filters.dates.length === 2) {
+    params.filters.createdAt = {
+      $gte: filters.dates[0],
+      $lte: filters.dates[1],
+    };
+  }
+  const result = await find<{ data: any; meta: any }>(
+    "form-submissions",
+    params
+  );
   loading.value = false;
   return result;
 }
@@ -208,7 +219,7 @@ function exportSubmissions(type: "csv" | "pdf") {
     email: submission.user.email,
     phone: submission.user.phone,
     status: startCase(submission.status),
-    progress: submission.progress + '%',
+    progress: submission.progress + "%",
     stopAt: submission.stopAt,
     createdAt: $dateFormat(submission.createdAt, false, true),
     updatedAt: $dateFormat(submission.updatedAt, false, true),
@@ -251,6 +262,7 @@ function exportSubmissions(type: "csv" | "pdf") {
       @change-status="filters.status = $event"
       :limit="filters.limit"
       @change-limit="filters.limit = $event"
+      @change-date="filters.dates = $event"
       @export="exportSubmissions($event)"
     />
     <div class="scroller scroller--sm -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

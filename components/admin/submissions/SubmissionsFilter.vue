@@ -18,6 +18,8 @@ import {
 } from "@headlessui/vue";
 import { XIcon, DownloadIcon } from "@heroicons/vue/outline";
 import { ChevronDownIcon } from "@heroicons/vue/solid";
+import "vue-datepicker-ui/lib/vuedatepickerui.css";
+import DatePicker from "vue-datepicker-ui";
 
 type StatusOption = "register" | "partial" | "complete";
 const props = withDefaults(
@@ -33,7 +35,19 @@ const props = withDefaults(
     limit: 10,
   }
 );
-const emit = defineEmits(["change-status", "change-limit", "export"]);
+const dates = ref([]);
+const emit = defineEmits([
+  "change-status",
+  "change-limit",
+  "export",
+  "change-date",
+]);
+watch(dates, (values) => {
+  if (values.length === 2 && values[0] && values[1]) {
+    emit("change-date", dates.value);
+  }
+});
+
 const filterStatus = computed(() => ({
   id: "status",
   name: "status",
@@ -320,7 +334,15 @@ const open = ref(false);
               </PopoverGroup>
             </div>
           </div>
-          <div class="ml-auto">
+          <div class="date-picker ml-auto">
+            <DatePicker
+              v-model="dates"
+              :range="true"
+              position="right"
+              lang="en"
+            />
+          </div>
+          <div>
             <PopoverGroup>
               <Popover>
                 <PopoverButton as="button" class="btn btn-primary">
@@ -417,5 +439,21 @@ const open = ref(false);
 <style scoped lang="postcss">
 .filter-option {
   @apply flex items-center justify-center cursor-pointer text-sm px-4 py-2 hover:bg-indigo-200;
+}
+.date-picker {
+  --v-calendar-input-font-size: theme("fontSize.sm");
+  --v-calendar-day-font-size: theme("fontSize.sm");
+  --v-calendar-view-button-font-size: theme("fontSize.base");
+  --v-calendar-day-name-font-size: theme("fontSize.sm");
+  --v-calendar-input-border: 1px solid theme("colors.gray.400");
+
+  :deep(.v-calendar) {
+    input {
+      @apply h-8;
+    }
+    svg {
+      @apply h-6 w-4;
+    }
+  }
 }
 </style>
