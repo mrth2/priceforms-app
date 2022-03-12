@@ -9,7 +9,6 @@ import {
 } from "@heroicons/vue/outline";
 import { Strapi4RequestParams } from "@nuxtjs/strapi/dist/runtime/types";
 import SubmissionsFilter from "~~/components/admin/submissions/SubmissionsFilter.vue";
-import Spinner from "~~/components/icon/Spinner.vue";
 import { useAppStore } from "~~/store/app";
 definePageMeta({
   layout: "admin",
@@ -90,8 +89,9 @@ function sortClasses(type: SortField) {
   };
 }
 
-const submissions = computed(() =>
-  data.value.data
+const submissions = computed(() => {
+  if (!data.value) return [];
+  return data.value.data
     .map((s) => ({
       id: s.id,
       ...s.attributes,
@@ -144,16 +144,17 @@ const submissions = computed(() =>
       } else {
         return b.user.fullName.localeCompare(a.user.fullName);
       }
-    })
-);
+    });
+});
 
 const pagination = computed<{
   page: number;
   pageCount: number;
   pageSize: number;
   total: number;
-}>(() => data.value.meta?.pagination);
+}>(() => data.value?.meta?.pagination);
 const pages = computed(() => {
+  if (!pagination.value) return [];
   let { page: current, pageCount: count } = pagination.value;
   return generatePagination(current, count);
 });
@@ -462,7 +463,7 @@ async function deleteSubmission() {
       </div>
     </div>
     <!-- pagination -->
-    <nav class="page-nav">
+    <nav v-if="submissions.length" class="page-nav">
       <div class="-mt-px w-0 flex-1 flex">
         <a
           href="#"

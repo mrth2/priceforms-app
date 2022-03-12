@@ -53,7 +53,7 @@ const form = ref(null);
 onMounted(async () => {
   requireFormOwner();
   watch(user, requireFormOwner);
-  
+
   appStore.setLoading(true);
   await fetchForm().then(({ data }) => {
     if (data.forms.data.length) {
@@ -211,7 +211,13 @@ const sidebarOpen = ref(false);
           to="/"
           class="flex items-center h-24 flex-shrink-0 px-4 bg-gray-900"
         >
-          <img class="h-16 max-w-full w-auto" :src="logo" alt="PriceForms" />
+          <img
+            v-if="logo"
+            class="h-16 max-w-full w-auto"
+            :src="logo"
+            alt="PriceForms"
+          />
+          <span v-else>PriceForms</span>
         </NuxtLink>
         <div class="flex-1 flex flex-col overflow-y-auto">
           <nav class="flex-1 px-2 py-4 space-y-1">
@@ -339,7 +345,7 @@ const sidebarOpen = ref(false);
             </p>
           </div>
           <!-- main page content here -->
-          <div v-if="!isLoading" class="mx-auto px-4 sm:px-6 md:px-8">
+          <div class="mx-auto px-4 sm:px-6 md:px-8">
             <div class="py-4">
               <slot v-if="verified">
                 <div
@@ -349,7 +355,7 @@ const sidebarOpen = ref(false);
             </div>
           </div>
           <!-- global admin loading -->
-          <div v-else class="relative">
+          <div v-if="isLoading" class="relative">
             <div
               class="fixed inset-0 flex flex-col justify-center items-center gap-3 bg-gray-900 bg-opacity-70 z-[100]"
             >
