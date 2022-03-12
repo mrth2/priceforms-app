@@ -34,6 +34,13 @@ const verified = ref(false);
 const router = useRouter();
 const route = useRoute();
 const user = useStrapiUser() as Ref<IUser>;
+const fullName = computed(() => {
+  if (!user.value) return "Form Owner";
+  else if (user.value.firstName || user.value.lastName) {
+    return `${user.value.firstName} ${user.value.lastName}`;
+  }
+  return user.value.username || user.value.email;
+});
 function requireFormOwner() {
   if (!user.value) {
     return router.push("/admin/login");
@@ -221,10 +228,10 @@ const sidebarOpen = ref(false);
         </NuxtLink>
         <div class="flex-1 flex flex-col overflow-y-auto">
           <nav class="flex-1 px-2 py-4 space-y-1">
-            <a
+            <NuxtLink
               v-for="item in navigation"
               :key="item.name"
-              :href="item.href"
+              :to="item.href"
               :class="[
                 item.name === currentNavigation.name
                   ? 'bg-gray-900 text-white'
@@ -243,7 +250,7 @@ const sidebarOpen = ref(false);
                 aria-hidden="true"
               />
               {{ item.name }}
-            </a>
+            </NuxtLink>
           </nav>
         </div>
       </div>
@@ -296,9 +303,9 @@ const sidebarOpen = ref(false);
                   class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   <span class="sr-only">Open user menu</span>
-                  <img
-                    class="h-8 w-8 rounded-full"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  <CoreAvatar
+                    :name="fullName"
+                    class="h-8 w-8 bg-blue-100"
                   />
                 </MenuButton>
               </div>
@@ -318,14 +325,15 @@ const sidebarOpen = ref(false);
                     :key="item.name"
                     v-slot="{ active }"
                   >
-                    <a
-                      :href="item.href"
+                    <NuxtLink
+                      :to="item.href"
                       :class="[
                         active ? 'bg-gray-100' : '',
                         'block px-4 py-2 text-sm text-gray-700',
                       ]"
-                      >{{ item.name }}</a
                     >
+                      {{ item.name }}
+                    </NuxtLink>
                   </MenuItem>
                 </MenuItems>
               </transition>

@@ -9,4 +9,7 @@ export interface IUser {
   updatedAt: string
   isOwner: boolean
   ownedForms?: string[]
+  firstName: string
+  lastName: string
+  phone: string
 }

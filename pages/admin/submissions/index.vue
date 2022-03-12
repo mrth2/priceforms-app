@@ -386,14 +386,10 @@ async function deleteSubmission() {
                 <td class="row">
                   <div class="flex items-center">
                     <div class="flex-shrink-0 h-10 w-10">
-                      <div
-                        class="h-10 w-10 rounded-full border border-gray-300 flex items-center justify-center font-medium tracking-tight"
+                      <CoreAvatar
                         :class="getStatusClass(item)"
-                        alt="user"
-                      >
-                        {{ item.user.firstName.charAt(0) }}
-                        {{ item.user.lastName.charAt(0) }}
-                      </div>
+                        :name="item.user.fullName"
+                      />
                     </div>
                     <div class="ml-4">
                       <div class="text-sm font-medium text-gray-900">
