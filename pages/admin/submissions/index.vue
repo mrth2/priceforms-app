@@ -33,12 +33,14 @@ async function fetchData() {
   loading.value = true;
   const params = {
     fields: [
+      "zip",
       "status",
       "progress",
       "stopAt",
       "minPrice",
       "maxPrice",
       "currency",
+      "data",
       "createdAt",
       "updatedAt",
     ],
@@ -210,36 +212,52 @@ function exportCSV<T>(
   document.body.removeChild(link);
 }
 
-function exportSubmissions(type: "csv" | "pdf") {
-  const table = submissions.value.map((submission) => ({
-    id: submission.id,
-    form: startCase(submission.form.subDomain),
-    category: submission.category.title,
+function getExportRow(submission, index) {
+  return {
+    index: index + 1,
+    zip: submission.zip,
     name: submission.user.fullName,
     email: submission.user.email,
     phone: submission.user.phone,
     status: startCase(submission.status),
-    progress: submission.progress + "%",
-    stopAt: submission.stopAt,
     createdAt: $dateFormat(submission.createdAt, false, true),
-    updatedAt: $dateFormat(submission.updatedAt, false, true),
-  }));
+    category: submission.category.title,
+  };
+}
+
+function exportSubmissions(type: "csv" | "pdf") {
   const headers = [
-    "ID",
-    "Form",
-    "Case",
+    "No.",
+    "Zip",
     "Name",
     "Email",
     "Phone",
     "Status",
-    "Progress",
-    "Stop At",
-    "Created At",
-    "Updated At",
+    "Created",
+    "Case Type",
   ];
   if (type === "csv") {
+    const table = [];
+    submissions.value.forEach((submission, index) => {
+      const row = getExportRow(submission, index);
+      if (submission.data && submission.data.length) {
+        const row2 = Object.keys(row).reduce(
+          (acc, key) => ({ ...acc, [key]: "" }),
+          {}
+        );
+        submission.data.forEach((d) => {
+          row[`q${d.qid}`] = "Q: " + d.question;
+          row2[`a${d.qid}`] = "A: " + d.answer;
+        });
+        table.push(row);
+        table.push(row2);
+      } else {
+        table.push(row);
+      }
+    });
     return exportCSV(table, headers, "submissions");
   } else {
+    const table = submissions.value.map(getExportRow);
     const rows = table.map((kw) => Object.values(kw));
 
     const doc = new jsPDF({
@@ -293,6 +311,7 @@ function exportSubmissions(type: "csv" | "pdf") {
                   />
                 </th>
                 <th scope="col" class="heading">Form</th>
+                <th scope="col" class="heading">Zip Code</th>
                 <th
                   scope="col"
                   class="heading sortable"
@@ -383,6 +402,9 @@ function exportSubmissions(type: "csv" | "pdf") {
                   <div class="text-sm text-gray-500">
                     Case: {{ item.category.title }}
                   </div>
+                </td>
+                <td class="row">
+                  {{ item.zip }}
                 </td>
                 <td class="row">
                   <span
