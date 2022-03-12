@@ -23,6 +23,11 @@ import {
   XIcon,
 } from "@heroicons/vue/outline";
 import { SearchIcon } from "@heroicons/vue/solid";
+import { useAppStore } from "~~/store/app";
+import Spinner from "~~/components/icon/Spinner.vue";
+
+const appStore = useAppStore();
+const isLoading = computed(() => appStore.isLoading);
 
 const verified = ref(false);
 
@@ -48,7 +53,8 @@ const form = ref(null);
 onMounted(async () => {
   requireFormOwner();
   watch(user, requireFormOwner);
-
+  
+  appStore.setLoading(true);
   await fetchForm().then(({ data }) => {
     if (data.forms.data.length) {
       form.value = {
@@ -56,10 +62,11 @@ onMounted(async () => {
       };
     }
   });
+  appStore.setLoading(false);
 });
 
-const logo = computed(() =>
-  form.value?.attributes?.logo?.data?.attributes?.url
+const logo = computed(
+  () => form.value?.attributes?.logo?.data?.attributes?.url
 );
 
 const graphql = useStrapiGraphQL();
@@ -155,7 +162,11 @@ const sidebarOpen = ref(false);
               </div>
             </TransitionChild>
             <NuxtLink to="/" class="flex-shrink-0 flex items-center px-4">
-              <img class="h-16 max-w-full w-auto" :src="logo" alt="PriceForms" />
+              <img
+                class="h-16 max-w-full w-auto"
+                :src="logo"
+                alt="PriceForms"
+              />
             </NuxtLink>
             <div class="mt-5 flex-1 h-0 overflow-y-auto">
               <nav class="px-2 space-y-1">
@@ -327,13 +338,23 @@ const sidebarOpen = ref(false);
               {{ route.meta.description }}
             </p>
           </div>
-          <div class="mx-auto px-4 sm:px-6 md:px-8">
+          <!-- main page content here -->
+          <div v-if="!isLoading" class="mx-auto px-4 sm:px-6 md:px-8">
             <div class="py-4">
               <slot v-if="verified">
                 <div
                   class="border-4 border-dashed border-gray-200 rounded-lg h-96"
                 />
               </slot>
+            </div>
+          </div>
+          <!-- global admin loading -->
+          <div v-else class="relative">
+            <div
+              class="fixed inset-0 flex flex-col justify-center items-center gap-3 bg-gray-900 bg-opacity-70 z-[100]"
+            >
+              <Spinner class="w-20 h-20" />
+              <div class="text-white">Please wait a bit...</div>
             </div>
           </div>
         </div>

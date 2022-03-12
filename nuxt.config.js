@@ -18,6 +18,7 @@ export default defineNuxtConfig({
   ],
   buildModules: [
     '@nuxtjs/strapi',
+    '@pinia/nuxt'
   ],
   strapi: {
     url: process.env.API_URL || 'http://localhost:1337',

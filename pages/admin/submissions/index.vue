@@ -10,6 +10,7 @@ import {
 import { Strapi4RequestParams } from "@nuxtjs/strapi/dist/runtime/types";
 import SubmissionsFilter from "~~/components/admin/submissions/SubmissionsFilter.vue";
 import Spinner from "~~/components/icon/Spinner.vue";
+import { useAppStore } from "~~/store/app";
 definePageMeta({
   layout: "admin",
   title: "Submissions",
@@ -28,9 +29,10 @@ const filters = reactive({
   limit: 10,
   page: 1,
 });
-const loading = ref(true);
+const appStore = useAppStore();
+const loading = computed(() => appStore.isLoading);
 async function fetchData() {
-  loading.value = true;
+  appStore.setLoading(true);
   const params = {
     fields: [
       "zip",
@@ -65,7 +67,7 @@ async function fetchData() {
     "form-submissions",
     params
   );
-  loading.value = false;
+  appStore.setLoading(false);
   return result;
 }
 
@@ -456,9 +458,6 @@ async function deleteSubmission() {
               </tr>
             </tbody>
           </table>
-          <div v-else class="loader">
-            <Spinner />
-          </div>
         </div>
       </div>
     </div>
@@ -552,16 +551,6 @@ async function deleteSubmission() {
 
     .action__item {
       @apply cursor-pointer;
-    }
-  }
-}
-.loader {
-  @apply min-h-[400px] flex items-center justify-center;
-  :deep(svg) {
-    @apply text-gray-400 w-12 h-12;
-
-    circle {
-      @apply stroke-2;
     }
   }
 }
