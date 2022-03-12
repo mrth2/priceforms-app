@@ -13,7 +13,6 @@ import {
 } from "@headlessui/vue";
 import {
   BellIcon,
-  BriefcaseIcon,
   CashIcon,
   ChartBarIcon,
   CogIcon,
@@ -56,18 +55,31 @@ function requireFormOwner() {
   verified.value = true;
 }
 
+const graphql = useStrapiGraphQL();
 const form = ref(null);
-onMounted(async () => {
+onMounted(() => {
   requireFormOwner();
+  // on mounted, watch if user changed, require form owner again on any tab
   watch(user, requireFormOwner);
+});
 
-  appStore.setLoading(true);
-  await fetchForm().then(({ data }) => {
-    if (data.forms.data.length) {
-      form.value = {
-        ...data.forms.data[0],
-      };
-    }
+appStore.setLoading(true);
+const { pending: loadingForm, data } = useLazyAsyncData("form", fetchForm);
+watch(data, (loadedData: any) => {
+  if (loadedData?.data?.forms?.data?.length) {
+    form.value = {
+      ...loadedData.data.forms.data[0],
+    };
+  }
+  // update meta to load configured form favicon if available
+  useMeta({
+    link: [
+      {
+        rel: "icon",
+        type: "image/png",
+        href: favicon.value || "/favicon.png",
+      },
+    ],
   });
   appStore.setLoading(false);
 });
@@ -75,21 +87,29 @@ onMounted(async () => {
 const logo = computed(
   () => form.value?.attributes?.logo?.data?.attributes?.url
 );
+const favicon = computed(
+  () => form?.value?.attributes?.favicon?.data?.attributes?.url
+);
 
-const graphql = useStrapiGraphQL();
 async function fetchForm() {
   return await graphql(`
+    fragment Image on UploadFileEntityResponse {
+      data {
+        attributes {
+          url
+        }
+      }
+    }
     query Form {
       forms(filters: {subDomain: {eq: "${useSubDomain()}"}}) {
         data {
           id
           attributes {
             logo {
-              data {
-                attributes {
-                  url
-                }
-              }
+              ...Image
+            }
+            favicon {
+              ...Image
             }
           }
         }
@@ -118,7 +138,7 @@ const sidebarOpen = ref(false);
 </script>
 
 <template>
-  <div>
+  <div v-if="!loadingForm">
     <TransitionRoot as="template" :show="sidebarOpen">
       <Dialog
         as="div"
@@ -303,10 +323,7 @@ const sidebarOpen = ref(false);
                   class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   <span class="sr-only">Open user menu</span>
-                  <CoreAvatar
-                    :name="fullName"
-                    class="h-8 w-8 bg-blue-100"
-                  />
+                  <CoreAvatar :name="fullName" class="h-8 w-8 bg-blue-100" />
                 </MenuButton>
               </div>
               <transition
