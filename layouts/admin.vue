@@ -87,7 +87,6 @@ async function fetchForm() {
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: HomeIcon },
   { name: "Submissions", href: "/admin/submissions", icon: UsersIcon },
-  { name: "Forms", href: "/admin/forms", icon: BriefcaseIcon },
   { name: "Analytics", href: "/admin/analytics", icon: ChartBarIcon },
   { name: "Payments", href: "/admin/payments", icon: CashIcon },
   { name: "Settings", href: "/admin/settings", icon: CogIcon },

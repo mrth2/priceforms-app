@@ -18,7 +18,7 @@ definePageMeta({
 
 const { $dateFormat } = useNuxtApp();
 
-const { find } = useStrapi4();
+const strapi = useStrapi4();
 
 const filters = reactive({
   status: ["register", "partial", "complete"] as Array<
@@ -61,7 +61,7 @@ async function fetchData() {
       $lte: filters.dates[1],
     };
   }
-  const result = await find<{ data: any; meta: any }>(
+  const result = await strapi.find<{ data: any; meta: any }>(
     "form-submissions",
     params
   );
@@ -271,6 +271,13 @@ function exportSubmissions(type: "csv" | "pdf") {
     doc.save("submissions.pdf");
   }
 }
+
+const deletingSubmission = ref(null);
+async function deleteSubmission() {
+  await strapi.delete("form-submissions", deletingSubmission.value.id);
+  data.value = await fetchData();
+  deletingSubmission.value = null;
+}
 </script>
 
 <template>
@@ -426,9 +433,16 @@ function exportSubmissions(type: "csv" | "pdf") {
                 <td class="row">
                   {{ $dateFormat(item.updatedAt) }}
                 </td>
-                <td class="row text-right text-sm font-medium">
-                  <a href="#" class="text-indigo-600 hover:text-indigo-900">
-                    Edit
+                <td class="row actions">
+                  <a class="action__item text-indigo-600 hover:text-indigo-900">
+                    View
+                  </a>
+                  |
+                  <a
+                    class="action__item text-red-600 hover:text-red-900"
+                    @click="deletingSubmission = item"
+                  >
+                    Delete
                   </a>
                 </td>
               </tr>
@@ -496,6 +510,17 @@ function exportSubmissions(type: "csv" | "pdf") {
         </a>
       </div>
     </nav>
+
+    <!-- confirm delete -->
+    <CoreConfirmModal
+      v-if="!!deletingSubmission"
+      :open="true"
+      :title="`Delete submission from ${deletingSubmission.user.fullName}`"
+      :description="`Are you sure you want to delete this submission? It will be permanently removed from our servers forever. This action cannot be undone!`"
+      :confirm-text="`OK. Delete now!`"
+      @cancel="deletingSubmission = null"
+      @confirm="deleteSubmission"
+    />
   </div>
 </template>
 
@@ -521,6 +546,14 @@ function exportSubmissions(type: "csv" | "pdf") {
 }
 .row {
   @apply px-6 py-4 whitespace-nowrap text-sm text-gray-500;
+
+  &.actions {
+    @apply text-right text-sm font-medium;
+
+    .action__item {
+      @apply cursor-pointer;
+    }
+  }
 }
 .loader {
   @apply min-h-[400px] flex items-center justify-center;
