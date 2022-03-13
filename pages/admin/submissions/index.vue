@@ -271,7 +271,7 @@ function exportSubmissions(type: "csv" | "pdf") {
 const deletingSubmission = ref(null);
 async function deleteSubmission() {
   try {
-    await useSubmissionStore(deletingSubmission.value.id);
+    await useSubmissionStore().deleteSubmission(deletingSubmission.value.id);
     appStore.pushNotification({
       type: "success",
       title: "Submission deleted",
@@ -279,6 +279,7 @@ async function deleteSubmission() {
     data.value = await fetchData();
     deletingSubmission.value = null;
   } catch (e) {
+    console.dir(e);
     appStore.pushNotification({
       type: "error",
       title: "Can not delete submission:",

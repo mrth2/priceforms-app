@@ -90,7 +90,7 @@ async function deleteSubmission() {
     await useSubmissionStore().deleteSubmission(deletingSubmission.value.id);
     appStore.pushNotification({
       type: "success",
-      title: "Submission deleted at " + new Date().toLocaleTimeString(),
+      title: "Submission deleted!",
     });
     router.push("/admin/submissions");
   } catch (e) {
