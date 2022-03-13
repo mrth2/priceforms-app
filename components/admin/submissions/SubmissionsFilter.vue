@@ -48,6 +48,7 @@ watch(dates, (values) => {
   }
 });
 
+const nuxtApp = useNuxtApp();
 const filterStatus = computed(() => ({
   id: "status",
   name: "status",
@@ -56,19 +57,19 @@ const filterStatus = computed(() => ({
       value: "register" as StatusOption,
       label: "Register",
       checked: props.status.includes("register"),
-      color: "!bg-cyan-200 text-cyan-800",
+      color: nuxtApp.$getStatusClass("register", false),
     },
     {
       value: "partial" as StatusOption,
       label: "Partial",
       checked: props.status.includes("partial"),
-      color: "!bg-blue-200 text-blue-800",
+      color: nuxtApp.$getStatusClass("partial", false),
     },
     {
       value: "complete" as StatusOption,
       label: "Complete",
       checked: props.status.includes("complete"),
-      color: "!bg-green-200 text-green-800",
+      color: nuxtApp.$getStatusClass("complete", false),
     },
   ],
 }));
