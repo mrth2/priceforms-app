@@ -2,6 +2,7 @@ export default defineNuxtPlugin(nuxtApp => {
   return {
     provide: {
       dateFormat: (rawTime: string, recently = true, noCommas = false) => {
+        if (!rawTime) return '';
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         // let date = new Date("2021-10-30T19:51:27.710Z");
         let date = new Date(rawTime);

@@ -126,7 +126,12 @@ const navigation = [
   { name: "Settings", href: "/admin/settings", icon: CogIcon },
 ];
 const currentNavigation = computed(() =>
-  navigation.find((nav) => route.matched.some(({ path }) => path === nav.href))
+  navigation.find((nav) =>
+    route.matched.some(
+      ({ path, name }) =>
+        path === nav.href || name.toString().includes(nav.name.toLowerCase())
+    )
+  )
 );
 const userNavigation = [
   { name: "Your Profile", href: "#" },

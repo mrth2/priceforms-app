@@ -190,14 +190,6 @@ function generatePagination(c: number, m: number) {
   return rangeWithDots;
 }
 
-function getStatusClass(item) {
-  return {
-    "bg-cyan-100 text-cyan-800": item.status === "register",
-    "bg-blue-100 text-blue-800": item.status === "partial",
-    "bg-green-100 text-green-800": item.status === "complete",
-  };
-}
-
 function exportCSV<T>(
   data: Array<T>,
   headers: string[],
@@ -387,7 +379,7 @@ async function deleteSubmission() {
                   <div class="flex items-center">
                     <div class="flex-shrink-0 h-10 w-10">
                       <CoreAvatar
-                        :class="getStatusClass(item)"
+                        :class="$getStatusClass(item.status, false)"
                         :name="item.user.fullName"
                       />
                     </div>
@@ -415,7 +407,7 @@ async function deleteSubmission() {
                 <td class="row">
                   <span
                     class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize"
-                    :class="getStatusClass(item)"
+                    :class="$getStatusClass(item.status, false)"
                   >
                     {{ item.status }}
                   </span>
@@ -433,9 +425,9 @@ async function deleteSubmission() {
                   {{ $dateFormat(item.updatedAt) }}
                 </td>
                 <td class="row actions">
-                  <a class="action__item text-indigo-600 hover:text-indigo-900">
+                  <NuxtLink :to="`/admin/submissions/${item.id}`" class="action__item text-indigo-600 hover:text-indigo-900">
                     View
-                  </a>
+                  </NuxtLink>
                   |
                   <a
                     class="action__item text-red-600 hover:text-red-900"
