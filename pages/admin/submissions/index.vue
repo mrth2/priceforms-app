@@ -10,6 +10,7 @@ import {
 import { Strapi4RequestParams } from "@nuxtjs/strapi/dist/runtime/types";
 import SubmissionsFilter from "~~/components/admin/submissions/SubmissionsFilter.vue";
 import { useAppStore } from "~~/store/app";
+import { useSubmissionStore } from "~~/store/submission";
 definePageMeta({
   layout: "admin",
   title: "Submissions",
@@ -269,9 +270,21 @@ function exportSubmissions(type: "csv" | "pdf") {
 
 const deletingSubmission = ref(null);
 async function deleteSubmission() {
-  await strapi.delete("form-submissions", deletingSubmission.value.id);
-  data.value = await fetchData();
-  deletingSubmission.value = null;
+  try {
+    await useSubmissionStore(deletingSubmission.value.id);
+    appStore.pushNotification({
+      type: "success",
+      title: "Submission deleted",
+    });
+    data.value = await fetchData();
+    deletingSubmission.value = null;
+  } catch (e) {
+    appStore.pushNotification({
+      type: "error",
+      title: "Can not delete submission:",
+      message: e.message,
+    });
+  }
 }
 </script>
 
@@ -425,7 +438,10 @@ async function deleteSubmission() {
                   {{ $dateFormat(item.updatedAt) }}
                 </td>
                 <td class="row actions">
-                  <NuxtLink :to="`/admin/submissions/${item.id}`" class="action__item text-indigo-600 hover:text-indigo-900">
+                  <NuxtLink
+                    :to="`/admin/submissions/${item.id}`"
+                    class="action__item text-indigo-600 hover:text-indigo-900"
+                  >
                     View
                   </NuxtLink>
                   |
