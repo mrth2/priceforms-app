@@ -396,6 +396,8 @@ const sidebarOpen = ref(false);
         </div>
       </main>
     </div>
+
+    <CoreNotification />
   </div>
 </template>
 

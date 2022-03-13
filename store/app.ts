@@ -1,12 +1,31 @@
 import { defineStore } from 'pinia';
+import { INotification } from '~~/types/notification';
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    isLoading: false
+    isLoading: false,
+    notifications: [] as Array<INotification>
   }),
   actions: {
     setLoading(loading: boolean) {
       this.isLoading = loading;
+    },
+    pushNotification(notification: INotification) {
+      const duration = notification.duration || 5000;
+      const newLength = this.notifications.push({
+        ...notification,
+        expireAt: new Date().getTime() + duration
+      });
+      // after the duration, filter out expired notifications
+      setTimeout(() => {
+        this.notifications = this.notifications.filter(n => n.expireAt > new Date().getTime());
+      }, duration);
+    },
+    removeNotification(index: number) {
+      this.notifications.splice(index, 1);
+    },
+    clearNotifications() {
+      this.notifications = [];
     }
   }
 });
