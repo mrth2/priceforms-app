@@ -1,56 +1,64 @@
 <script setup lang="ts">
+import { useFormStore } from "~~/store/form";
+
 definePageMeta({
-  layout: 'auth'
-})
+  layout: "auth",
+});
 
-const { login } = useStrapiAuth()
-const router = useRouter()
+const { login } = useStrapiAuth();
+const router = useRouter();
 
-const identifier = ref('')
-const password = ref('')
-const loading = ref(false)
+const logo = computed(() => useFormStore().form?.logo?.url);
+
+const identifier = ref("");
+const password = ref("");
+const loading = ref(false);
 const onSubmit = async () => {
   try {
-    loading.value = true
+    loading.value = true;
     await login({
       identifier: identifier.value,
-      password: password.value
-    })
-    router.push('/admin')
+      password: password.value,
+    });
+    router.push("/admin");
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
-  loading.value = false
-}
+  loading.value = false;
+};
 const subdomain = computed(() => {
   try {
-    return useNuxtApp().$useSubdomain()
+    return useNuxtApp().$useSubdomain();
+  } catch (e) {
+    return "";
   }
-  catch (e) {
-    return ''
-  }
-})
+});
 </script>
 
 <template>
-  <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div
+    class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+  >
     <div class="max-w-md w-full space-y-8">
       <div>
         <img
+          v-if="logo"
           class="mx-auto h-12 w-auto"
-          src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
+          :src="logo"
           alt="PriceForms"
         />
-        <h2 class="mt-6 text-center text-3xl font-semibold text-gray-900">
+        <h2 class="mt-6 text-center text-3xl font-semibold">
           Sign in to
-          <span class="capitalize font-semibold underline">{{ subdomain }}</span> dashboard
+          <span class="capitalize font-semibold underline">{{
+            subdomain
+          }}</span>
+          dashboard
         </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
+        <p class="mt-2 text-center text-sm">
           Or
-          <a
-            href="/join-us"
-            class="font-medium text-indigo-600 hover:text-indigo-500"
-          >become our new awesome client!</a>
+          <a href="/join-us" class="font-medium underline"
+            >become our new awesome client!</a
+          >
         </p>
       </div>
       <form @submit.prevent="onSubmit" class="mt-8 space-y-6">
@@ -92,14 +100,13 @@ const subdomain = computed(() => {
               type="checkbox"
               class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
             />
-            <label for="remember-me" class="ml-2 block text-sm text-gray-900">Remember me</label>
+            <label for="remember-me" class="ml-2 block text-sm">
+              Remember me
+            </label>
           </div>
 
           <div class="text-sm">
-            <a
-              href="#"
-              class="font-medium text-indigo-600 hover:text-indigo-500"
-            >Forgot your password?</a>
+            <a href="#" class="font-medium underline">Forgot your password?</a>
           </div>
         </div>
 
@@ -108,7 +115,9 @@ const subdomain = computed(() => {
             type="submit"
             class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            <span class="absolute left-0 inset-y-0 flex items-center pl-3 text-white">
+            <span
+              class="absolute left-0 inset-y-0 flex items-center pl-3 text-white"
+            >
               <IconSpinner v-if="loading" />
               <IconLock v-else />
             </span>

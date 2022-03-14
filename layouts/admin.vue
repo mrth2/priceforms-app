@@ -24,6 +24,7 @@ import {
 import { SearchIcon } from "@heroicons/vue/solid";
 import { useAppStore } from "~~/store/app";
 import Spinner from "~~/components/icon/Spinner.vue";
+import { useFormStore } from "~~/store/form";
 
 const appStore = useAppStore();
 const isLoading = computed(() => appStore.isLoading);
@@ -56,67 +57,17 @@ function requireFormOwner() {
 }
 
 const graphql = useStrapiGraphQL();
-const form = ref(null);
 onMounted(() => {
   requireFormOwner();
   // on mounted, watch if user changed, require form owner again on any tab
   watch(user, requireFormOwner);
 });
 
-appStore.setLoading(true);
-const { pending: loadingForm, data } = useLazyAsyncData("form", fetchForm);
-watch(data, (loadedData: any) => {
-  if (loadedData?.data?.forms?.data?.length) {
-    form.value = {
-      ...loadedData.data.forms.data[0],
-    };
-  }
-  // update meta to load configured form favicon if available
-  useMeta({
-    link: [
-      {
-        rel: "icon",
-        type: "image/png",
-        href: favicon.value || "/favicon.png",
-      },
-    ],
-  });
-  appStore.setLoading(false);
-});
+const form = computed(() => useFormStore().form);
+const logo = computed(() => form.value?.logo?.url);
 
-const logo = computed(
-  () => form.value?.attributes?.logo?.data?.attributes?.url
-);
-const favicon = computed(
-  () => form?.value?.attributes?.favicon?.data?.attributes?.url
-);
-
-async function fetchForm() {
-  return await graphql(`
-    fragment Image on UploadFileEntityResponse {
-      data {
-        attributes {
-          url
-        }
-      }
-    }
-    query Form {
-      forms(filters: {subDomain: {eq: "${useSubDomain()}"}}) {
-        data {
-          id
-          attributes {
-            logo {
-              ...Image
-            }
-            favicon {
-              ...Image
-            }
-          }
-        }
-      }
-    }
-  `);
-}
+// update meta to load configured form favicon if available
+useFavicon();
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: HomeIcon },
@@ -143,7 +94,7 @@ const sidebarOpen = ref(false);
 </script>
 
 <template>
-  <div v-if="!loadingForm">
+  <div>
     <TransitionRoot as="template" :show="sidebarOpen">
       <Dialog
         as="div"

@@ -1,8 +1,9 @@
 <script setup>
-const appMounted = ref(false)
+useFavicon();
+const appMounted = ref(false);
 onMounted(() => {
-  appMounted.value = true
-})
+  appMounted.value = true;
+});
 </script>
 <template>
   <div>
