@@ -29,9 +29,6 @@ import { useFormStore } from "~~/store/form";
 const appStore = useAppStore();
 const isLoading = computed(() => appStore.isLoading);
 
-const verified = ref(false);
-
-const router = useRouter();
 const route = useRoute();
 const user = useStrapiUser() as Ref<IUser>;
 const fullName = computed(() => {
@@ -40,27 +37,6 @@ const fullName = computed(() => {
     return `${user.value.firstName} ${user.value.lastName}`;
   }
   return user.value.username || user.value.email;
-});
-function requireFormOwner() {
-  if (!user.value) {
-    return router.push("/admin/login");
-  }
-  const subDomain = useSubDomain();
-  if (
-    !user.value.isOwner ||
-    !user.value.ownedForms.length ||
-    !user.value.ownedForms.includes(subDomain)
-  ) {
-    return router.push("/");
-  }
-  verified.value = true;
-}
-
-const graphql = useStrapiGraphQL();
-onMounted(() => {
-  requireFormOwner();
-  // on mounted, watch if user changed, require form owner again on any tab
-  watch(user, requireFormOwner);
 });
 
 const form = computed(() => useFormStore().form);
@@ -328,7 +304,7 @@ const sidebarOpen = ref(false);
           <!-- main page content here -->
           <div class="mx-auto px-4 sm:px-6 md:px-8">
             <div class="py-4">
-              <slot v-if="verified">
+              <slot>
                 <div
                   class="border-4 border-dashed border-gray-200 rounded-lg h-96"
                 />
