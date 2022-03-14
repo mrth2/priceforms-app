@@ -3,8 +3,8 @@ export const strapiParser = (res: any, key?: string) => {
   if (data) {
     if (key && data[key]) {
       return {
-        id: data[key].data?.id,
-        ...data[key].data?.attributes
+        id: data[key]?.data?.id,
+        ...data[key]?.data?.attributes
       }
     }
     else {
@@ -14,7 +14,7 @@ export const strapiParser = (res: any, key?: string) => {
       }
     }
   }
-  else if (res?.id) {
+  else if (res.id) {
     return {
       id: res.id,
       ...res.attributes

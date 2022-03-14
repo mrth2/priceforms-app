@@ -20,7 +20,8 @@ const onSubmit = async () => {
       identifier: identifier.value,
       password: password.value,
     });
-    router.push("/admin");
+    const authRef = useCookie("auth-ref");
+    router.push(authRef.value || "/admin");
   } catch (e) {
     console.log(e);
   }

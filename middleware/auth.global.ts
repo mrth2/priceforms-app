@@ -10,9 +10,11 @@ export default defineNuxtRouteMiddleware((to, from) => {
     const user = useStrapiUser() as Ref<IUser>;
 
     if (!user.value) {
+      const authRef = useCookie('auth-ref', { path: '/' });
+      authRef.value = to.path.toString();
       return navigateTo('/admin/login');
     }
-    if (
+    else if (
       !user.value.isOwner ||
       !user.value.ownedForms.length ||
       !user.value.ownedForms.includes(subDomain)

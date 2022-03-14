@@ -67,6 +67,9 @@ const { pending, data } = useAsyncData<{ data: any }>("submission", () =>
   `)
 );
 watch(pending, () => {
+  if (!pending.value && !submission.value) {
+    return router.push("/admin/submissions");
+  }
   appStore.setLoading(pending.value);
 });
 
@@ -75,12 +78,14 @@ const submission = computed<IFormSubmission>(() =>
   pending.value ? null : nuxtApp.$strapiParser(data.value, "formSubmission")
 );
 const category = computed<IFormCategory>(() =>
-  pending.value
+  pending.value || !submission.value
     ? null
     : nuxtApp.$strapiParser(submission.value.category, "category")
 );
 const subscriber = computed<IUser>(() =>
-  pending.value ? null : nuxtApp.$strapiParser(submission.value.user, "user")
+  pending.value || !submission.value
+    ? null
+    : nuxtApp.$strapiParser(submission.value?.user, "user")
 );
 
 const deletingSubmission = ref<IFormSubmission | null>(null);
@@ -103,7 +108,7 @@ async function deleteSubmission() {
 }
 </script>
 <template>
-  <div v-if="!pending" class="mx-auto xl:grid xl:grid-cols-3">
+  <div v-if="!pending && submission" class="mx-auto xl:grid xl:grid-cols-3">
     <div class="xl:col-span-2 xl:pr-8 xl:border-r xl:border-gray-200">
       <div>
         <div>
@@ -182,7 +187,9 @@ async function deleteSubmission() {
     <CoreConfirmModal
       v-if="!!deletingSubmission"
       :open="true"
-      :title="`Delete submission #${deletingSubmission.id} from ${$fullname(subscriber)}?`"
+      :title="`Delete submission #${deletingSubmission.id} from ${$fullname(
+        subscriber
+      )}?`"
       :description="`Are you sure you want to delete this submission? It will be permanently removed from our servers forever. This action cannot be undone!`"
       :confirm-text="`OK. Delete now!`"
       @cancel="deletingSubmission = null"
