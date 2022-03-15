@@ -7,7 +7,16 @@ module.exports = {
     './plugins/**/*.{js,ts}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        catania: {
+          primary: '#143050',
+          button: '#4690CB',
+          review: '#F6E34D',
+          outline: '#BFBFBF'
+        }
+      }
+    },
   },
   plugins: [],
 }
