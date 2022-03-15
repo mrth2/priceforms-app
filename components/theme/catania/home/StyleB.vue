@@ -62,8 +62,7 @@ h1 {
   @apply text-catania-primary font-extrabold text-center mt-10 mb-4 text-2xl;
 }
 .intro {
-  @apply max-w-form grid grid-cols-2 bg-white px-4 mx-auto items-center rounded;
-  box-shadow: 0px 0px 15px theme('colors.gray.300');
+  @apply max-w-form grid grid-cols-2 bg-white px-4 mx-auto items-center rounded shadow-main;
 
   .intro-banner {
     @apply h-[400px] relative py-4;
