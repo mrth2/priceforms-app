@@ -6,6 +6,7 @@ import { IForm } from '~~/types/form';
 export const useFormStore = defineStore('form', {
   state: () => ({
     form: null as IForm,
+    headerType: 'Center' as 'Left' | 'Center',
     socialIcons: [{
       type: 'facebook',
       icon: 'facebook-f',
@@ -46,6 +47,45 @@ export const useFormStore = defineStore('form', {
               data {
                 id
                 attributes {
+                  title
+                  introBanner {
+                    media {
+                      ...Image
+                    }
+                    text
+                  }
+                  thankyouBanner {
+                    media {
+                      ...Image
+                    }
+                    text
+                  }
+                  zip {
+                    ... on ComponentPriceFormText {
+                      id
+                      hint
+                    }
+                    ... on ComponentPriceFormZipCode {
+                      id
+                      code
+                    }
+                  }
+                  button {
+                    promo
+                    return
+                    joining
+                  }
+                  registerForm {
+                    title
+                    description
+                    progress
+                    placeholder {
+                      firstName
+                      lastName
+                      email
+                      phone
+                    }
+                  }
                   theme
                   socialLinks {
                     facebook
@@ -66,17 +106,26 @@ export const useFormStore = defineStore('form', {
                   favicon {
                     ...Image
                   }
+                  term
                 }
               }
             }
           }
         `);
         if (data?.forms?.data?.length) {
-          const form = strapiParser(data.forms.data[0])
+          const form = strapiParser(data.forms.data[0]) as IForm;
           this.form = {
             ...form,
             favicon: strapiParser(form.favicon, 'favicon'),
-            logo: strapiParser(form.logo, 'logo')
+            logo: strapiParser(form.logo, 'logo'),
+            introBanner: {
+              ...form.introBanner,
+              media: strapiParser(form.introBanner.media)
+            },
+            thankyouBanner: {
+              ...form.thankyouBanner,
+              media: strapiParser(form.thankyouBanner.media)
+            },
           };
         }
       } catch (e) {

@@ -5,16 +5,10 @@ import CataniaHeaderLeft from "~~/components/theme/catania/header/LogoLeft.vue";
 import CataniaFooter from "~~/components/theme/catania/footer/Footer.vue";
 
 useFavicon();
-const appMounted = ref(false);
-onMounted(() => {
-  appMounted.value = true;
-});
-
 const formStore = useFormStore();
 const form = computed(() => formStore.form);
 const theme = computed(() => form.value?.theme);
-
-const headerType = ref<"Center" | "Left">("Left");
+const headerType = computed(() => formStore.headerType);
 const Header = computed(() =>
   theme.value
     ? theme.value === "catania"
@@ -29,14 +23,14 @@ const Footer = computed(() =>
 );
 </script>
 <template>
-  <div class="container">
+  <div v-if="form" class="container scroller">
     <!-- header -->
     <Component :is="Header" />
     <div
       class="page"
       :style="{ backgroundImage: `url(/assets/images/catania/bg.png)` }"
     >
-      <slot v-if="appMounted" />
+      <slot />
     </div>
     <Component :is="Footer" />
   </div>

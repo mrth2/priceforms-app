@@ -14,7 +14,7 @@ defineEmits(["click"]);
 const buttonClass = computed(() => {
   switch (props.type) {
     case "primary":
-      return "bg-blue-600 hover:bg-blue-400 text-white";
+      return "bg-catania-button hover:bg-opacity-80 text-white";
     case "secondary":
       return "bg-gray-300 hover:bg-gray-600 text-white";
     case "delete":

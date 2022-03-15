@@ -8,6 +8,7 @@
 @layer base {
   html, body {
     font-family: 'Muli', sans-serif;
+    @apply overflow-hidden;
   }
 }
 

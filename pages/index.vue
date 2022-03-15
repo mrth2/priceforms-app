@@ -5,7 +5,5 @@ definePageMeta({
 });
 </script>
 <template>
-  <div class="h-[500px]">
-    
-  </div>
+  <ThemeCataniaHomeStyleB />
 </template>
