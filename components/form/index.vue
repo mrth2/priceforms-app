@@ -141,8 +141,8 @@ const { data } = await useAsyncData<any>("forms", () => {
 <template>
   <div class="text-sm h-screen p-4">
     <!-- <img src="~/assets/images/home.jpeg" class="h-full object-cover" /> -->
-    <code>
+    <!-- <code class="w-full whitespace-normal break-all">
       <pre v-text="JSON.stringify(data.data.flows, undefined, '\t')" />
-    </code>
+    </code> -->
   </div>
 </template>

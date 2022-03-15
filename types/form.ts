@@ -43,6 +43,13 @@ export interface IForm {
   logo: IMedia
   favicon: IMedia
   theme: 'catania' | null
+  socialLinks: {
+    facebook: string
+    instagram: string
+    twitter: string
+    youtube: string
+    linkedin: string
+  }
 }
 
 export interface IFormCategory {

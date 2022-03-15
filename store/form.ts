@@ -5,10 +5,32 @@ import { IForm } from '~~/types/form';
 
 export const useFormStore = defineStore('form', {
   state: () => ({
-    form: null as IForm
+    form: null as IForm,
+    socialIcons: [{
+      type: 'facebook',
+      icon: 'facebook-f',
+    }, {
+      type: 'twitter',
+      icon: 'twitter'
+    }, {
+      type: 'linkedin',
+      icon: 'linkedin-in'
+    }, {
+      type: 'instagram',
+      icon: 'instagram'
+    }, {
+      type: 'youtube',
+      icon: 'youtube'
+    }] as Array<{
+      type: keyof IForm['socialLinks'],
+      icon: string
+    }>
   }),
   getters: {
     getTheme: (state) => state.form.theme,
+    getSocialUrl: (state) => {
+      return (type: keyof IForm['socialLinks']): string => state.form.socialLinks[type]
+    }
   },
   actions: {
     async loadForm() {
@@ -24,6 +46,13 @@ export const useFormStore = defineStore('form', {
                 id
                 attributes {
                   theme
+                  socialLinks {
+                    facebook
+                    instagram
+                    twitter
+                    youtube
+                    linkedin
+                  }
                   logo {
                     ...Image
                   }
