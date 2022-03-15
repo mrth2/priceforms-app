@@ -7,6 +7,9 @@ export const useFormStore = defineStore('form', {
   state: () => ({
     form: null as IForm
   }),
+  getters: {
+    getTheme: (state) => state.form.theme,
+  },
   actions: {
     async loadForm() {
       if (this.form) return;
@@ -20,6 +23,7 @@ export const useFormStore = defineStore('form', {
               data {
                 id
                 attributes {
+                  theme
                   logo {
                     ...Image
                   }

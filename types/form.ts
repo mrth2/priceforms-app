@@ -42,6 +42,7 @@ export interface IForm {
   categories: IFormCategory[]
   logo: IMedia
   favicon: IMedia
+  theme: 'catania' | null
 }
 
 export interface IFormCategory {
