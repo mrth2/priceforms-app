@@ -50,6 +50,12 @@ export interface IForm {
     youtube: string
     linkedin: string
   }
+  footer: {
+    policy: string
+    sitemap: string
+    disclaimer: string
+    copyright: string
+  }
 }
 
 export interface IFormCategory {

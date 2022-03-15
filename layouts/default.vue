@@ -2,6 +2,7 @@
 import { useFormStore } from "~~/store/form";
 import CataniaHeaderCenter from "~~/components/theme/catania/header/LogoCenter.vue";
 import CataniaHeaderLeft from "~~/components/theme/catania/header/LogoLeft.vue";
+import CataniaFooter from "~~/components/theme/catania/footer/Footer.vue";
 
 useFavicon();
 const appMounted = ref(false);
@@ -23,11 +24,16 @@ const Header = computed(() =>
       : null
     : null
 );
+const Footer = computed(() =>
+  theme.value === "catania" ? CataniaFooter : null
+);
 </script>
 <template>
   <div>
     <!-- header -->
     <Component :is="Header" />
     <slot v-if="appMounted" />
+
+    <Component :is="Footer" />
   </div>
 </template>

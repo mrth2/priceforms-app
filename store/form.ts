@@ -30,7 +30,8 @@ export const useFormStore = defineStore('form', {
     getTheme: (state) => state.form.theme,
     getSocialUrl: (state) => {
       return (type: keyof IForm['socialLinks']): string => state.form.socialLinks[type]
-    }
+    },
+    getFooter: (state) => state.form.footer,
   },
   actions: {
     async loadForm() {
@@ -52,6 +53,12 @@ export const useFormStore = defineStore('form', {
                     twitter
                     youtube
                     linkedin
+                  }
+                  footer {
+                    policy
+                    sitemap
+                    disclaimer
+                    copyright
                   }
                   logo {
                     ...Image
