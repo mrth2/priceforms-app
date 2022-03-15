@@ -5,7 +5,7 @@ definePageMeta({
 });
 </script>
 <template>
-  <div>
-    <Form />
+  <div class="h-[500px]">
+    
   </div>
 </template>

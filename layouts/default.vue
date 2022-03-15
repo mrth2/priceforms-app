@@ -29,11 +29,29 @@ const Footer = computed(() =>
 );
 </script>
 <template>
-  <div>
+  <div class="container">
     <!-- header -->
     <Component :is="Header" />
-    <slot v-if="appMounted" />
-
+    <div
+      class="page"
+      :style="{ backgroundImage: `url(/assets/images/catania/bg.png)` }"
+    >
+      <slot v-if="appMounted" />
+    </div>
     <Component :is="Footer" />
   </div>
 </template>
+
+<style scoped lang="postcss">
+.container {
+  @apply min-h-screen overflow-y-auto;
+  max-width: 100vw;
+
+  .page {
+    @apply bg-cover;
+    min-height: calc(
+      100vh - var(--header-height, 82px) - var(--footer-height, 88px)
+    );
+  }
+}
+</style>
