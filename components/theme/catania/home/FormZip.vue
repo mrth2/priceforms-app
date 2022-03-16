@@ -7,8 +7,15 @@ const form = computed(() => formStore.form);
 const zipHint = computed(() => form.value.zip.find((item) => item.hint)?.hint);
 
 const inputCode = ref("");
+const formInput = ref();
+const termAgreed = ref(false);
 
-async function checkZip() {}
+async function checkZip() {
+  if (!termAgreed.value) return;
+  if (!/^(\d{5})$/g.test(inputCode.value)) {
+    formInput.value.$tippy.show();
+  }
+}
 </script>
 
 <template>
@@ -16,19 +23,39 @@ async function checkZip() {}
     <form>
       <h3>ENTER YOUR ZIP CODE TO BEGIN</h3>
       <div class="form-group">
-        <div class="form-input">
+        <div
+          ref="formInput"
+          class="form-input"
+          v-tippy="{
+            content: zipHint,
+            placement: 'bottom',
+            trigger: 'manual',
+            interactive: true,
+          }"
+        >
           <input
             v-model.trim="inputCode"
             type="text"
             placeholder="Enter zip code"
           />
         </div>
-        <CoreButton class="uppercase">
+        <CoreButton
+          class="uppercase"
+          :class="{ 'opacity-50': !termAgreed }"
+          v-tippy="{
+            content: !termAgreed
+              ? 'Please agree to the terms and conditions'
+              : null,
+            trigger: 'mouseenter',
+            placement: 'top',
+          }"
+          @click="checkZip"
+        >
           {{ form.button.joining }}
         </CoreButton>
       </div>
       <div class="agreement">
-        <input type="checkbox" />
+        <input v-model="termAgreed" type="checkbox" />
         <span>{{ form.term }}</span>
       </div>
     </form>
@@ -48,6 +75,14 @@ async function checkZip() {}
 
     input {
       @apply w-full border border-catania-outline rounded flex items-center h-10 indent-2 focus:outline-catania-button;
+    }
+
+    :deep(.tippy-box) {
+      @apply bg-red-600;
+
+      .tippy-arrow {
+        @apply text-red-600;
+      }
     }
   }
   .agreement {

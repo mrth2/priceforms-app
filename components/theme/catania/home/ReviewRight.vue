@@ -11,7 +11,7 @@ const form = computed(() => formStore.form);
     <div class="grid grid-rows-2 lg:grid-rows-none lg:grid-cols-2 gap-6">
       <div class="intro">
         <ThemeCataniaHomeIntroBanner />
-        <ThemeCataniaHomeFormRegister />
+        <ThemeCataniaHomeFormZip />
       </div>
       <ThemeCataniaHomeClientReviews />
     </div>
