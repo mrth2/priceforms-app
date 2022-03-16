@@ -30,7 +30,8 @@ const copyright = computed(() =>
 
 <style scoped lang="postcss">
 .footer-container {
-  @apply absolute inset-0 top-auto mx-auto flex justify-center shadow-main;
+  @apply top-auto bottom-0 mx-auto flex justify-center shadow-main;
+  padding: 0 var(--site-padding);
   @apply pt-6 pb-12 bg-white;
 }
 .footer {

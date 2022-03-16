@@ -36,7 +36,7 @@ const socials = computed(() => formStore.socialIcons);
 
 <style scoped lang="postcss">
 .header {
-  @apply flex flex-row justify-between items-center max-w-form mx-auto;
+  @apply max-w-form mx-auto;
 
   .header-cta {
     @apply text-base text-white font-extralight;

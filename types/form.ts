@@ -43,6 +43,7 @@ export interface IForm {
   logo: IMedia
   favicon: IMedia
   theme: 'catania' | null
+  homeStyle: 'reviewBottom' | 'reviewRight'
   socialLinks: {
     facebook: string
     instagram: string

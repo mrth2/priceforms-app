@@ -32,8 +32,9 @@ const socials = computed(() => formStore.socialIcons);
 
 <style scoped lang="postcss">
 .header {
-  @apply flex flex-row justify-between items-center w-full bg-catania-primary;
-  @apply px-2 md:px-4 lg:px-6 xl:px-12 py-6;
+  @apply w-full bg-catania-primary;
+  @apply !py-6 relative;
+
   max-width: 100vw;
 
   --max-side-width: calc(100vw / 2 - theme("width.36") / 2 - theme("width.4"));

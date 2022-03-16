@@ -23,14 +23,20 @@ const Footer = computed(() =>
 );
 </script>
 <template>
-  <div v-if="form" class="container scroller">
+  <div
+    v-if="form"
+    class="container scroller"
+    :class="{ center: headerType === 'Center', left: headerType === 'Left' }"
+  >
     <!-- header -->
     <Component :is="Header" />
     <div
       class="page"
       :style="{ backgroundImage: `url(/assets/images/catania/bg.png)` }"
     >
-      <slot />
+      <div class="max-w-form mx-auto">
+        <slot />
+      </div>
     </div>
     <Component :is="Footer" />
   </div>
@@ -38,14 +44,35 @@ const Footer = computed(() =>
 
 <style scoped lang="postcss">
 .container {
-  @apply min-h-screen overflow-y-auto;
+  @apply w-screen h-screen overflow-y-auto relative;
   max-width: 100vw;
 
+  &.left {
+    --header-height: 82px;
+  }
+
+  --site-padding: theme("padding.2");
+  @screen sm {
+    --site-padding: theme("padding.4");
+  }
+  @screen md {
+    --site-padding: theme("padding.6");
+  }
+  @screen lg {
+    --site-padding: theme("padding.8");
+  }
+
   .page {
-    @apply bg-cover;
+    @apply bg-cover pb-10;
+    padding: 0 var(--site-padding);
     min-height: calc(
-      100vh - var(--header-height, 82px) - var(--footer-height, 88px)
+      100vh - var(--header-height, 72px) - var(--footer-height, 88px)
     );
+  }
+
+  :deep(.header) {
+    @apply flex flex-row justify-between items-center;
+    padding: 0 var(--site-padding);
   }
 }
 </style>

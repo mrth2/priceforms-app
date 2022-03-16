@@ -6,7 +6,7 @@ import { IForm } from '~~/types/form';
 export const useFormStore = defineStore('form', {
   state: () => ({
     form: null as IForm,
-    headerType: 'Center' as 'Left' | 'Center',
+    headerType: 'Left' as 'Left' | 'Center',
     socialIcons: [{
       type: 'facebook',
       icon: 'facebook-f',
@@ -29,6 +29,7 @@ export const useFormStore = defineStore('form', {
   }),
   getters: {
     getTheme: (state) => state.form.theme,
+    getHomeStyle: (state) => state.form.homeStyle,
     getSocialUrl: (state) => {
       return (type: keyof IForm['socialLinks']): string => state.form.socialLinks[type]
     },
@@ -87,6 +88,7 @@ export const useFormStore = defineStore('form', {
                     }
                   }
                   theme
+                  homeStyle
                   socialLinks {
                     facebook
                     instagram
