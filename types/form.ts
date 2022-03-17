@@ -44,6 +44,7 @@ export interface IForm {
   favicon: IMedia
   theme: 'catania' | null
   homeStyle: 'reviewBottom' | 'reviewRight'
+  headerStyle: 'logoLeft' | 'logoCenter'
   socialLinks: {
     facebook: string
     instagram: string
@@ -56,6 +57,10 @@ export interface IForm {
     sitemap: string
     disclaimer: string
     copyright: string
+  }
+  phone: {
+    label: string
+    number: string
   }
 }
 

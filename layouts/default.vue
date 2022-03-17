@@ -8,12 +8,12 @@ useFavicon();
 const route = useRoute();
 const formStore = useFormStore();
 const form = computed(() => formStore.form);
-const theme = computed(() => form.value?.theme);
-const headerType = computed(() => formStore.headerType);
+const theme = computed(() => form.value.theme);
+const headerType = computed(() => formStore.getHeaderStyle);
 const Header = computed(() =>
   theme.value
     ? theme.value === "catania"
-      ? headerType.value === "Center"
+      ? headerType.value === "logoCenter"
         ? CataniaHeaderCenter
         : CataniaHeaderLeft
       : null
@@ -27,7 +27,7 @@ const Footer = computed(() =>
   <div
     v-if="form"
     class="container scroller"
-    :class="{ center: headerType === 'Center', left: headerType === 'Left' }"
+    :class="{ center: headerType === 'logoCenter', left: headerType === 'logoLeft' }"
   >
     <Head>
       <Title>{{ route.meta.title }} | PriceForms</Title>

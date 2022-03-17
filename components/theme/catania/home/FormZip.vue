@@ -4,10 +4,12 @@ import { useFormStore } from "~~/store/form";
 const router = useRouter();
 
 const formStore = useFormStore();
-const form = formStore.form;
+const form = computed(() => formStore.form);
 
-const zipHint = computed(() => form.zip.find((item) => item.hint)?.hint);
-const zipCodes = form.zip.filter((item) => item.code).map((item) => item.code);
+const zipHint = computed(() => form.value.zip.find((item) => item.hint)?.hint);
+const zipCodes = computed(() =>
+  form.value.zip.filter((item) => item.code).map((item) => item.code)
+);
 
 const inputCode = ref("");
 const formInput = ref();
@@ -19,7 +21,7 @@ async function checkZip() {
     formInput.value.$tippy.show();
     return;
   }
-  if (zipCodes.includes(inputCode.value)) {
+  if (zipCodes.value.includes(inputCode.value)) {
     router.push("/signup");
   }
 }

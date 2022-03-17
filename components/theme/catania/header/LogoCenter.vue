@@ -3,8 +3,8 @@ import { useFormStore } from "~~/store/form";
 
 const formStore = useFormStore();
 const form = computed(() => formStore.form);
-const logo = computed(() => form.value?.logo?.url);
-
+const logo = computed(() => form.value.logo?.url);
+const phone = computed(() => form.value.phone);
 const socials = computed(() => formStore.socialIcons);
 </script>
 
@@ -12,7 +12,9 @@ const socials = computed(() => formStore.socialIcons);
   <div class="header header-center">
     <span class="header-cta">
       Call NOW for a <strong>FREE</strong> Consultation
-      <strong>(813) 590-5954</strong>
+      <a :href="`tel:${phone.number}`">
+        <strong>{{ phone.label }}</strong>
+      </a>
     </span>
     <NuxtLink class="header-logo" to="/">
       <img v-if="logo" :src="logo" :alt="form?.title" />

@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia';
 import { ImageFragment } from '~/types/graphql';
+import form from '~~/plugins/form';
 import { strapiParser } from '~~/services/helper';
 import { IForm } from '~~/types/form';
 
 export const useFormStore = defineStore('form', {
   state: () => ({
     form: null as IForm,
-    headerType: 'Left' as 'Left' | 'Center',
     socialIcons: [{
       type: 'facebook',
       icon: 'facebook-f',
@@ -29,11 +29,13 @@ export const useFormStore = defineStore('form', {
   }),
   getters: {
     getTheme: (state) => state.form.theme,
+    getHeaderStyle: (state) => state.form.headerStyle,
     getHomeStyle: (state) => state.form.homeStyle,
     getSocialUrl: (state) => {
       return (type: keyof IForm['socialLinks']): string => state.form.socialLinks[type]
     },
     getFooter: (state) => state.form.footer,
+    getPhone: (state) => state.form.phone,
   },
   actions: {
     async loadForm() {
@@ -88,6 +90,7 @@ export const useFormStore = defineStore('form', {
                     }
                   }
                   theme
+                  headerStyle
                   homeStyle
                   socialLinks {
                     facebook
@@ -109,6 +112,10 @@ export const useFormStore = defineStore('form', {
                     ...Image
                   }
                   term
+                  phone {
+                    label
+                    number
+                  }
                 }
               }
             }
@@ -132,6 +139,15 @@ export const useFormStore = defineStore('form', {
         }
       } catch (e) {
         console.log(e.message);
+      }
+    },
+    setPhone(phone) {
+      this.form = {
+        ...this.form,
+        phone: {
+          ...this.form.phone,
+          label: phone
+        }
       }
     }
   }
