@@ -35,20 +35,57 @@ const focusing = reactive({
 });
 watch(
   () => userInput.phone,
-  () => (errors.phone = null)
+  () => {
+    if (validatePhone()) {
+      errors.phone = null;
+    }
+  }
 );
 watch(
   () => userInput.email,
-  () => (errors.email = null)
+  () => {
+    if (validateEmail()) {
+      errors.email = null;
+    }
+  }
 );
-function signUp() {
+
+const loading = ref(false);
+
+function validatePhone() {
   const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
   if (!phoneRegex.test(userInput.phone)) {
     errors.phone = "Please enter a valid number";
+    return false;
   }
+  return true;
+}
+function validateEmail() {
   if (!userInput.email.includes("@")) {
     errors.email = "Please enter a valid email";
+    return false;
   }
+  return true;
+}
+
+function validateFormInputs() {
+  return validateEmail() && validatePhone();
+}
+
+async function signUp() {
+  if (loading.value) return;
+  if (!validateFormInputs()) return;
+  loading.value = true;
+  const res = await useStrapiAuth().register({
+    username: userInput.email,
+    email: userInput.email,
+    password: Math.random().toString(36).substring(2, 15),
+    firstName: userInput.firstName,
+    lastName: userInput.lastName,
+    phone: userInput.phone,
+  });
+  console.log(res);
+  loading.value = false;
 }
 </script>
 
@@ -125,7 +162,7 @@ function signUp() {
           <XIcon />
         </span>
       </div>
-      <CoreButton class="btn-signup" @click="signUp">
+      <CoreButton class="btn-signup" :loading="loading" @click="signUp">
         {{ registerForm.button }}
       </CoreButton>
       <a class="back" @click="$router.back()">

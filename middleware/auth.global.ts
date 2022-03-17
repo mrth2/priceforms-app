@@ -4,11 +4,11 @@ import { IUser } from "~~/types/user";
 export default defineNuxtRouteMiddleware((to, from) => {
   const isOnAdmin = to.path.includes('/admin');
   const isOnAuth = to.path.includes('/admin/login') || to.path.includes('/admin/logout');
+  const isOnSignUp = to.path === '/signup';
+  const user = useStrapiUser() as Ref<IUser>;
   if (isOnAdmin && !isOnAuth) {
     // check for user
     const subDomain = useSubDomain();
-    const user = useStrapiUser() as Ref<IUser>;
-
     if (!user.value) {
       const authRef = useCookie('auth-ref', { path: '/' });
       authRef.value = to.path.toString();
@@ -20,6 +20,12 @@ export default defineNuxtRouteMiddleware((to, from) => {
       !user.value.ownedForms.includes(subDomain)
     ) {
       return navigateTo('/');
+    }
+  }
+  // if normal user trying to access signup page but already logged in, direct to /cases page
+  else if (isOnSignUp) {
+    if (user.value) {
+      return navigateTo('/cases');
     }
   }
 });

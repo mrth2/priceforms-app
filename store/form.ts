@@ -93,6 +93,10 @@ export const useFormStore = defineStore('form', {
                       phone
                     }
                   }
+                  categoryForm {
+                    title
+                    progress
+                  }
                   theme
                   headerStyle
                   homeStyle

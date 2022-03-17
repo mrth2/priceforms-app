@@ -12,7 +12,6 @@ const props = withDefaults(
 const progressBar = ref();
 const indicatorTranslateX = ref(null);
 onMounted(() => {
-  console.log(progressBar.value.offsetWidth);
   indicatorTranslateX.value =
     Math.ceil((progressBar.value.offsetWidth * props.progress) / 100) - 12; // minus 12px for the half circle
 });
