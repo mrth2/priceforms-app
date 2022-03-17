@@ -39,7 +39,7 @@ const buttonClass = computed(() => {
 <template>
   <button
     :type="isSubmit ? 'submit' : 'button'"
-    class="inline-flex justify-center items-center px-4 py-2 shadow-sm text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+    class="inline-flex justify-center items-center px-4 py-2 shadow-sm text-sm font-medium rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
     :class="buttonClass"
     @click="$emit('click')"
   >
@@ -50,8 +50,8 @@ const buttonClass = computed(() => {
       aria-hidden="true"
     />
     <slot />
-    <div class="ml-2">
-      <IconSpinner class="!m-0" v-if="loading" />
+    <div v-if="loading" class="ml-2">
+      <IconSpinner class="!m-0" />
     </div>
   </button>
 </template>

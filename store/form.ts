@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ImageFragment } from '~/types/graphql';
 import { strapiParser } from '~~/services/helper';
-import { IForm } from '~~/types/form';
+import { IForm, IFormCategory } from '~~/types/form';
 
 export const useFormStore = defineStore('form', {
   state: () => ({
@@ -124,6 +124,20 @@ export const useFormStore = defineStore('form', {
                     label
                     number
                   }
+                  categories (sort: "ordering:ASC")  {
+                    data {
+                      id
+                      attributes {
+                        title
+                        icon {
+                          ...Image
+                        }
+                        iconActive {
+                          ...Image
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -131,6 +145,7 @@ export const useFormStore = defineStore('form', {
         `);
         if (data?.forms?.data?.length) {
           const form = strapiParser(data.forms.data[0]) as IForm;
+          const categories = (form.categories as any).data;
           this.form = {
             ...form,
             favicon: strapiParser(form.favicon, 'favicon'),
@@ -143,6 +158,14 @@ export const useFormStore = defineStore('form', {
               ...form.thankyouBanner,
               media: strapiParser(form.thankyouBanner.media)
             },
+            categories: categories.map((category) => {
+              const parsedCategory = strapiParser(category);
+              return {
+                ...parsedCategory,
+                icon: strapiParser(category.attributes.icon, 'icon'),
+                iconActive: strapiParser(category.attributes.iconActive, 'iconActive'),
+              }
+            }),
           };
         }
       } catch (e) {

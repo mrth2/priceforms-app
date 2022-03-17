@@ -90,7 +90,7 @@ async function signUp() {
 </script>
 
 <template>
-  <div v-if="registerForm">
+  <div>
     <h1>{{ registerForm.title }}</h1>
     <p v-html="registerForm.description" />
     <form>
