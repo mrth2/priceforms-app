@@ -10,10 +10,15 @@ const props = withDefaults(
   }
 );
 const progressBar = ref();
+const indicatorSize = 12;
 const indicatorTranslateX = ref(null);
+const labelTranslateX = computed(() =>
+  indicatorTranslateX.value ? indicatorTranslateX.value + indicatorSize : null
+);
 onMounted(() => {
   indicatorTranslateX.value =
-    Math.ceil((progressBar.value.offsetWidth * props.progress) / 100) - 12; // minus 12px for the half circle
+    Math.ceil((progressBar.value.offsetWidth * props.progress) / 100) -
+    indicatorSize;
 });
 </script>
 
@@ -31,13 +36,20 @@ onMounted(() => {
       />
       <div class="slide" />
     </div>
-    <span class="label">{{ label }}</span>
+    <span
+      class="label"
+      :style="{
+        left: labelTranslateX ? `${labelTranslateX}px` : null,
+      }"
+    >
+      {{ label }}
+    </span>
   </div>
 </template>
 
 <style scoped lang="postcss">
 .progress-bar {
-  @apply pt-12 pb-4;
+  @apply pt-12 pb-8 relative;
 
   .progress {
     @apply relative w-full h-3 drop-shadow mb-2;
@@ -52,7 +64,7 @@ onMounted(() => {
     }
   }
   .label {
-    @apply text-xs font-semibold text-catania-secondary tracking-wide leading-tight uppercase;
+    @apply text-xs font-semibold text-catania-secondary tracking-wide leading-tight uppercase absolute transform -translate-x-1/2;
   }
 }
 </style>
