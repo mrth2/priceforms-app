@@ -11,9 +11,9 @@ const socials = computed(() => formStore.socialIcons);
 <template>
   <div class="bg-catania-primary">
     <div class="header header-left">
-      <div class="header-logo">
+      <NuxtLink class="header-logo" to="/">
         <img v-if="logo" :src="logo" :alt="form?.title" />
-      </div>
+      </NuxtLink>
       <div class="flex flex-col ml-auto py-4 gap-2">
         <span class="header-cta">
           Call NOW for a FREE Consultation

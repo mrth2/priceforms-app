@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { useFormStore } from "~~/store/form";
 
-const formStore = useFormStore();
-const form = computed(() => formStore.form);
+const router = useRouter();
 
-const zipHint = computed(() => form.value.zip.find((item) => item.hint)?.hint);
+const formStore = useFormStore();
+const form = formStore.form;
+
+const zipHint = computed(() => form.zip.find((item) => item.hint)?.hint);
+const zipCodes = form.zip.filter((item) => item.code).map((item) => item.code);
 
 const inputCode = ref("");
 const formInput = ref();
@@ -14,6 +17,10 @@ async function checkZip() {
   if (!termAgreed.value) return;
   if (!/^(\d{5})$/g.test(inputCode.value)) {
     formInput.value.$tippy.show();
+    return;
+  }
+  if (zipCodes.includes(inputCode.value)) {
+    router.push("/signup");
   }
 }
 </script>

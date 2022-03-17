@@ -5,6 +5,7 @@ import CataniaHeaderLeft from "~~/components/theme/catania/header/LogoLeft.vue";
 import CataniaFooter from "~~/components/theme/catania/footer/Footer.vue";
 
 useFavicon();
+const route = useRoute();
 const formStore = useFormStore();
 const form = computed(() => formStore.form);
 const theme = computed(() => form.value?.theme);
@@ -28,6 +29,9 @@ const Footer = computed(() =>
     class="container scroller"
     :class="{ center: headerType === 'Center', left: headerType === 'Left' }"
   >
+    <Head>
+      <Title>{{ route.meta.title }} | PriceForms</Title>
+    </Head>
     <!-- header -->
     <Component :is="Header" />
     <div

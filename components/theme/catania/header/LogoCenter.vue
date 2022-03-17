@@ -14,9 +14,9 @@ const socials = computed(() => formStore.socialIcons);
       Call NOW for a <strong>FREE</strong> Consultation
       <strong>(813) 590-5954</strong>
     </span>
-    <div class="header-logo">
+    <NuxtLink class="header-logo" to="/">
       <img v-if="logo" :src="logo" :alt="form?.title" />
-    </div>
+    </NuxtLink>
     <div class="header-social">
       <a
         v-for="item in socials"
