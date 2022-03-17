@@ -40,4 +40,8 @@
       @apply bg-blue-900 hover:bg-blue-700;
     }
   }
+
+  .form-input {
+    @apply w-full border border-catania-outline rounded flex items-center h-10 indent-2 focus:outline-catania-button;
+  }
 }

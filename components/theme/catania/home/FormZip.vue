@@ -32,7 +32,7 @@ async function checkZip() {
     <form>
       <h3>ENTER YOUR ZIP CODE TO BEGIN</h3>
       <div class="form-group">
-        <div
+        <input
           ref="formInput"
           class="form-input"
           v-tippy="{
@@ -41,13 +41,10 @@ async function checkZip() {
             trigger: 'manual',
             interactive: true,
           }"
-        >
-          <input
-            v-model.trim="inputCode"
-            type="text"
-            placeholder="Enter zip code"
-          />
-        </div>
+          v-model.trim="inputCode"
+          type="text"
+          placeholder="Enter zip code"
+        />
         <CoreButton
           class="uppercase"
           :class="{ 'opacity-50': !termAgreed }"
@@ -81,10 +78,6 @@ async function checkZip() {
 
   .form-group {
     @apply mt-4 grid grid-cols-2 gap-4;
-
-    input {
-      @apply w-full border border-catania-outline rounded flex items-center h-10 indent-2 focus:outline-catania-button;
-    }
 
     :deep(.tippy-box) {
       @apply bg-red-600;

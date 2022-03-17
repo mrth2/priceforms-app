@@ -27,7 +27,10 @@ const Footer = computed(() =>
   <div
     v-if="form"
     class="container scroller"
-    :class="{ center: headerType === 'logoCenter', left: headerType === 'logoLeft' }"
+    :class="{
+      center: headerType === 'logoCenter',
+      left: headerType === 'logoLeft',
+    }"
   >
     <Head>
       <Title>{{ route.meta.title }} | PriceForms</Title>
@@ -72,6 +75,10 @@ const Footer = computed(() =>
     min-height: calc(
       100vh - var(--header-height, 72px) - var(--footer-height, 88px)
     );
+
+    :deep(h1) {
+      @apply text-catania-primary font-extrabold text-center pt-16 mb-8 text-3xl uppercase;
+    }
   }
 
   :deep(.header) {

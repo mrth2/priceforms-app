@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import { ImageFragment } from '~/types/graphql';
-import form from '~~/plugins/form';
 import { strapiParser } from '~~/services/helper';
 import { IForm } from '~~/types/form';
 
@@ -25,7 +24,11 @@ export const useFormStore = defineStore('form', {
     }] as Array<{
       type: keyof IForm['socialLinks'],
       icon: string
-    }>
+    }>,
+    currentProgress: {
+      label: '',
+      value: 0,
+    },
   }),
   getters: {
     getTheme: (state) => state.form.theme,
@@ -82,6 +85,7 @@ export const useFormStore = defineStore('form', {
                     title
                     description
                     progress
+                    button
                     placeholder {
                       firstName
                       lastName
@@ -141,14 +145,8 @@ export const useFormStore = defineStore('form', {
         console.log(e.message);
       }
     },
-    setPhone(phone) {
-      this.form = {
-        ...this.form,
-        phone: {
-          ...this.form.phone,
-          label: phone
-        }
-      }
+    setProgress(progress: { label: string, value: number }) {
+      this.currentProgress = progress;
     }
   }
 });
