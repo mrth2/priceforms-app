@@ -9,16 +9,31 @@ const props = withDefaults(
     progress: 5,
   }
 );
-const progressBar = ref();
+const progressBar = ref<HTMLElement>();
 const indicatorSize = 12;
-const indicatorTranslateX = ref(null);
+const indicatorTranslateX = ref<number>(null);
+const indicatorStyle = computed(() => ({
+  transform: indicatorTranslateX.value
+    ? `translateX(${indicatorTranslateX.value}px)`
+    : null,
+}));
 const labelTranslateX = computed(() =>
   indicatorTranslateX.value ? indicatorTranslateX.value + indicatorSize : null
 );
-onMounted(() => {
+const labelStyle = computed(() => ({
+  left: labelTranslateX ? `${labelTranslateX}px` : null,
+}));
+
+function updateIndicatorTranslate() {
   indicatorTranslateX.value =
     Math.ceil((progressBar.value.offsetWidth * props.progress) / 100) -
     indicatorSize;
+}
+const route = useRoute();
+onMounted(() => {
+  updateIndicatorTranslate();
+  // also on progress changes
+  watch(() => props.progress, updateIndicatorTranslate);
 });
 </script>
 
@@ -26,22 +41,10 @@ onMounted(() => {
   <div ref="progressBar" class="progress-bar">
     <div class="progress">
       <div class="active" :style="{ width: `${progress}%` }" />
-      <div
-        class="indicator"
-        :style="{
-          transform: indicatorTranslateX
-            ? `translateX(${indicatorTranslateX}px)`
-            : null,
-        }"
-      />
+      <div class="indicator" :style="indicatorStyle" />
       <div class="slide" />
     </div>
-    <span
-      class="label"
-      :style="{
-        left: labelTranslateX ? `${labelTranslateX}px` : null,
-      }"
-    >
+    <span class="label" :style="labelStyle">
       {{ label }}
     </span>
   </div>
@@ -57,10 +60,10 @@ onMounted(() => {
       @apply bg-gray-200 h-full rounded-lg;
     }
     .active {
-      @apply rounded-lg bg-catania-button h-3 absolute top-0;
+      @apply rounded-lg bg-catania-button h-3 absolute top-0 transition-all duration-300;
     }
     .indicator {
-      @apply bg-catania-button absolute h-6 w-6 rounded-full left-0 -top-1.5;
+      @apply bg-catania-button absolute h-6 w-6 rounded-full left-0 -top-1.5 transition-transform duration-300;
     }
   }
   .label {

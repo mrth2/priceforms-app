@@ -200,10 +200,10 @@ async function signUp() {
           {{ registerForm.button }}
         </CoreButton>
       </div>
-      <a class="back" @click="$router.back()">
+      <NuxtLink to="/" class="back">
         <ChevronLeftIcon class="w-5 h-5 mt-1" />
         BACK
-      </a>
+      </NuxtLink>
     </form>
   </div>
 </template>

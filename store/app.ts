@@ -3,10 +3,14 @@ import { INotification } from '~~/types/notification';
 
 export const useAppStore = defineStore('app', {
   state: () => ({
+    pageTitle: null,
     isLoading: false,
     notifications: [] as Array<INotification>
   }),
   actions: {
+    setPageTitle(title: string) {
+      this.pageTitle = title;
+    },
     setLoading(loading: boolean) {
       this.isLoading = loading;
     },

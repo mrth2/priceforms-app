@@ -3,9 +3,19 @@ import { useFormStore } from "~~/store/form";
 import CataniaHeaderCenter from "~~/components/theme/catania/header/LogoCenter.vue";
 import CataniaHeaderLeft from "~~/components/theme/catania/header/LogoLeft.vue";
 import CataniaFooter from "~~/components/theme/catania/footer/Footer.vue";
+import { useAppStore } from "~~/store/app";
 
 useFavicon();
 const route = useRoute();
+const pageTitle = computed(() => useAppStore().pageTitle || route.meta.title);
+// on route change, immediately unset page title
+watch(
+  () => route.fullPath,
+  () => {
+    useAppStore().setPageTitle(null);
+  },
+  { immediate: true }
+);
 const formStore = useFormStore();
 const form = computed(() => formStore.form);
 const theme = computed(() => form.value.theme);
@@ -33,7 +43,7 @@ const Footer = computed(() =>
     }"
   >
     <Head>
-      <Title>{{ route.meta.title }} | PriceForms</Title>
+      <Title>{{ pageTitle }} | PriceForms</Title>
     </Head>
     <!-- header -->
     <Component :is="Header" />
