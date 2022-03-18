@@ -1,34 +1,33 @@
 import { defineStore } from 'pinia';
 import { ImageFragment } from '~/types/graphql';
 import { strapiParser } from '~~/services/helper';
-import { IForm, IFormCategory } from '~~/types/form';
+import { IForm, IFormCategoryFlow, IFormQuestion } from '~~/types/form';
+
+const socialIcons = [{
+  type: 'facebook',
+  icon: 'facebook-f',
+}, {
+  type: 'twitter',
+  icon: 'twitter'
+}, {
+  type: 'linkedin',
+  icon: 'linkedin-in'
+}, {
+  type: 'instagram',
+  icon: 'instagram'
+}, {
+  type: 'youtube',
+  icon: 'youtube'
+}] as Array<{
+  type: keyof IForm['socialLinks'],
+  icon: string
+}>;
 
 export const useFormStore = defineStore('form', {
   state: () => ({
     form: null as IForm,
-    socialIcons: [{
-      type: 'facebook',
-      icon: 'facebook-f',
-    }, {
-      type: 'twitter',
-      icon: 'twitter'
-    }, {
-      type: 'linkedin',
-      icon: 'linkedin-in'
-    }, {
-      type: 'instagram',
-      icon: 'instagram'
-    }, {
-      type: 'youtube',
-      icon: 'youtube'
-    }] as Array<{
-      type: keyof IForm['socialLinks'],
-      icon: string
-    }>,
-    currentProgress: {
-      label: '',
-      value: 0,
-    },
+    flows: [] as IFormCategoryFlow[],
+    socialIcons,
   }),
   getters: {
     getTheme: (state) => state.form.theme,
@@ -39,6 +38,24 @@ export const useFormStore = defineStore('form', {
     },
     getFooter: (state) => state.form.footer,
     getPhone: (state) => state.form.phone,
+    getFirstQuestion: (state) => {
+      return (flowId: number) => {
+        return state.flows.find(flow => flow.id === flowId)?.questions[0];
+      }
+    },
+    getQuestion: (state) => {
+      return (qid: number) => {
+        let result: IFormQuestion | undefined;
+        state.flows.forEach(flow => {
+          flow.questions.forEach(question => {
+            if (question.id === qid) {
+              result = question;
+            }
+          });
+        })
+        return result;
+      }
+    }
   },
   actions: {
     async loadForm() {
@@ -135,6 +152,11 @@ export const useFormStore = defineStore('form', {
                         iconActive {
                           ...Image
                         }
+                        startFlow {
+                          data {
+                            id
+                          }
+                        }
                       }
                     }
                   }
@@ -146,6 +168,7 @@ export const useFormStore = defineStore('form', {
         if (data?.forms?.data?.length) {
           const form = strapiParser(data.forms.data[0]) as IForm;
           const categories = (form.categories as any).data;
+          console.log(categories);
           this.form = {
             ...form,
             favicon: strapiParser(form.favicon, 'favicon'),
@@ -164,6 +187,7 @@ export const useFormStore = defineStore('form', {
                 ...parsedCategory,
                 icon: strapiParser(category.attributes.icon, 'icon'),
                 iconActive: strapiParser(category.attributes.iconActive, 'iconActive'),
+                startFlow: strapiParser(category.attributes.startFlow, 'startFlow'),
               }
             }),
           };
@@ -172,8 +196,90 @@ export const useFormStore = defineStore('form', {
         console.log(e.message);
       }
     },
-    setProgress(progress: { label: string, value: number }) {
-      this.currentProgress = progress;
+    async loadFlows() {
+      const graphql = useStrapiGraphQL();
+      const subDomain = useSubDomain();
+      try {
+        const { data } = await graphql(`
+          ${ImageFragment}
+          query FLOWS {
+            formCategoryFlows(filters:{form: {subDomain: {eq : "${subDomain}"}}}) {
+              data {
+                id
+                attributes {
+                  name
+                  questions {
+                    id
+                    title
+                    description
+                    type
+                    question
+                    options {
+                      id
+                      value
+                      minPrice
+                      maxPrice
+                      currency
+                      discountPercent
+                      icon {
+                        ...Image
+                      }
+                      iconActive {
+                        ...Image
+                      }
+                      nextFlow {
+                        data {
+                          id
+                        }
+                      }
+                    }
+                    hasNext
+                    nextButtonOnTop
+                    showEstimate
+                    canSelectMulti
+                    otherwiseFlow {
+                      data {
+                        id
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `);
+        if (data?.formCategoryFlows?.data?.length) {
+          this.flows = data.formCategoryFlows.data.map((_flow) => {
+            // parse flow
+            const flow = strapiParser(_flow) as IFormCategoryFlow;
+            // parse flow questions
+            const questions = flow.questions.map((_question: IFormCategoryFlow['questions'][0]) => {
+              // parse question options
+              const options = _question.options.map((_option) => {
+                return {
+                  ..._option,
+                  icon: strapiParser(_option.icon, 'icon'),
+                  iconActive: strapiParser(_option.iconActive, 'iconActive'),
+                  nextFlow: strapiParser(_option.nextFlow, 'nextFlow'),
+                }
+              });
+              // return parsed options & nextFlow
+              return {
+                ..._question,
+                options,
+                otherwiseFlow: strapiParser(_question.otherwiseFlow, 'otherwiseFlow'),
+              }
+            });
+            // return flow with parsed questions
+            return {
+              ...flow,
+              questions
+            }
+          });
+        }
+      } catch (e) {
+        console.log(e.message);
+      }
     }
   }
 });

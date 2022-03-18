@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import CoreButton from "~/components/core/Button.vue";
+import { useAppStore } from "~~/store/app";
 import { useFormStore } from "~~/store/form";
+import { useSubmissionStore } from "~~/store/submission";
 import { IFormCategory } from "~~/types/form";
 
 definePageMeta({
@@ -8,18 +10,23 @@ definePageMeta({
   title: "Case Type",
 });
 
+const router = useRouter();
+
 const formStore = useFormStore();
+const submissionStore = useSubmissionStore();
 
 const form = computed(() => formStore.form);
 const categoryForm = computed(() => form.value.categoryForm);
-formStore.setProgress({
+const submission = computed(() => submissionStore.submission);
+
+useAppStore().setCurrentProgress({
   label: categoryForm.value.progress,
   value: 10,
 });
 
 const categories = computed(() => form.value.categories);
 
-const selectedCategory = ref<IFormCategory>(null);
+const selectedCategory = ref<IFormCategory>(submission.value.category);
 function selectCategory(category: IFormCategory) {
   if (selectedCategory.value && selectedCategory.value.id === category.id) {
     selectedCategory.value = null;
@@ -27,8 +34,18 @@ function selectCategory(category: IFormCategory) {
     selectedCategory.value = category;
   }
 }
-function goNext() {
-  
+async function goNext() {
+  if (!selectedCategory.value) return;
+  // set category to storage
+  submissionStore.setCategory(selectedCategory.value);
+  submissionStore.saveSubmission();
+  // go to next page
+  const qid = formStore.getFirstQuestion(
+    selectedCategory.value.startFlow?.id
+  )?.id;
+  if (qid) {
+    router.push(`/question/${qid}`);
+  }
 }
 </script>
 
@@ -41,7 +58,10 @@ function goNext() {
         v-for="category in categories"
         :key="category.id"
         class="category-item"
-        :class="{ selected: selectedCategory?.id === category.id }"
+        :class="{
+          selected: selectedCategory?.id === category.id,
+          disabled: !category.startFlow,
+        }"
         @click="selectCategory(category)"
       >
         <div class="category-item-image">
@@ -54,7 +74,9 @@ function goNext() {
       </div>
     </div>
     <div class="cta">
-      <CoreButton type="delete" @click="$router.back()">BACK</CoreButton>
+      <CoreButton type="delete" @click="$router.push('/signup')">
+        BACK
+      </CoreButton>
       <CoreButton
         :type="selectedCategory ? 'primary' : 'secondary'"
         @click="goNext"
@@ -89,16 +111,21 @@ h1 {
     }
     &.selected,
     &:hover {
-      @apply bg-catania-primary;
-      .icon-active {
-        @apply block;
+      &:not(.disabled) {
+        @apply bg-catania-primary;
+        .icon-active {
+          @apply block;
+        }
+        .icon {
+          @apply hidden;
+        }
+        .category-item-title {
+          @apply text-white;
+        }
       }
-      .icon {
-        @apply hidden;
-      }
-      .category-item-title {
-        @apply text-white;
-      }
+    }
+    &.disabled {
+      @apply cursor-not-allowed opacity-30;
     }
   }
 }

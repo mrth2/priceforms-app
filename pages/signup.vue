@@ -4,6 +4,7 @@ import { useFormStore } from "~~/store/form";
 import CoreButton from "~~/components/core/Button.vue";
 import { ISubscriber } from "~~/types/subscriber";
 import { useSubmissionStore } from "~~/store/submission";
+import { useAppStore } from "~~/store/app";
 
 definePageMeta({
   layout: "form",
@@ -16,13 +17,14 @@ const formStore = useFormStore();
 const form = computed(() => formStore.form);
 const registerForm = computed(() => form.value.registerForm);
 
-formStore.setProgress({
+const submissionStore = useSubmissionStore();
+const submission = computed(() => submissionStore.submission);
+
+useAppStore().setCurrentProgress({
   label: registerForm.value.progress,
   value: 5,
 });
 
-const submissionStore = useSubmissionStore();
-const submission = computed(() => submissionStore.submission);
 const userInput = reactive({
   firstName: submission.value?.subscriber?.firstName || "",
   lastName: submission.value?.subscriber?.lastName || "",
@@ -105,10 +107,11 @@ async function signUp() {
       ...submission,
       form: form.value,
       status: submission?.status || "register",
+      progress: submission?.progress || 5,
       stopAt: submission?.stopAt || "Just Signed Up",
       subscriber,
     });
-    await submissionStore.saveSubmission();
+    submissionStore.saveSubmission();
     // direct to cases
     router.push("/cases");
   } catch (e) {

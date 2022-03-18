@@ -3,20 +3,20 @@ export const strapiParser = (res: any, key?: string) => {
   if (data) {
     if (key && data[key]) {
       return {
-        id: data[key]?.data?.id,
+        id: parseInt(data[key]?.data?.id),
         ...data[key]?.data?.attributes
       }
     }
     else {
       return {
-        id: data.id,
+        id: parseInt(data.id),
         ...data.attributes
       }
     }
   }
   else if (res.id) {
     return {
-      id: res.id,
+      id: parseInt(res.id),
       ...res.attributes
     }
   }

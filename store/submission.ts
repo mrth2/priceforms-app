@@ -9,7 +9,6 @@ export const useSubmissionStore = defineStore('submission', {
   actions: {
     setSubmission(submission: IFormSubmission) {
       this.submission = submission;
-      storeSubmission(submission);
     },
     setForm(form: IForm) {
       this.submission.form = form;

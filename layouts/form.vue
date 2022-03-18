@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { useFormStore } from "~~/store/form";
-
-const route = useRoute();
-const currentProgress = computed(() => useFormStore().currentProgress);
+import { useAppStore } from "~~/store/app";
+const currentProgress = computed(() => useAppStore().currentProgress);
 </script>
 
 <template>

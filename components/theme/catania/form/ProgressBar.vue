@@ -21,7 +21,7 @@ const labelTranslateX = computed(() =>
   indicatorTranslateX.value ? indicatorTranslateX.value + indicatorSize : null
 );
 const labelStyle = computed(() => ({
-  left: labelTranslateX ? `${labelTranslateX}px` : null,
+  left: labelTranslateX.value ? `${labelTranslateX.value}px` : null,
 }));
 
 function updateIndicatorTranslate() {
@@ -29,7 +29,6 @@ function updateIndicatorTranslate() {
     Math.ceil((progressBar.value.offsetWidth * props.progress) / 100) -
     indicatorSize;
 }
-const route = useRoute();
 onMounted(() => {
   updateIndicatorTranslate();
   // also on progress changes
@@ -55,7 +54,7 @@ onMounted(() => {
   @apply pt-12 pb-8 relative;
 
   .progress {
-    @apply relative w-full h-3 drop-shadow mb-2;
+    @apply relative w-full h-3 drop-shadow mb-3;
     .slide {
       @apply bg-gray-200 h-full rounded-lg;
     }

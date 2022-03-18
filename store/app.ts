@@ -5,7 +5,11 @@ export const useAppStore = defineStore('app', {
   state: () => ({
     pageTitle: null,
     isLoading: false,
-    notifications: [] as Array<INotification>
+    notifications: [] as Array<INotification>,
+    currentProgress: {
+      label: '',
+      value: 0,
+    },
   }),
   actions: {
     setPageTitle(title: string) {
@@ -30,6 +34,9 @@ export const useAppStore = defineStore('app', {
     },
     clearNotifications() {
       this.notifications = [];
+    },
+    setCurrentProgress(progress: { label: string, value: number }) {
+      this.currentProgress = progress;
     }
   }
 });
