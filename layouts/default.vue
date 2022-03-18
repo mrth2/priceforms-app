@@ -46,6 +46,8 @@ const Footer = computed(() =>
       </div>
     </div>
     <Component :is="Footer" />
+
+    <CoreNotification />
   </div>
 </template>
 

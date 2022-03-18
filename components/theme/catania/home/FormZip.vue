@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useFormStore } from "~~/store/form";
+import { useSubmissionStore } from "~~/store/submission";
 
 const router = useRouter();
 
@@ -22,6 +23,12 @@ async function checkZip() {
     return;
   }
   if (zipCodes.value.includes(inputCode.value)) {
+    // save submission to storage with zip code
+    const submissionStore = useSubmissionStore();
+    submissionStore.setSubmission({
+      ...submissionStore.submission,
+      zip: inputCode.value,
+    });
     router.push("/signup");
   }
 }

@@ -24,8 +24,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
   }
   // if normal user trying to access signup page but already logged in, direct to /cases page
   else if (isOnSignUp) {
-    if (user.value) {
-      return navigateTo('/cases');
-    }
+    // if (user.value) {
+    //   return navigateTo('/cases');
+    // }
   }
 });

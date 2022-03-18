@@ -2,11 +2,15 @@
 import { ChevronLeftIcon, XIcon } from "@heroicons/vue/solid";
 import { useFormStore } from "~~/store/form";
 import CoreButton from "~~/components/core/Button.vue";
+import { ISubscriber } from "~~/types/subscriber";
+import { useSubmissionStore } from "~~/store/submission";
 
 definePageMeta({
   layout: "form",
   title: "Sign Up",
 });
+
+const router = useRouter();
 
 const formStore = useFormStore();
 const form = computed(() => formStore.form);
@@ -17,11 +21,13 @@ formStore.setProgress({
   value: 5,
 });
 
+const submissionStore = useSubmissionStore();
+const submission = computed(() => submissionStore.submission);
 const userInput = reactive({
-  firstName: "",
-  lastName: "",
-  phone: "",
-  email: "",
+  firstName: submission.value?.subscriber?.firstName || "",
+  lastName: submission.value?.subscriber?.lastName || "",
+  phone: submission.value?.subscriber?.phone || "",
+  email: submission.value?.subscriber?.email || "",
 });
 const errors = reactive({
   phone: null,
@@ -69,22 +75,49 @@ function validateEmail() {
 }
 
 function validateFormInputs() {
-  return validateEmail() && validatePhone();
+  const validPhone = validatePhone();
+  const validEmail = validateEmail();
+  return validPhone && validEmail;
 }
+
+const strapi = useStrapiClient();
+
+const signupButton = ref();
+const error = ref(null);
+const buttonTippy = computed(() => ({
+  content: error.value ? error.value : null,
+  placement: "top",
+  trigger: "manual",
+}));
 
 async function signUp() {
   if (loading.value) return;
+  error.value = null;
   if (!validateFormInputs()) return;
   loading.value = true;
-  const res = await useStrapiAuth().register({
-    username: userInput.email,
-    email: userInput.email,
-    password: Math.random().toString(36).substring(2, 15),
-    firstName: userInput.firstName,
-    lastName: userInput.lastName,
-    phone: userInput.phone,
-  });
-  console.log(res);
+  try {
+    const subscriber = await strapi<ISubscriber>("/subscribers", {
+      method: "PATCH",
+      body: userInput,
+    });
+    const submission = submissionStore.submission;
+    submissionStore.setSubmission({
+      ...submission,
+      form: form.value,
+      status: submission?.status || "register",
+      stopAt: submission?.stopAt || "Just Signed Up",
+      subscriber,
+    });
+    await submissionStore.saveSubmission();
+    // direct to cases
+    router.push("/cases");
+  } catch (e) {
+    error.value = e.error?.message || e.message;
+    await nextTick();
+    if (signupButton.value) {
+      signupButton.value.$tippy?.show();
+    }
+  }
   loading.value = false;
 }
 </script>
@@ -162,9 +195,11 @@ async function signUp() {
           <XIcon />
         </span>
       </div>
-      <CoreButton class="btn-signup" :loading="loading" @click="signUp">
-        {{ registerForm.button }}
-      </CoreButton>
+      <div ref="signupButton" v-tippy="buttonTippy" class="btn-signup">
+        <CoreButton :loading="loading" @click="signUp">
+          {{ registerForm.button }}
+        </CoreButton>
+      </div>
       <a class="back" @click="$router.back()">
         <ChevronLeftIcon class="w-5 h-5 mt-1" />
         BACK
@@ -207,7 +242,11 @@ form {
     }
   }
   .btn-signup {
-    @apply mx-4 uppercase font-bold text-lg h-12;
+    @apply flex justify-center;
+
+    :deep(button) {
+      @apply uppercase font-bold text-lg h-12;
+    }
   }
   .back {
     @apply cursor-pointer text-catania-secondary font-semibold flex flex-row gap-0.5 items-center mx-auto -mt-4;

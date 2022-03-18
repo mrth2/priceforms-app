@@ -1,4 +1,5 @@
 import { IMedia } from "./media"
+import { ISubscriber } from "./subscriber"
 import { IUser } from "./user"
 
 export interface IForm {
@@ -114,7 +115,7 @@ export interface IFormCategoryFlow {
 export interface IFormSubmission extends IPricing {
   id: number
   zip: string
-  user: IUser
+  subscriber: ISubscriber
   form: IForm
   category: IFormCategory
   status: 'register' | 'partial' | 'complete'
@@ -129,7 +130,7 @@ export interface IFormSubmission extends IPricing {
     answer: string
     at: string
   }>
-  dataPath: string
+  dataPath: IFormCategoryFlow[]
   createdAt: string
   updatedAt: string
 }

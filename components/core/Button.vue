@@ -15,7 +15,7 @@ const props = withDefaults(
 defineEmits(["click"]);
 const buttonClass = computed(() => {
   const result = [];
-  if (props.loading) result.push("cursor-wait");
+  if (props.loading) result.push("cursor-wait", "loading");
   switch (props.type) {
     case "primary":
       result.push("bg-catania-button", "hover:bg-opacity-80", "text-white");
@@ -39,7 +39,7 @@ const buttonClass = computed(() => {
 <template>
   <button
     :type="isSubmit ? 'submit' : 'button'"
-    class="inline-flex justify-center items-center px-4 py-2 shadow-sm text-sm font-medium rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+    class="relative inline-flex justify-center items-center px-4 py-2 shadow-sm text-sm font-medium rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
     :class="buttonClass"
     @click="$emit('click')"
   >
@@ -49,9 +49,20 @@ const buttonClass = computed(() => {
       class="-ml-1 mr-2 h-5 w-5"
       aria-hidden="true"
     />
-    <slot />
-    <div v-if="loading" class="ml-2">
+    <div class="btn-content">
+      <slot />
+    </div>
+    <div v-if="loading" class="loading-icon">
       <IconSpinner class="!m-0" />
     </div>
   </button>
 </template>
+
+<style scoped lang="postcss">
+button.loading > .btn-content{
+  @apply opacity-0;
+}
+.loading-icon {
+  @apply absolute m-auto;
+}
+</style>
