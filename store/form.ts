@@ -43,7 +43,7 @@ export const useFormStore = defineStore('form', {
         return state.flows.find(flow => flow.id === flowId)?.questions[0];
       }
     },
-    getQuestion: (state) => {
+    getQuestionById: (state) => {
       return (qid: number) => {
         let result: IFormQuestion | undefined;
         state.flows.forEach(flow => {
@@ -168,7 +168,6 @@ export const useFormStore = defineStore('form', {
         if (data?.forms?.data?.length) {
           const form = strapiParser(data.forms.data[0]) as IForm;
           const categories = (form.categories as any).data;
-          console.log(categories);
           this.form = {
             ...form,
             favicon: strapiParser(form.favicon, 'favicon'),
@@ -208,13 +207,13 @@ export const useFormStore = defineStore('form', {
                 id
                 attributes {
                   name
-                  questions {
+                  questions(pagination:{pageSize: 50}) {
                     id
                     title
                     description
                     type
                     question
-                    options {
+                    options(pagination:{pageSize: 20}) {
                       id
                       value
                       minPrice
@@ -266,6 +265,7 @@ export const useFormStore = defineStore('form', {
               // return parsed options & nextFlow
               return {
                 ..._question,
+                id: parseInt(`${_question.id}`),
                 options,
                 otherwiseFlow: strapiParser(_question.otherwiseFlow, 'otherwiseFlow'),
               }

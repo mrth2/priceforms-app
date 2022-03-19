@@ -10,7 +10,7 @@ const currentProgress = computed(() => useAppStore().currentProgress);
         :progress="currentProgress.value"
         :label="currentProgress.label"
       />
-      <div class="content">
+      <div class="form-content">
         <slot />
       </div>
     </div>
@@ -18,7 +18,8 @@ const currentProgress = computed(() => useAppStore().currentProgress);
 </template>
 
 <style scoped lang="postcss">
-.content {
-  @apply rounded-lg shadow-main bg-white min-h-[300px] px-10;
+.form-content {
+  @apply rounded-lg shadow-main bg-white px-10 flex flex-col items-stretch;
+  min-height: calc(100vh - 300px);
 }
 </style>
