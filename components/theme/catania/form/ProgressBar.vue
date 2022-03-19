@@ -24,6 +24,12 @@ const labelStyle = computed(() => ({
   left: labelTranslateX.value ? `${labelTranslateX.value}px` : null,
 }));
 
+const activeBarStyle = computed(() => {
+  if (!indicatorTranslateX.value) return {};
+  return {
+    width: `${props.progress}%`,
+  };
+});
 function updateIndicatorTranslate() {
   indicatorTranslateX.value =
     Math.ceil((progressBar.value.offsetWidth * props.progress) / 100) -
@@ -39,7 +45,7 @@ onMounted(() => {
 <template>
   <div ref="progressBar" class="progress-bar">
     <div class="progress">
-      <div class="active" :style="{ width: `${progress}%` }" />
+      <div class="active" :style="activeBarStyle" />
       <div class="indicator" :style="indicatorStyle" />
       <div class="slide" />
     </div>
@@ -59,10 +65,11 @@ onMounted(() => {
       @apply bg-gray-200 h-full rounded-lg;
     }
     .active {
-      @apply rounded-lg bg-catania-button h-3 absolute top-0 transition-all duration-300;
+      @apply rounded-lg bg-catania-button h-3 absolute top-0 left-0 w-0;
+      transition: width 400ms ease-out;
     }
     .indicator {
-      @apply bg-catania-button absolute h-6 w-6 rounded-full left-0 -top-1.5 transition-transform duration-300;
+      @apply bg-catania-button absolute h-6 w-6 rounded-full left-0 -top-1.5 transition-transform duration-500 ease-out;
     }
   }
   .label {
