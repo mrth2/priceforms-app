@@ -4,6 +4,7 @@ import { IFormQuestion, IFormQuestionOption } from "~~/types/form";
 import YesNoVue from "./type/YesNo.vue";
 import IconListVue from "./type/IconList.vue";
 import DatePickerVue from "./type/DatePicker.vue";
+import OptionListVue from "./type/OptionList.vue";
 
 const props = defineProps<{
   question: IFormQuestion;
@@ -17,6 +18,8 @@ const QuestionOptionComponent = computed(() => {
       return YesNoVue;
     case "icon_list":
       return IconListVue;
+    case "option_list":
+      return OptionListVue;
     case "date_picker":
       return DatePickerVue;
   }
@@ -54,15 +57,13 @@ function selectOption(opt: IFormQuestionOption) {
     </div>
     <div class="question-content">
       <h1>{{ question.question }}</h1>
-      <div class="options">
-        <Component
-          :is="QuestionOptionComponent"
-          :type="question.type"
-          :selected="selectedOption"
-          :options="question.options"
-          @selected="selectOption"
-        />
-      </div>
+      <Component
+        :is="QuestionOptionComponent"
+        :type="question.type"
+        :selected="selectedOption"
+        :options="question.options"
+        @selected="selectOption"
+      />
     </div>
     <div class="footer-actions">
       <!-- has next button + button not on Top -->
@@ -112,6 +113,17 @@ function selectOption(opt: IFormQuestionOption) {
 
   :deep(h1) {
     @apply text-4xl font-extrabold text-catania-primary;
+  }
+
+  :deep(.options) {
+    button {
+      @apply px-8 h-12 text-2xl uppercase text-catania-primary font-extrabold transition-colors;
+
+      &.selected,
+      &:hover {
+        @apply bg-catania-primary text-white;
+      }
+    }
   }
 }
 </style>

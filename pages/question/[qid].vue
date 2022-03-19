@@ -2,6 +2,7 @@
 import { useAppStore } from "~~/store/app";
 import { useFormStore } from "~~/store/form";
 import { useSubmissionStore } from "~~/store/submission";
+import { IFormQuestion } from "~~/types/form";
 
 definePageMeta({
   layout: "form",
@@ -20,18 +21,24 @@ watch(
   question,
   (value) => {
     if (!value) {
-      console.log(formStore.flows)
       throw new Error("Question not found");
     }
   },
   { immediate: true }
 );
+const allQuestions = computed(() =>
+  formStore.flows.reduce((acc, flow) => {
+    return acc.concat(flow.questions);
+  }, [] as IFormQuestion[])
+);
 const totalQuestions = computed(() =>
   formStore.flows.reduce((acc, flow) => acc + flow.questions.length, 0)
 );
-console.log(question.value);
 const progress = computed(
-  () => (90 * (submission.value.data.length + 1)) / totalQuestions.value + 10
+  () =>
+    (90 * allQuestions.value.findIndex((q) => q.id === question.value.id) + 1) /
+      totalQuestions.value +
+    10
 );
 useAppStore().setCurrentProgress({
   label: question.value.title,

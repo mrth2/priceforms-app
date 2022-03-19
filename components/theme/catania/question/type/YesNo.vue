@@ -4,45 +4,51 @@ import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/vue/outline";
 
 const props = defineProps<{
   type: IFormQuestion["type"];
-  selected: Partial<IFormQuestionOption>;
+  selected: IFormQuestionOption | { id: "yes" | "no", value: 'YES' | 'NO' };
   options: IFormQuestionOption[];
 }>();
-console.log(props.options, props.type);
 defineEmits(["selected"]);
-const selectedOption = ref<"yes" | "no">(null);
 
-function selectOption(opt: "yes" | "no") {
-  if (selectedOption.value === opt) {
-    selectedOption.value = null;
-  } else {
-    selectedOption.value = opt;
+const options = computed(() => {
+  if (props.options && Array.isArray(props.options) && props.options.length) {
+    return props.options;
   }
+  return [
+    {
+      id: "yes",
+      value: "YES",
+    },
+    {
+      id: "no",
+      value: "NO",
+    },
+  ];
+});
+
+function isSelected(opt: typeof options.value[0]) {
+  return opt.id === props.selected?.id;
+}
+function getIcon(opt: typeof options.value[0]) {
+  if (opt.value === "YES") {
+    return ThumbUpIcon;
+  }
+  return ThumbDownIcon;
 }
 </script>
 
 <template>
   <div class="options">
     <CoreButton
+      v-for="option in options"
       type="outline"
       :class="{
-        selected: selectedOption && selectedOption === 'yes',
+        selected: isSelected(option),
         hasIcon: type === 'yes_no_icon',
       }"
-      @click="selectOption('yes')"
+      @click="$emit('selected', option)"
     >
-      <ThumbUpIcon v-if="type === 'yes_no_icon'" />
-      <template v-else>YES</template>
-    </CoreButton>
-    <CoreButton
-      type="outline"
-      :class="{
-        selected: selectedOption && selectedOption === 'no',
-        hasIcon: type === 'yes_no_icon',
-      }"
-      @click="selectOption('no')"
-    >
-      <ThumbDownIcon v-if="type === 'yes_no_icon'" />
-      <template v-else>NO</template>
+      <Component v-if="type === 'yes_no_icon'" :is="getIcon(option)" />
+      <template v-else>{{ option.value }}</template>
     </CoreButton>
   </div>
 </template>
@@ -52,13 +58,6 @@ function selectOption(opt: "yes" | "no") {
   @apply flex flex-row gap-6;
 
   :deep(button) {
-    @apply px-8 h-12 text-2xl uppercase text-catania-primary font-extrabold transition-colors;
-
-    &.selected,
-    &:hover {
-      @apply bg-catania-primary text-white;
-    }
-
     &.hasIcon {
       @apply h-20 w-24;
     }
