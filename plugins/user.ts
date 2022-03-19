@@ -3,6 +3,7 @@ export default defineNuxtPlugin(nuxtApp => {
   return {
     provide: {
       fullname: (user: IUser) => {
+        if (!user) return '';
         if (user.firstName && user.lastName) {
           return user.firstName + ' ' + user.lastName;
         }
