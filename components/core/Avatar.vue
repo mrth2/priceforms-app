@@ -2,13 +2,14 @@
 const props = defineProps<{
   name: string;
 }>();
-const text = computed(() =>
-  props.name
+const text = computed(() => {
+  if (!props.name) return "U";
+  return props.name
     .split(" ")
     .slice(0, 2)
     .map((n) => n.charAt(0).toUpperCase())
-    .join("")
-);
+    .join("");
+});
 </script>
 <template>
   <div

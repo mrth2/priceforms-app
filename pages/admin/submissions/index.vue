@@ -51,7 +51,7 @@ async function fetchData() {
         $in: filters.status.length ? filters.status : [],
       },
     },
-    populate: ["form", "category", "user"],
+    populate: ["form", "category", "subscriber"],
     pagination: {
       page: filters.page,
       pageSize: filters.limit,
@@ -92,60 +92,65 @@ function sortClasses(type: SortField) {
 
 const submissions = computed(() => {
   if (!data.value) return [];
-  return data.value.data
-    .map((s) => ({
-      id: s.id,
-      ...s.attributes,
-      category: {
-        id: s.attributes.category.data.id,
-        ...s.attributes.category.data.attributes,
-      },
-      form: {
-        id: s.attributes.form.data.id,
-        ...s.attributes.form.data.attributes,
-      },
-      user: {
-        id: s.attributes.user.data.id,
-        ...s.attributes.user.data.attributes,
-        fullName: `${s.attributes.user.data.attributes.firstName} ${s.attributes.user.data.attributes.lastName}`,
-      },
-    }))
-    .sort((a, b) => {
-      // sort by updatedAt
-      if (sortBy.value === "updated") {
-        if (sortAsc.value) {
-          return (
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          );
-        } else {
-          return (
-            new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
-          );
+  try {
+    return data.value.data
+      .map((s) => ({
+        id: s.id,
+        ...s.attributes,
+        category: {
+          id: s.attributes.category?.data?.id,
+          ...s.attributes.category?.data?.attributes,
+        },
+        form: {
+          id: s.attributes.form?.data?.id,
+          ...s.attributes.form?.data?.attributes,
+        },
+        subscriber: {
+          id: s.attributes.subscriber?.data?.id,
+          ...s.attributes.subscriber?.data?.attributes,
+          fullName: useNuxtApp().$fullname(s.attributes.subscriber?.data?.attributes),
+        },
+      }))
+      .sort((a, b) => {
+        // sort by updatedAt
+        if (sortBy.value === "updated") {
+          if (sortAsc.value) {
+            return (
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+            );
+          } else {
+            return (
+              new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+            );
+          }
         }
-      }
-      // sort by status name
-      if (sortBy.value === "status") {
-        if (sortAsc.value) {
-          return a.status.localeCompare(b.status);
-        } else {
-          return b.status.localeCompare(a.status);
+        // sort by status name
+        if (sortBy.value === "status") {
+          if (sortAsc.value) {
+            return a.status.localeCompare(b.status);
+          } else {
+            return b.status.localeCompare(a.status);
+          }
         }
-      }
-      // sort by progress
-      if (sortBy.value === "progress") {
-        if (sortAsc.value) {
-          return b.progress - a.progress;
-        } else {
-          return a.progress - b.progress;
+        // sort by progress
+        if (sortBy.value === "progress") {
+          if (sortAsc.value) {
+            return b.progress - a.progress;
+          } else {
+            return a.progress - b.progress;
+          }
         }
-      }
-      // sort by user name
-      if (sortAsc.value) {
-        return a.user.fullName.localeCompare(b.user.fullName);
-      } else {
-        return b.user.fullName.localeCompare(a.user.fullName);
-      }
-    });
+        // sort by user name
+        if (sortAsc.value) {
+          return a.subscriber.fullName.localeCompare(b.subscriber.fullName);
+        } else {
+          return b.subscriber.fullName.localeCompare(a.subscriber.fullName);
+        }
+      });
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
 });
 
 const pagination = computed<{
@@ -212,9 +217,9 @@ function getExportRow(submission, index) {
   return {
     index: index + 1,
     zip: submission.zip,
-    name: submission.user.fullName,
-    email: submission.user.email,
-    phone: submission.user.phone,
+    name: submission.subscriber.fullName,
+    email: submission.subscriber.email,
+    phone: submission.subscriber.phone,
     status: startCase(submission.status),
     createdAt: $dateFormat(submission.createdAt, false, true),
     category: submission.category.title,
@@ -394,15 +399,15 @@ async function deleteSubmission() {
                     <div class="flex-shrink-0 h-10 w-10">
                       <CoreAvatar
                         :class="$getStatusClass(item.status, false)"
-                        :name="item.user.fullName"
+                        :name="item.subscriber.fullName"
                       />
                     </div>
                     <div class="ml-4">
                       <div class="text-sm font-medium text-gray-900">
-                        {{ item.user.fullName }}
+                        {{ item.subscriber.fullName }}
                       </div>
                       <div class="text-sm text-gray-500">
-                        {{ item.user.email }}
+                        {{ item.subscriber.email }}
                       </div>
                     </div>
                   </div>
@@ -520,7 +525,7 @@ async function deleteSubmission() {
     <CoreConfirmModal
       v-if="!!deletingSubmission"
       :open="true"
-      :title="`Delete submission from ${deletingSubmission.user.fullName}`"
+      :title="`Delete submission from ${deletingSubmission.subscriber.fullName}`"
       :description="`Are you sure you want to delete this submission? It will be permanently removed from our servers forever. This action cannot be undone!`"
       :confirm-text="`OK. Delete now!`"
       @cancel="deletingSubmission = null"
