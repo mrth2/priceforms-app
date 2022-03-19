@@ -1,6 +1,14 @@
 export const useSubDomain = () => {
   try {
-    const host = window.location.host
+    // try to check for request header
+    const headers = useRequestHeaders();
+    let host: string;
+    if (headers.host) {
+      host = headers.host;
+    }
+    else {
+      host = window.location.host;
+    }
     const hostFragments = host.split('.')
     return hostFragments[1] ? hostFragments[0] : null
   } catch (error) {
