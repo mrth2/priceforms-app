@@ -50,6 +50,8 @@ export const useSubmissionStore = defineStore('submission', {
         at: new Date().toISOString(),
       });
       this.submission.data = newData;
+      // save to server as soon as user answer a question
+      this.saveSubmission();
     },
     async saveSubmission() {
       const strapi = useStrapi4();
