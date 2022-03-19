@@ -50,6 +50,10 @@ export const useSubmissionStore = defineStore('submission', {
         at: new Date().toISOString(),
       });
       this.submission.data = newData;
+      // auto set status to partial if it's not marked as complete
+      if (this.submission.status !== 'complete') {
+        this.submission.status = 'partial';
+      }
       // save to server as soon as user answer a question
       this.saveSubmission();
     },
