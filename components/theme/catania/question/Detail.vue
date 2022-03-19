@@ -112,7 +112,7 @@ function selectOption(opt: IFormQuestionOption) {
   @apply flex-1 flex flex-col justify-center items-center;
 
   :deep(h1) {
-    @apply text-4xl font-extrabold text-catania-primary;
+    @apply text-4xl font-extrabold text-catania-primary !important;
   }
 
   :deep(.options) {

@@ -20,6 +20,7 @@ export const useAppStore = defineStore('app', {
     },
     pushNotification(notification: INotification) {
       const duration = notification.duration || 5000;
+      const position = notification.position || 'right';
       const newLength = this.notifications.push({
         ...notification,
         expireAt: new Date().getTime() + duration
