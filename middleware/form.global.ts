@@ -6,5 +6,7 @@ export default defineNuxtRouteMiddleware(async () => {
   await Promise.all([
     formStore.loadForm(),
     formStore.loadFlows(),
-  ])
+  ]);
+  // init category tree
+  formStore.initCategories();
 });

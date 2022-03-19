@@ -71,7 +71,9 @@ export interface IFormCategory {
   icon: IMedia
   iconActive: IMedia
   form: IForm
-  startFlow: IFormCategoryFlow
+  flows: Array<{
+    flow: IFormCategoryFlow
+  }>
   createdAt: string
   updatedAt: string
 }

@@ -10,6 +10,7 @@ import { useSubmissionStore } from "~~/store/submission";
 defineEmits(["selected", "next", "back"]);
 
 const question = computed(() => useSubmissionStore().current.question);
+console.log(question.value);
 const option = computed(() => useSubmissionStore().current.option);
 const QuestionOptionComponent = computed(() => {
   switch (question.value.type) {

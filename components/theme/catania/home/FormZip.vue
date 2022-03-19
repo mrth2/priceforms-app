@@ -84,7 +84,7 @@ async function checkZip() {
   }
 
   .form-group {
-    @apply mt-4 grid grid-cols-2 gap-4;
+    @apply mt-4 grid grid-flow-col-dense gap-4;
 
     :deep(.tippy-box) {
       @apply bg-red-600;

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ImageFragment } from '~/types/graphql';
 import { strapiParser } from '~~/services/helper';
-import { IForm, IFormCategoryFlow, IFormQuestion } from '~~/types/form';
+import { IForm, IFormCategory, IFormCategoryFlow, IFormQuestion } from '~~/types/form';
 
 const socialIcons = [{
   type: 'facebook',
@@ -27,6 +27,8 @@ export const useFormStore = defineStore('form', {
   state: () => ({
     form: null as IForm,
     flows: [] as IFormCategoryFlow[],
+    // list of categories which have it's flows organized by flow order
+    categories: [] as IFormCategory[],
     socialIcons,
   }),
   getters: {
@@ -38,6 +40,11 @@ export const useFormStore = defineStore('form', {
     },
     getFooter: (state) => state.form.footer,
     getPhone: (state) => state.form.phone,
+    getStartQuestion: (state) => {
+      return (categoryId: number): IFormQuestion => {
+        return state.categories.find(category => category.id === categoryId)?.flows?.[0]?.flow?.questions?.[0]
+      }
+    },
     getFirstQuestion: (state) => {
       return (flowId: number) => {
         return state.flows.find(flow => flow.id === flowId)?.questions[0];
@@ -55,9 +62,20 @@ export const useFormStore = defineStore('form', {
         })
         return result;
       }
+    },
+    getOrderedQuestions: (state) => {
+      // extract all questions
+      const allQuestions = state.flows.reduce((acc, flow) => acc.concat(flow.questions), [] as IFormQuestion[]);
+      // sort questions by flow ordering in the category then question order
+      return allQuestions.sort((a, b) => {
+        if (a.flowId === b.flowId) {
+          return 1
+        }
+      });
     }
   },
   actions: {
+    // load form & categories metadata
     async loadForm() {
       if (this.form) return;
       const graphql = useStrapiGraphQL();
@@ -152,9 +170,11 @@ export const useFormStore = defineStore('form', {
                         iconActive {
                           ...Image
                         }
-                        startFlow {
-                          data {
-                            id
+                        flows(pagination: {pageSize: 50}) {
+                          flow {
+                            data {
+                              id
+                            }
                           }
                         }
                       }
@@ -186,7 +206,9 @@ export const useFormStore = defineStore('form', {
                 ...parsedCategory,
                 icon: strapiParser(category.attributes.icon, 'icon'),
                 iconActive: strapiParser(category.attributes.iconActive, 'iconActive'),
-                startFlow: strapiParser(category.attributes.startFlow, 'startFlow'),
+                flows: category.attributes.flows.map(item => ({
+                  flow: strapiParser(item.flow)
+                })),
               }
             }),
           };
@@ -195,6 +217,7 @@ export const useFormStore = defineStore('form', {
         console.log(e.message);
       }
     },
+    // load all flows of the forms over all categories
     async loadFlows() {
       if (this.flows.length) return;
       const graphql = useStrapiGraphQL();
@@ -283,6 +306,17 @@ export const useFormStore = defineStore('form', {
       } catch (e) {
         console.log(e.message);
       }
+    },
+    // initialize category tree, with ordered flows inside each category
+    initCategories() {
+      this.categories = (this.form.categories as IFormCategory[]).map((category) => {
+        return {
+          ...category,
+          flows: category.flows.map(item => ({
+            flow: (this.flows as IFormCategoryFlow[]).find(f => f.id === item.flow.id),
+          })),
+        }
+      });
     }
   }
 });

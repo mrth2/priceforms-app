@@ -19,16 +19,16 @@ const form = computed(() => formStore.form);
 const question = computed(() =>
   formStore.getQuestionById(parseInt(route.params.qid as string))
 );
+submissionStore.setCurrentQuestion(question.value);
 watch(
-  question,
-  (value) => {
-    if (!value) {
+  () => route.params.qid,
+  () => {
+    if (!question.value) {
       throw new Error("Question not found");
     } else {
-      submissionStore.setQuestion(value);
+      submissionStore.setCurrentQuestion(question.value);
     }
-  },
-  { immediate: true }
+  }
 );
 const allQuestions = computed(() =>
   formStore.flows.reduce((acc, flow) => {
@@ -38,6 +38,7 @@ const allQuestions = computed(() =>
 const totalQuestions = computed(() =>
   formStore.flows.reduce((acc, flow) => acc + flow.questions.length, 0)
 );
+console.log(formStore.categories);
 const progress = computed(
   () =>
     (90 * allQuestions.value.findIndex((q) => q.id === question.value.id) + 1) /
@@ -69,7 +70,7 @@ function selectOption(opt: ISubmissionOption) {
       selectedOption.value = opt;
     }
   }
-  submissionStore.setQuestionOption(selectedOption.value);
+  submissionStore.setCurrentQuestionOption(selectedOption.value);
   // if question has next button => wait for next button click
   if (question.value.hasNext) {
     return;
@@ -97,6 +98,8 @@ function goBack() {
   console.log(prevQuestion);
   if (prevQuestion) {
     router.push(`/question/${prevQuestion.id}`);
+  } else {
+    router.push("/cases");
   }
 }
 
@@ -115,16 +118,23 @@ function goNext() {
 
   // if question is date picker, simply update data and move on
   if (option instanceof Date) {
-    submissionStore.answerQuestion(question.value, option.toISOString());
+    submissionStore.answerQuestion({
+      question: question.value,
+      answer: option.toISOString(),
+    });
   } else {
     const realOption = option as IFormQuestionOption;
-    submissionStore.answerQuestion(
-      question.value,
-      realOption.value,
-      realOption
-    );
+    submissionStore.answerQuestion({
+      question: question.value,
+      answer: realOption.value,
+      option: realOption,
+    });
     // if selected option has next flow, go for it
     if (realOption.nextFlow) {
+      const nextFlow = formStore.flows.find(
+        (flow) => flow.id === realOption.nextFlow.id
+      );
+      console.log(nextFlow);
     } else {
       //
     }

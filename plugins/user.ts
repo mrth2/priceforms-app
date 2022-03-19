@@ -1,8 +1,9 @@
+import { ISubscriber } from '~~/types/subscriber';
 import { IUser } from '~~/types/user'
 export default defineNuxtPlugin(nuxtApp => {
   return {
     provide: {
-      fullname: (user: IUser) => {
+      fullname: (user: IUser | ISubscriber) => {
         if (!user) return '';
         if (user.firstName && user.lastName) {
           return user.firstName + ' ' + user.lastName;
@@ -13,8 +14,8 @@ export default defineNuxtPlugin(nuxtApp => {
         if (user.lastName) {
           return user.lastName
         }
-        if (user.username) {
-          return user.username
+        if (user['username']) {
+          return user['username']
         }
         return user.email
       }

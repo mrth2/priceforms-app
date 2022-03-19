@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { strapiParser } from "~~/services/helper";
-import { IForm, IFormQuestion, IFormQuestionOption, IFormSubmission } from "~~/types/form";
+import { IForm, IFormCategoryFlow, IFormQuestion, IFormQuestionOption, IFormSubmission } from "~~/types/form";
 import type { ISubmissionOption } from "~~/types/form";
 import { useAppStore } from "./app";
 export const useSubmissionStore = defineStore('submission', {
@@ -12,10 +12,10 @@ export const useSubmissionStore = defineStore('submission', {
     }
   }),
   actions: {
-    setQuestion(question: IFormQuestion) {
+    setCurrentQuestion(question: IFormQuestion) {
       this.current.question = question;
     },
-    setQuestionOption(option: ISubmissionOption) {
+    setCurrentQuestionOption(option: ISubmissionOption) {
       this.current.option = option;
     },
     setSubmission(submission: IFormSubmission) {
@@ -36,7 +36,7 @@ export const useSubmissionStore = defineStore('submission', {
     setProgress(progress: IFormSubmission['progress']) {
       this.submission.progress = progress;
     },
-    answerQuestion(question: IFormQuestion, answer: string, option?: IFormQuestionOption) {
+    answerQuestion({ question, answer, option }: { question: IFormQuestion, answer: string, option?: IFormQuestionOption }) {
       // filter out current question from data
       const newData = (this.submission.data as IFormSubmission['data']).filter(d => d.qid !== question.id);
       // append new question answer
@@ -50,6 +50,7 @@ export const useSubmissionStore = defineStore('submission', {
         at: new Date().toISOString(),
       });
       this.submission.data = newData;
+      // save data path. IMPORTANT: data path won't be changed the order to keep order of flow
       // auto set status to partial if it's not marked as complete
       if (this.submission.status !== 'complete') {
         this.submission.status = 'partial';

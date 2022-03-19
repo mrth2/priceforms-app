@@ -81,9 +81,6 @@ async function fetchData() {
                 }
               }
             }
-            startFlow {
-              ...Flow
-            }
           }
         }
       }

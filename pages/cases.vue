@@ -40,11 +40,9 @@ async function goNext() {
   submissionStore.setCategory(selectedCategory.value);
   submissionStore.saveSubmission();
   // go to next page
-  const qid = formStore.getFirstQuestion(
-    selectedCategory.value.startFlow?.id
-  )?.id;
-  if (qid) {
-    router.push(`/question/${qid}`);
+  const firstQuestion = formStore.getStartQuestion(selectedCategory.value.id);
+  if (firstQuestion) {
+    router.push(`/question/${firstQuestion.id}`);
   }
 }
 </script>
@@ -60,7 +58,7 @@ async function goNext() {
         class="category-item"
         :class="{
           selected: selectedCategory?.id === category.id,
-          disabled: !category.startFlow,
+          disabled: !category.flows.length,
         }"
         @click="selectCategory(category)"
       >

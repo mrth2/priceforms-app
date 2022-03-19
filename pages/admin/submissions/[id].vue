@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { TrashIcon } from "@heroicons/vue/outline";
 import { useAppStore } from "~~/store/app";
-import { IUser } from "~~/types/user";
 import { IFormCategory, IFormSubmission } from "~~/types/form";
-import SubmissionDetail from "~~/components/admin/submissions/SubmissionDetail.vue";
+import { ISubscriber } from "~~/types/subscriber";
 import { useSubmissionStore } from "~~/store/submission";
 import Button from "~~/components/core/Button.vue";
+import SubmissionDetail from "~~/components/admin/submissions/SubmissionDetail.vue";
 
 definePageMeta({
   layout: "admin",
@@ -32,7 +32,7 @@ const { pending, data } = useAsyncData<{ data: any }>("submission", () =>
                 }
               }
             }
-            user {
+            subscriber {
               data {
                 attributes{
                   firstName
@@ -82,10 +82,10 @@ const category = computed<IFormCategory>(() =>
     ? null
     : nuxtApp.$strapiParser(submission.value.category, "category")
 );
-const subscriber = computed<IUser>(() =>
+const subscriber = computed<ISubscriber>(() =>
   pending.value || !submission.value
     ? null
-    : nuxtApp.$strapiParser(submission.value?.user, "user")
+    : nuxtApp.$strapiParser(submission.value?.subscriber, "subscriber")
 );
 
 const deletingSubmission = ref<IFormSubmission | null>(null);
