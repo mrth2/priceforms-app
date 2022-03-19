@@ -28,5 +28,10 @@ defineEmits(["selected"]);
 <style scoped lang="postcss">
 .options {
   @apply flex flex-col gap-5;
+
+  .option-item {
+    @apply !px-20 !py-6;
+    text-transform: unset !important;
+  }
 }
 </style>

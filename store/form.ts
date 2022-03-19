@@ -196,6 +196,7 @@ export const useFormStore = defineStore('form', {
       }
     },
     async loadFlows() {
+      if (this.flows.length) return;
       const graphql = useStrapiGraphQL();
       const subDomain = useSubDomain();
       try {
@@ -257,6 +258,7 @@ export const useFormStore = defineStore('form', {
               const options = _question.options.map((_option) => {
                 return {
                   ..._option,
+                  id: parseInt(`${_option.id}`),
                   icon: strapiParser(_option.icon, 'icon'),
                   iconActive: strapiParser(_option.iconActive, 'iconActive'),
                   nextFlow: strapiParser(_option.nextFlow, 'nextFlow'),
@@ -268,6 +270,7 @@ export const useFormStore = defineStore('form', {
                 id: parseInt(`${_question.id}`),
                 options,
                 otherwiseFlow: strapiParser(_question.otherwiseFlow, 'otherwiseFlow'),
+                flowId: flow.id,
               }
             });
             // return flow with parsed questions

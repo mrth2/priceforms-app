@@ -1,12 +1,23 @@
 import { defineStore } from "pinia";
 import { strapiParser } from "~~/services/helper";
-import { IForm, IFormSubmission } from "~~/types/form";
+import { IForm, IFormQuestion, IFormQuestionOption, IFormSubmission } from "~~/types/form";
+import type { ISubmissionOption } from "~~/types/form";
 import { useAppStore } from "./app";
 export const useSubmissionStore = defineStore('submission', {
   state: () => ({
     submission: {} as IFormSubmission,
+    current: {
+      question: null as IFormQuestion | null,
+      option: null as ISubmissionOption | null,
+    }
   }),
   actions: {
+    setQuestion(question: IFormQuestion) {
+      this.current.question = question;
+    },
+    setQuestionOption(option: ISubmissionOption) {
+      this.current.option = option;
+    },
     setSubmission(submission: IFormSubmission) {
       this.submission = submission;
     },
@@ -24,6 +35,21 @@ export const useSubmissionStore = defineStore('submission', {
     },
     setProgress(progress: IFormSubmission['progress']) {
       this.submission.progress = progress;
+    },
+    answerQuestion(question: IFormQuestion, answer: string, option?: IFormQuestionOption) {
+      // filter out current question from data
+      const newData = (this.submission.data as IFormSubmission['data']).filter(d => d.qid !== question.id);
+      // append new question answer
+      newData.push({
+        fid: question.flowId,
+        qid: question.id,
+        oid: option?.id ?? null,
+        title: question.title,
+        question: question.question,
+        answer,
+        at: new Date().toISOString(),
+      });
+      this.submission.data = newData;
     },
     async saveSubmission() {
       const strapi = useStrapi4();

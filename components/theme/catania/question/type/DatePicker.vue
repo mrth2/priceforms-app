@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { ChevronDownIcon } from "@heroicons/vue/solid";
 import { useAppStore } from "~~/store/app";
-import { IFormQuestionOption } from "~~/types/form";
 
 const props = defineProps<{
-  selected: IFormQuestionOption;
-  options: IFormQuestionOption[];
+  selected: string;
 }>();
 const emit = defineEmits(["selected"]);
 
+const propSelected = computed(() =>
+  useNuxtApp().$isIsoDate(props.selected) ? new Date(props.selected) : null
+);
 const selectedDate = reactive<{
   day: number;
   month: string;
@@ -18,6 +19,13 @@ const selectedDate = reactive<{
   month: null,
   year: null,
 });
+if (propSelected.value) {
+  selectedDate.month = propSelected.value.toLocaleString("default", {
+    month: "short",
+  });
+  selectedDate.year = propSelected.value.getFullYear();
+  selectedDate.day = propSelected.value.getDate();
+}
 
 const months = [
   "Jan",
@@ -47,7 +55,7 @@ function getMonth() {
 const days = computed(() => {
   const month = getMonth();
   const year = selectedDate.year || now.getFullYear();
-  if (month) {
+  if (month !== -1) {
     const daysInMonth = new Date(+year, +month + 1, 0).getDate();
     return [...Array(daysInMonth).keys()].map((d) => d + 1);
   }
@@ -55,7 +63,7 @@ const days = computed(() => {
 });
 function submitDate() {
   const month = getMonth();
-  if (!month || !selectedDate.day || !selectedDate.year) {
+  if (month === -1 || !selectedDate.day || !selectedDate.year) {
     useAppStore().pushNotification({
       type: "warning",
       title: "Please select a specific day first",
@@ -65,7 +73,7 @@ function submitDate() {
   }
   emit(
     "selected",
-    new Date(selectedDate.year, month, selectedDate.day).toISOString()
+    new Date(selectedDate.year, month, selectedDate.day)
   );
 }
 </script>
@@ -93,7 +101,7 @@ function submitDate() {
       </select>
       <ChevronDownIcon class="arrow" />
     </div>
-    <CoreButton class="!text-white !px-4 !text-lg" @click="submitDate"
+    <CoreButton class="!text-white !px-4 !text-lg !h-12" @click="submitDate"
       >SUBMIT</CoreButton
     >
   </div>

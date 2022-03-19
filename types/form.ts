@@ -103,6 +103,8 @@ export interface IFormQuestion {
   canSelectMulti: boolean
   options: IFormQuestionOption[]
   otherwiseFlow: IFormCategoryFlow
+  // custom on front end only after load data
+  flowId: IFormCategoryFlow['id']
 }
 
 export interface IFormCategoryFlow {
@@ -116,6 +118,7 @@ export interface IFormCategoryFlow {
 export interface IFormSubmission extends IPricing {
   id: number
   zip: string
+  owner: IUser
   subscriber: ISubscriber
   form: IForm
   category: IFormCategory
@@ -135,3 +138,5 @@ export interface IFormSubmission extends IPricing {
   createdAt: string
   updatedAt: string
 }
+
+export type ISubmissionOption = IFormQuestionOption | Date | null;

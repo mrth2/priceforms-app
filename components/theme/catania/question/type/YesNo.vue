@@ -59,7 +59,7 @@ function getIcon(opt: typeof options.value[0]) {
 
   :deep(button) {
     &.hasIcon {
-      @apply h-20 w-24;
+      @apply !h-20 !w-24;
     }
 
     svg {

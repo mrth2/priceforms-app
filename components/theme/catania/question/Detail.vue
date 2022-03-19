@@ -5,14 +5,14 @@ import YesNoVue from "./type/YesNo.vue";
 import IconListVue from "./type/IconList.vue";
 import DatePickerVue from "./type/DatePicker.vue";
 import OptionListVue from "./type/OptionList.vue";
+import { useSubmissionStore } from "~~/store/submission";
 
-const props = defineProps<{
-  question: IFormQuestion;
-}>();
+defineEmits(["selected", "next", "back"]);
 
-const selectedOption = ref<IFormQuestionOption>(null);
+const question = computed(() => useSubmissionStore().current.question);
+const option = computed(() => useSubmissionStore().current.option);
 const QuestionOptionComponent = computed(() => {
-  switch (props.question.type) {
+  switch (question.value.type) {
     case "yes_no":
     case "yes_no_icon":
       return YesNoVue;
@@ -24,29 +24,22 @@ const QuestionOptionComponent = computed(() => {
       return DatePickerVue;
   }
 });
-watch(selectedOption, () => console.log(selectedOption.value));
-function selectOption(opt: IFormQuestionOption) {
-  if (selectedOption.value && selectedOption.value.id === opt.id) {
-    selectedOption.value = null;
-  } else {
-    selectedOption.value = opt;
-  }
-}
 </script>
 
 <template>
   <div class="question-detail">
     <div class="header-actions">
       <div>
-        <NuxtLink to="/" class="back">
+        <a class="back" @click="$emit('back')">
           <ChevronLeftIcon class="w-5 h-5 mt-1" />
           BACK
-        </NuxtLink>
+        </a>
       </div>
       <!-- has next button + button on Top -->
       <CoreButton
         v-if="question.hasNext && question.nextButtonOnTop"
         class="btn-next"
+        @click="$emit('next')"
       >
         Next
       </CoreButton>
@@ -60,9 +53,9 @@ function selectOption(opt: IFormQuestionOption) {
       <Component
         :is="QuestionOptionComponent"
         :type="question.type"
-        :selected="selectedOption"
+        :selected="option"
         :options="question.options"
-        @selected="selectOption"
+        @selected="$emit('selected', $event)"
       />
     </div>
     <div class="footer-actions">
@@ -70,6 +63,7 @@ function selectOption(opt: IFormQuestionOption) {
       <CoreButton
         v-if="question.hasNext && !question.nextButtonOnTop"
         class="btn-next"
+        @click="$emit('next')"
       >
         Next
       </CoreButton>
@@ -112,16 +106,16 @@ function selectOption(opt: IFormQuestionOption) {
   @apply flex-1 flex flex-col justify-center items-center;
 
   :deep(h1) {
-    @apply text-4xl font-extrabold text-catania-primary !important;
+    @apply text-4xl font-extrabold text-catania-primary pt-4 !important;
   }
 
   :deep(.options) {
     button {
-      @apply px-8 h-12 text-2xl uppercase text-catania-primary font-extrabold transition-colors;
+      @apply px-8 h-10 text-lg uppercase text-catania-primary font-extrabold transition-colors;
 
       &.selected,
       &:hover {
-        @apply bg-catania-primary text-white;
+        @apply bg-catania-primary text-white border-catania-primary;
       }
     }
   }

@@ -30,7 +30,7 @@ const buttonClass = computed(() => {
       result.push("bg-transparent");
       break;
     case "outline":
-      result.push("border", "border-gray-300", "hover:border-gray-600");
+      result.push("border-2", "border-gray-300", "hover:border-gray-600");
       break;
   }
   return result;
