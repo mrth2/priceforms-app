@@ -70,7 +70,7 @@ const sidebarOpen = ref(false);
 </script>
 
 <template>
-  <div>
+  <div class="admin-page scroller">
     <TransitionRoot as="template" :show="sidebarOpen">
       <Dialog
         as="div"
@@ -292,7 +292,7 @@ const sidebarOpen = ref(false);
       </div>
 
       <main class="flex-1">
-        <div class="py-6">
+        <div class="pt-6">
           <div class="mx-auto px-4 sm:px-6 md:px-8">
             <h1 class="text-3xl font-bold text-gray-900">
               {{ route.meta.title }}
@@ -328,4 +328,8 @@ const sidebarOpen = ref(false);
   </div>
 </template>
 
-<style scoped lang="postcss"></style>
+<style scoped lang="postcss">
+.admin-page {
+  @apply overflow-y-auto h-screen;
+}
+</style>

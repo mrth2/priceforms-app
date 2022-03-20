@@ -3,6 +3,7 @@ import { useFormStore } from "~~/store/form";
 
 definePageMeta({
   layout: "auth",
+  middleware: "auth",
 });
 
 const { login } = useStrapiAuth();

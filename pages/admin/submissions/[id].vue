@@ -10,6 +10,7 @@ import SubmissionDetail from "~~/components/admin/submissions/SubmissionDetail.v
 definePageMeta({
   layout: "admin",
   title: "Submission",
+  middleware: "auth",
 });
 
 const route = useRoute();
@@ -34,7 +35,7 @@ const { pending, data } = useAsyncData<{ data: any }>("submission", () =>
             }
             subscriber {
               data {
-                attributes{
+                attributes {
                   firstName
                   lastName
                   email
@@ -76,6 +77,10 @@ watch(pending, () => {
 const nuxtApp = useNuxtApp();
 const submission = computed<IFormSubmission>(() =>
   pending.value ? null : nuxtApp.$strapiParser(data.value, "formSubmission")
+);
+// reorder data by question order ASC
+const submissionData = computed(() =>
+  submission.value?.data.sort((a, b) => a.order - b.order)
 );
 const category = computed<IFormCategory>(() =>
   pending.value || !submission.value
@@ -148,11 +153,11 @@ async function deleteSubmission() {
           <!-- Question answered -->
           <div class="flow-root">
             <ul
-              v-if="submission.data?.length"
+              v-if="submissionData && submissionData?.length"
               role="list"
               class="divide-y divide-gray-200"
             >
-              <li v-for="item in submission.data" :key="item.qid" class="py-4">
+              <li v-for="item in submissionData" :key="item.qid" class="py-4">
                 <div class="flex space-x-3">
                   <div class="flex-1 space-y-1">
                     <div class="flex items-center justify-between">

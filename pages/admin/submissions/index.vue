@@ -15,6 +15,7 @@ definePageMeta({
   layout: "admin",
   title: "Submissions",
   description: "View submissions from your form!",
+  middleware: "auth",
 });
 
 const { $dateFormat } = useNuxtApp();
@@ -108,7 +109,9 @@ const submissions = computed(() => {
         subscriber: {
           id: s.attributes.subscriber?.data?.id,
           ...s.attributes.subscriber?.data?.attributes,
-          fullName: useNuxtApp().$fullname(s.attributes.subscriber?.data?.attributes),
+          fullName: useNuxtApp().$fullname(
+            s.attributes.subscriber?.data?.attributes
+          ),
         },
       }))
       .sort((a, b) => {
