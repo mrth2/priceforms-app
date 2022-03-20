@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ImageFragment } from '~/types/graphql';
 import { strapiParser } from '~~/services/helper';
 import { IForm, IFormCategory, IFormCategoryFlow, IFormQuestion } from '~~/types/form';
+import { useSubmissionStore } from './submission';
 
 const socialIcons = [{
   type: 'facebook',
@@ -45,11 +46,6 @@ export const useFormStore = defineStore('form', {
         return state.categories.find(category => category.id === categoryId)?.flows?.[0]?.flow?.questions?.[0]
       }
     },
-    getFirstQuestion: (state) => {
-      return (flowId: number) => {
-        return state.flows.find(flow => flow.id === flowId)?.questions[0];
-      }
-    },
     getQuestionById: (state) => {
       return (qid: number) => {
         let result: IFormQuestion | undefined;
@@ -63,16 +59,7 @@ export const useFormStore = defineStore('form', {
         return result;
       }
     },
-    getOrderedQuestions: (state) => {
-      // extract all questions
-      const allQuestions = state.flows.reduce((acc, flow) => acc.concat(flow.questions), [] as IFormQuestion[]);
-      // sort questions by flow ordering in the category then question order
-      return allQuestions.sort((a, b) => {
-        if (a.flowId === b.flowId) {
-          return 1
-        }
-      });
-    }
+    getCurrentCategory: (state) => state.categories.find((c) => c.id === useSubmissionStore().submission?.category?.id),
   },
   actions: {
     // load form & categories metadata
@@ -318,6 +305,11 @@ export const useFormStore = defineStore('form', {
           })),
         }
       });
+    },
+    getAllQuestions(): IFormQuestion[] {
+      return this.getCurrentCategory?.flows.reduce((acc, item) => {
+        return acc.concat(item?.flow?.questions || []);
+      }, [] as IFormQuestion[]) || [];
     }
   }
 });

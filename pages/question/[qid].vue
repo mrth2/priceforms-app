@@ -21,6 +21,11 @@ const question = computed(() =>
   formStore.getQuestionById(parseInt(route.params.qid as string))
 );
 function initCurrentQuestionAndOption() {
+  // direct back to home if there's no data
+  if (!submission.value || !submission.value.data) {
+    router.push("/");
+    return;
+  }
   // set current question
   submissionStore.setCurrentQuestion(question.value);
   // load selected option from localstorage if any
@@ -64,20 +69,13 @@ watch(
   }
 );
 
-const currentCategory = computed(() =>
-  formStore.categories.find((c) => c.id === submission.value.category?.id)
-);
+const currentCategory = computed(() => formStore.getCurrentCategory);
 // back to category page if no category selected
 if (!currentCategory.value) {
   router.push("/cases");
 }
 // get all question in current category to calculate progress
-const allQuestions = computed(
-  () =>
-    currentCategory.value?.flows.reduce((acc, item) => {
-      return acc.concat(item?.flow?.questions || []);
-    }, [] as IFormQuestion[]) || []
-);
+const allQuestions = computed(() => formStore.getAllQuestions());
 const progress = computed(
   () =>
     (90 * allQuestions.value.findIndex((q) => q.id === question.value.id) + 1) /
@@ -127,17 +125,11 @@ function selectOption(opt: ISubmissionOption) {
     }
   }
   submissionStore.setCurrentQuestionOption(selectedOption.value);
-  if (
-    selectedOption.value &&
-    selectedOption.value["minPrice"] &&
-    selectedOption.value["maxPrice"]
-  ) {
-    submissionStore.setCurrentEstimation({
-      minPrice: selectedOption.value["minPrice"],
-      maxPrice: selectedOption.value["maxPrice"],
-      currency: selectedOption.value["currency"],
-    });
-  }
+  submissionStore.setCurrentEstimation({
+    minPrice: selectedOption.value["minPrice"] || 0,
+    maxPrice: selectedOption.value["maxPrice"] || 0,
+    currency: selectedOption.value["currency"],
+  });
   // if question has next button => wait for next button click
   if (question.value.hasNext) {
     return;

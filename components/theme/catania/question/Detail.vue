@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ChevronLeftIcon } from "@heroicons/vue/solid";
-import { IFormQuestion, IFormQuestionOption } from "~~/types/form";
+import { IFormPricing } from "~~/types/form";
 import YesNoVue from "./type/YesNo.vue";
 import IconListVue from "./type/IconList.vue";
 import DatePickerVue from "./type/DatePicker.vue";
@@ -12,8 +12,15 @@ defineEmits(["selected", "next", "back"]);
 const submissionStore = useSubmissionStore();
 const question = computed(() => submissionStore.current.question);
 const option = computed(() => submissionStore.current.option);
-const estimation = computed(() => submissionStore.current.estimation);
-console.log(question.value.options)
+const submission = computed(() => submissionStore.submission);
+const totalEstimation = computed<IFormPricing>(() => submissionStore.getTotalEstimation(question.value.id));
+const estimation = computed<IFormPricing>(() => ({
+  minPrice:
+    totalEstimation.value.minPrice + submissionStore.current.estimation.minPrice,
+  maxPrice:
+    totalEstimation.value.maxPrice + submissionStore.current.estimation.maxPrice,
+  currency: submission.value.currency,
+}));
 const QuestionOptionComponent = computed(() => {
   switch (question.value.type) {
     case "yes_no":
@@ -52,7 +59,6 @@ const QuestionOptionComponent = computed(() => {
       <span class="price">
         {{ $formatPrice(estimation.minPrice, estimation.currency) }} -
         {{ $formatPrice(estimation.maxPrice, estimation.currency) }}
-        <!-- $26,000 - $120,000 -->
       </span>
     </div>
     <div class="question-content">
@@ -116,7 +122,7 @@ const QuestionOptionComponent = computed(() => {
     @apply bg-catania-primary text-white border-r-0 rounded-r-none;
   }
   .price {
-    @apply text-catania-primary border-l-0 rounded-l-none;
+    @apply w-60 text-catania-primary border-l-0 rounded-l-none;
   }
 }
 .question-content {

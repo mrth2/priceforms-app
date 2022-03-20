@@ -3,6 +3,7 @@ import { strapiParser } from "~~/services/helper";
 import { IForm, IFormQuestion, IFormQuestionOption, IFormSubmission, IFormPricing } from "~~/types/form";
 import type { ISubmissionOption } from "~~/types/form";
 import { useAppStore } from "./app";
+import { useFormStore } from "./form";
 export const useSubmissionStore = defineStore('submission', {
   state: () => ({
     submission: {} as IFormSubmission,
@@ -16,6 +17,34 @@ export const useSubmissionStore = defineStore('submission', {
       } as IFormPricing
     }
   }),
+  getters: {
+    getTotalEstimation: (state) => {
+      return (excludeQuestionId: number | null) => {
+        const allQuestions = useFormStore().getAllQuestions();
+        let totalMinPrice = 0, totalMaxPrice = 0;
+        state.submission.data
+          .filter(d => !excludeQuestionId || d.qid !== excludeQuestionId)
+          .forEach(d => {
+            const question = allQuestions.find(q => q.id === d.qid);
+            let minPrice = 0, maxPrice = 0;
+            if (question) {
+              const option = question?.options?.find(o => o.id === d.oid);
+              if (option) {
+                minPrice = option.minPrice;
+                maxPrice = option.maxPrice;
+              }
+            }
+            totalMinPrice += minPrice;
+            totalMaxPrice += maxPrice;
+          });
+        return {
+          minPrice: totalMinPrice,
+          maxPrice: totalMaxPrice,
+          currency: state.submission.currency
+        }
+      }
+    }
+  },
   actions: {
     setCurrentQuestion(question: IFormQuestion) {
       this.current.question = question;
@@ -78,7 +107,9 @@ export const useSubmissionStore = defineStore('submission', {
     async saveSubmission() {
       const strapi = useStrapi4();
       const { id, ...submission } = this.submission as IFormSubmission;
+      const totalEstimation = this.getTotalEstimation() as IFormPricing;
       const payload = {
+        ...totalEstimation,
         zip: submission?.zip,
         subscriber: submission?.subscriber?.id,
         form: submission?.form?.id,
