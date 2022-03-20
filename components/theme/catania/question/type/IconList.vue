@@ -52,6 +52,7 @@ defineEmits(["selected"]);
     }
     &.selected,
     &:hover {
+      @apply bg-catania-primary;
       .icon-active {
         @apply block;
       }

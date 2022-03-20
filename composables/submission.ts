@@ -3,25 +3,34 @@ import { IFormSubmission } from "~~/types/form";
 const LS_KEY = 'submission';
 export const getSubmission = (): IFormSubmission => {
   try {
-    const submission = localStorage.getItem(LS_KEY);
-    return JSON.parse(submission);
+    if (typeof window.localStorage !== 'undefined') {
+      const submission = localStorage.getItem(LS_KEY);
+      return JSON.parse(submission);
+    }
   } catch (e) {
-    return null;
+    console.log(e);
   }
+  return null;
 };
 
 export const storeSubmission = (submission: IFormSubmission) => {
   try {
-    localStorage.setItem(LS_KEY, JSON.stringify(submission));
+    if (typeof window.localStorage !== 'undefined') {
+      localStorage.setItem(LS_KEY, JSON.stringify(submission));
+    }
   } catch (e) {
-    console.error(e);
+    console.log(e);
   }
+  return null;
 };
 
 export const clearSubmission = () => {
   try {
-    localStorage.removeItem(LS_KEY);
+    if (typeof window.localStorage !== 'undefined') {
+      localStorage.removeItem(LS_KEY);
+    }
   } catch (e) {
-    console.error(e);
+    console.log(e);
   }
+  return null;
 };

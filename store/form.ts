@@ -309,6 +309,7 @@ export const useFormStore = defineStore('form', {
     },
     // initialize category tree, with ordered flows inside each category
     initCategories() {
+      if (!this.form || !this.flows.length) return;
       this.categories = (this.form.categories as IFormCategory[]).map((category) => {
         return {
           ...category,

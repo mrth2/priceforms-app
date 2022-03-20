@@ -36,7 +36,7 @@ export const useSubmissionStore = defineStore('submission', {
     setProgress(progress: IFormSubmission['progress']) {
       this.submission.progress = progress;
     },
-    answerQuestion({ question, answer, option }: { question: IFormQuestion, answer: string, option?: IFormQuestionOption }) {
+    answerQuestion({ question, answer, option, order }: { question: IFormQuestion, answer: string, option?: IFormQuestionOption, order: number }) {
       // filter out current question from data
       const newData = (this.submission.data as IFormSubmission['data']).filter(d => d.qid !== question.id);
       // append new question answer
@@ -48,6 +48,7 @@ export const useSubmissionStore = defineStore('submission', {
         question: question.question,
         answer,
         at: new Date().toISOString(),
+        order
       });
       this.submission.data = newData;
       // save data path. IMPORTANT: data path won't be changed the order to keep order of flow

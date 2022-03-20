@@ -10,6 +10,7 @@ definePageMeta({
   layout: "form",
   title: "Question",
 });
+const router = useRouter();
 const route = useRoute();
 const formStore = useFormStore();
 const submissionStore = useSubmissionStore();
@@ -19,35 +20,90 @@ const form = computed(() => formStore.form);
 const question = computed(() =>
   formStore.getQuestionById(parseInt(route.params.qid as string))
 );
-submissionStore.setCurrentQuestion(question.value);
+function initCurrentQuestionAndOption() {
+  // set current question
+  submissionStore.setCurrentQuestion(question.value);
+  // load selected option from localstorage if any
+  const answered = submission.value.data.find(
+    (d) => d.qid === question.value.id
+  );
+  if (answered) {
+    // answer has optionId
+    if (answered.oid) {
+      const option = question.value.options.find((o) => o.id === answered.oid);
+      if (option) {
+        submissionStore.setCurrentQuestionOption(option);
+      }
+    }
+    // answer is an ISODate string
+    else if (
+      answered.answer &&
+      question.value.type === "date_picker" &&
+      useNuxtApp().$isIsoDate(answered.answer)
+    ) {
+      submissionStore.setCurrentQuestionOption(new Date(answered.answer));
+    }
+    // answer is non option ( for yes / no question)
+    else if (["yes_no", "yes_no_icon"].includes(question.value.type)) {
+      submissionStore.setCurrentQuestionOption({
+        id: answered.answer.toLowerCase(),
+        value: answered.answer,
+      } as unknown as IFormQuestionOption);
+    }
+  }
+}
+initCurrentQuestionAndOption();
 watch(
   () => route.params.qid,
   () => {
     if (!question.value) {
-      throw new Error("Question not found");
+      // throw new Error("Question not found");
     } else {
-      submissionStore.setCurrentQuestion(question.value);
+      initCurrentQuestionAndOption();
     }
   }
 );
-const allQuestions = computed(() =>
-  formStore.flows.reduce((acc, flow) => {
-    return acc.concat(flow.questions);
-  }, [] as IFormQuestion[])
+
+const currentCategory = computed(() =>
+  formStore.categories.find((c) => c.id === submission.value.category?.id)
 );
-const totalQuestions = computed(() =>
-  formStore.flows.reduce((acc, flow) => acc + flow.questions.length, 0)
+// back to category page if no category selected
+if (!currentCategory.value) {
+  router.push("/cases");
+}
+// get all question in current category to calculate progress
+const allQuestions = computed(
+  () =>
+    currentCategory.value?.flows.reduce((acc, item) => {
+      return acc.concat(item?.flow?.questions || []);
+    }, [] as IFormQuestion[]) || []
 );
-console.log(formStore.categories);
 const progress = computed(
   () =>
     (90 * allQuestions.value.findIndex((q) => q.id === question.value.id) + 1) /
-      totalQuestions.value +
+      allQuestions.value.length +
     10
 );
 useAppStore().setCurrentProgress({
   label: question.value.title,
   value: progress.value,
+});
+
+const currentFlow = computed(
+  () =>
+    currentCategory.value.flows.find(
+      (item) => item.flow.id === question.value.flowId
+    ).flow
+);
+const currentQuestionIndex = computed(() =>
+  currentFlow.value.questions.findIndex((q) => q.id === question.value.id)
+);
+const currentQuestionOrder = computed(() => {
+  const index = allQuestions.value.findIndex((q) => q.id === question.value.id);
+  if (index > -1) {
+    return index + 1;
+  }
+  return 1;
 });
 
 const selectedOption = ref<ISubmissionOption>(null);
@@ -78,14 +134,6 @@ function selectOption(opt: ISubmissionOption) {
   // otherwise goNext
   goNext();
 }
-
-const router = useRouter();
-const currentFlow = computed(() =>
-  formStore.flows.find((flow) => flow.id === question.value.flowId)
-);
-const currentQuestionIndex = computed(() =>
-  currentFlow.value.questions.findIndex((q) => q.id === question.value.id)
-);
 function goBack() {
   let prevQuestion: IFormQuestion;
   // last question is in this flow
@@ -121,6 +169,7 @@ function goNext() {
     submissionStore.answerQuestion({
       question: question.value,
       answer: option.toISOString(),
+      order: currentQuestionOrder.value,
     });
   } else {
     const realOption = option as IFormQuestionOption;
@@ -128,6 +177,7 @@ function goNext() {
       question: question.value,
       answer: realOption.value,
       option: realOption,
+      order: currentQuestionOrder.value,
     });
     // if selected option has next flow, go for it
     if (realOption.nextFlow) {

@@ -15,5 +15,6 @@ export default defineNuxtPlugin(nuxtApp => {
       // save to LS
       storeSubmission(state.submission);
     });
+    console.log('app:created:done');
   })
 });

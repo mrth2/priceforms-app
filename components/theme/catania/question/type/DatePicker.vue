@@ -3,13 +3,10 @@ import { ChevronDownIcon } from "@heroicons/vue/solid";
 import { useAppStore } from "~~/store/app";
 
 const props = defineProps<{
-  selected: string;
+  selected: Date | null;
 }>();
 const emit = defineEmits(["selected"]);
 
-const propSelected = computed(() =>
-  useNuxtApp().$isIsoDate(props.selected) ? new Date(props.selected) : null
-);
 const selectedDate = reactive<{
   day: number;
   month: string;
@@ -19,13 +16,17 @@ const selectedDate = reactive<{
   month: null,
   year: null,
 });
-if (propSelected.value) {
-  selectedDate.month = propSelected.value.toLocaleString("default", {
-    month: "short",
-  });
-  selectedDate.year = propSelected.value.getFullYear();
-  selectedDate.day = propSelected.value.getDate();
+function initialSelectedDate() {
+  if (props.selected) {
+    selectedDate.month = props.selected.toLocaleString("default", {
+      month: "short",
+    });
+    selectedDate.year = props.selected.getFullYear();
+    selectedDate.day = props.selected.getDate();
+  }
 }
+initialSelectedDate();
+watch(() => props.selected, initialSelectedDate);
 
 const months = [
   "Jan",
@@ -71,10 +72,7 @@ function submitDate() {
     });
     return;
   }
-  emit(
-    "selected",
-    new Date(selectedDate.year, month, selectedDate.day)
-  );
+  emit("selected", new Date(selectedDate.year, month, selectedDate.day));
 }
 </script>
 
@@ -101,9 +99,9 @@ function submitDate() {
       </select>
       <ChevronDownIcon class="arrow" />
     </div>
-    <CoreButton class="!text-white !px-4 !text-lg !h-12" @click="submitDate"
-      >SUBMIT</CoreButton
-    >
+    <CoreButton class="!text-white !px-4 !text-lg !h-12" @click="submitDate">
+      SUBMIT
+    </CoreButton>
   </div>
 </template>
 
@@ -116,7 +114,7 @@ function submitDate() {
   }
 
   select {
-    @apply border-2 border-gray-300 rounded w-[120px] pl-5 py-2 appearance-none text-catania-primary text-lg font-bold;
+    @apply border-2 border-gray-300 rounded w-[120px] pl-5 py-2 appearance-none text-catania-primary text-lg font-bold cursor-pointer;
   }
 
   .arrow {
