@@ -22,7 +22,7 @@ const question = computed(() =>
 );
 function initCurrentQuestionAndOption() {
   // direct back to home if there's no data
-  if (!submission.value || !submission.value.data) {
+  if (!submission.value || !submission.value.data || !question.value) {
     router.push("/");
     return;
   }
@@ -126,9 +126,9 @@ function selectOption(opt: ISubmissionOption) {
   }
   submissionStore.setCurrentQuestionOption(selectedOption.value);
   submissionStore.setCurrentEstimation({
-    minPrice: selectedOption.value["minPrice"] || 0,
-    maxPrice: selectedOption.value["maxPrice"] || 0,
-    currency: selectedOption.value["currency"],
+    minPrice: selectedOption.value?.["minPrice"] || 0,
+    maxPrice: selectedOption.value?.["maxPrice"] || 0,
+    currency: submission.value.currency,
   });
   // if question has next button => wait for next button click
   if (question.value.hasNext) {
@@ -201,10 +201,16 @@ function goNext() {
       const nextFlow = formStore.flows.find(
         (flow) => flow.id === realOption.nextFlow.id
       );
+      console.log(formStore.flows);
+      console.log(realOption);
       console.log(nextFlow);
       nextQuestion = nextFlow?.questions[0];
-    } else {
-      //
+    } 
+    else {
+      // if there's no next question in the flow => end form
+      if (!nextQuestion) {
+        console.log('end form');
+      }
     }
   }
   // go to nextQuestion

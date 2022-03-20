@@ -146,7 +146,7 @@ export const useFormStore = defineStore('form', {
                     label
                     number
                   }
-                  categories (sort: "ordering:ASC")  {
+                  categories (sort: "ordering:ASC", pagination:{pageSize: 50}) {
                     data {
                       id
                       attributes {
