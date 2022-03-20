@@ -213,7 +213,14 @@ export const useFormStore = defineStore('form', {
         const { data } = await graphql(`
           ${ImageFragment}
           query FLOWS {
-            formCategoryFlows(filters:{form: {subDomain: {eq : "${subDomain}"}}}) {
+            formCategoryFlows(
+              filters: {
+                form: {subDomain: {eq : "${subDomain}"}}
+              },
+              pagination: {
+                pageSize: 50
+              }
+            ) {
               data {
                 id
                 attributes {
