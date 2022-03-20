@@ -12,6 +12,7 @@ export default defineNuxtPlugin(nuxtApp => {
 
     // subscribe to changes and reflect on LS
     submissionStore.$subscribe(async (mutation, state) => {
+      console.log(mutation);
       // save to LS
       storeSubmission(state.submission);
     });

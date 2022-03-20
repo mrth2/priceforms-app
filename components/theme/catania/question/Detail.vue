@@ -12,6 +12,8 @@ defineEmits(["selected", "next", "back"]);
 const submissionStore = useSubmissionStore();
 const question = computed(() => submissionStore.current.question);
 const option = computed(() => submissionStore.current.option);
+const estimation = computed(() => submissionStore.current.estimation);
+console.log(question.value.options)
 const QuestionOptionComponent = computed(() => {
   switch (question.value.type) {
     case "yes_no":
@@ -39,7 +41,7 @@ const QuestionOptionComponent = computed(() => {
       <!-- has next button + button on Top -->
       <CoreButton
         v-if="question.hasNext && question.nextButtonOnTop"
-        class="btn-next"
+        class="btn-next top"
         @click="$emit('next')"
       >
         Next
@@ -47,10 +49,20 @@ const QuestionOptionComponent = computed(() => {
     </div>
     <div v-if="question.showEstimate" class="estimation">
       <span class="label">YOUR CASE ESTIMATE</span>
-      <span class="price">$26,000 - $120,000</span>
+      <span class="price">
+        {{ $formatPrice(estimation.minPrice, estimation.currency) }} -
+        {{ $formatPrice(estimation.maxPrice, estimation.currency) }}
+        <!-- $26,000 - $120,000 -->
+      </span>
     </div>
     <div class="question-content">
-      <h1>{{ question.question }}</h1>
+      <!-- wrap h1 if more than 8 words -->
+      <h1 :class="{ wrap: question.question.split(' ').length > 8 }">
+        {{ question.question }}
+      </h1>
+      <p v-if="question.description" class="text-catania-secondary">
+        {{ question.description }}
+      </p>
       <Component
         :is="QuestionOptionComponent"
         :type="question.type"
@@ -84,13 +96,17 @@ const QuestionOptionComponent = computed(() => {
   }
 }
 .btn-next {
-  @apply uppercase font-bold h-9 px-4 tracking-wide;
+  @apply uppercase font-bold text-lg h-12 px-6 tracking-wide;
+
+  &.top {
+    @apply h-10;
+  }
 }
 .footer-actions {
   @apply flex justify-center;
 }
 .estimation {
-  @apply flex flex-row justify-center my-4;
+  @apply flex flex-row justify-center mt-10;
 
   .label,
   .price {
@@ -107,16 +123,21 @@ const QuestionOptionComponent = computed(() => {
   @apply flex-1 flex flex-col justify-center items-center;
 
   :deep(h1) {
-    @apply text-4xl font-extrabold text-catania-primary pt-4 !important;
+    @apply text-3xl font-extrabold text-catania-primary my-0 pt-6 !important;
+
+    &.wrap {
+      @apply px-16;
+    }
   }
 
   :deep(.options) {
+    @apply my-10;
     button {
       @apply px-8 h-10 text-lg uppercase text-catania-primary font-extrabold transition-colors;
 
       &.selected,
       &:hover {
-        @apply bg-catania-primary text-white border-catania-primary;
+        @apply bg-catania-primary !text-white border-catania-primary;
       }
     }
   }

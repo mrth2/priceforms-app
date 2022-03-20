@@ -78,13 +78,13 @@ export interface IFormCategory {
   updatedAt: string
 }
 
-interface IPricing {
+export interface IFormPricing {
   minPrice: number
   maxPrice: number
   currency: 'usd' | 'gbp' | 'eur'
 }
 
-export interface IFormQuestionOption extends IPricing {
+export interface IFormQuestionOption extends IFormPricing {
   id: number
   value: string
   icon: IMedia
@@ -117,7 +117,7 @@ export interface IFormCategoryFlow {
   category: IFormCategory
 }
 
-export interface IFormSubmission extends IPricing {
+export interface IFormSubmission extends IFormPricing {
   id: number
   zip: string
   owner: IUser

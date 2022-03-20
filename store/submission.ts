@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { strapiParser } from "~~/services/helper";
-import { IForm, IFormCategoryFlow, IFormQuestion, IFormQuestionOption, IFormSubmission } from "~~/types/form";
+import { IForm, IFormQuestion, IFormQuestionOption, IFormSubmission, IFormPricing } from "~~/types/form";
 import type { ISubmissionOption } from "~~/types/form";
 import { useAppStore } from "./app";
 export const useSubmissionStore = defineStore('submission', {
@@ -9,6 +9,11 @@ export const useSubmissionStore = defineStore('submission', {
     current: {
       question: null as IFormQuestion | null,
       option: null as ISubmissionOption | null,
+      estimation: {
+        minPrice: 0,
+        maxPrice: 0,
+        currency: 'usd'
+      } as IFormPricing
     }
   }),
   actions: {
@@ -17,6 +22,17 @@ export const useSubmissionStore = defineStore('submission', {
     },
     setCurrentQuestionOption(option: ISubmissionOption) {
       this.current.option = option;
+    },
+    setCurrentEstimation(estimation: IFormPricing) {
+      this.current.estimation = estimation;
+    },
+    increaseCurrentEstimation(minPrice: number, maxPrice: number) {
+      this.current.estimation.minPrice += minPrice;
+      this.current.estimation.maxPrice += maxPrice;
+    },
+    decreaseCurrentEstimation(minPrice: number, maxPrice: number) {
+      this.current.estimation.minPrice -= minPrice;
+      this.current.estimation.maxPrice -= maxPrice;
     },
     setSubmission(submission: IFormSubmission) {
       this.submission = submission;

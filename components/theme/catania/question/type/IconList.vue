@@ -9,7 +9,8 @@ defineEmits(["selected"]);
 </script>
 
 <template>
-  <div class="options">
+  <!-- condensed options list with reduced margin & padding when more than 6 options -->
+  <div class="options" :class="{ condensed: options.length > 6 }">
     <div
       v-for="option in options"
       :key="option.id"
@@ -24,7 +25,7 @@ defineEmits(["selected"]);
         <img class="icon-active" :src="option.iconActive.url" />
       </div>
       <div class="option-item-title">
-        <h2>{{ option.value }}</h2>
+        <h2 v-html="option.value.replace(/\\n/g, '<br/>')" />
       </div>
     </div>
   </div>
@@ -32,10 +33,22 @@ defineEmits(["selected"]);
 
 <style scoped lang="postcss">
 .options {
-  @apply flex flex-wrap justify-center gap-4 pb-6 max-w-xl mx-auto;
+  @apply flex flex-wrap justify-center gap-4 max-w-xl mx-auto;
+
+  &.condensed {
+    @apply !my-4;
+
+    .option-item {
+      @apply h-32;
+      .option-item-title {
+        @apply text-xs;
+      }
+    }
+  }
 
   .option-item {
     @apply flex flex-col items-center justify-center gap-1 w-32 h-36 bg-gray-200 cursor-pointer p-4 transition-colors;
+    max-width: calc(100% / 3 - 8px);
     flex: 1 0 30%;
 
     .option-item-image {
@@ -48,7 +61,7 @@ defineEmits(["selected"]);
       }
     }
     .option-item-title {
-      @apply text-center text-sm leading-4 h-6;
+      @apply text-gray-600 text-center text-sm leading-4 h-6;
     }
     &.selected,
     &:hover {

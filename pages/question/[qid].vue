@@ -127,6 +127,17 @@ function selectOption(opt: ISubmissionOption) {
     }
   }
   submissionStore.setCurrentQuestionOption(selectedOption.value);
+  if (
+    selectedOption.value &&
+    selectedOption.value["minPrice"] &&
+    selectedOption.value["maxPrice"]
+  ) {
+    submissionStore.setCurrentEstimation({
+      minPrice: selectedOption.value["minPrice"],
+      maxPrice: selectedOption.value["maxPrice"],
+      currency: selectedOption.value["currency"],
+    });
+  }
   // if question has next button => wait for next button click
   if (question.value.hasNext) {
     return;
@@ -142,12 +153,29 @@ function goBack() {
   }
   // find previous flow
   else {
+    // find previous question from current data
+    const currentQuestionInData = submission.value.data.find(
+      (d) => d.qid === question.value.id
+    );
+    const answered = submission.value.data
+      // sort DESC by order in data
+      .sort((a, b) => b.order - a.order)
+      // get the first one after current question
+      // current question is answered OR
+      // current question is not answered yet => go to last answered question ( usually the one before this )
+      .find(
+        (d) => !currentQuestionInData || d.order < currentQuestionInData.order
+      );
+    // found => assign the prevQuestion
+    if (answered) {
+      prevQuestion = allQuestions.value.find((q) => q.id === answered.qid);
+    }
   }
   console.log(prevQuestion);
   if (prevQuestion) {
     router.push(`/question/${prevQuestion.id}`);
   } else {
-    router.push("/cases");
+    // router.push("/cases");
   }
 }
 
@@ -157,13 +185,10 @@ function goNext() {
   if (!option && !question.value.canSelectMulti) return;
 
   let nextQuestion: IFormQuestion;
-  console.log(currentFlow.value);
   // next question still in this flow
   if (currentQuestionIndex.value < currentFlow.value.questions.length - 1) {
     nextQuestion = currentFlow.value.questions[currentQuestionIndex.value + 1];
   }
-  console.log(nextQuestion);
-
   // if question is date picker, simply update data and move on
   if (option instanceof Date) {
     submissionStore.answerQuestion({
@@ -185,6 +210,7 @@ function goNext() {
         (flow) => flow.id === realOption.nextFlow.id
       );
       console.log(nextFlow);
+      nextQuestion = nextFlow?.questions[0];
     } else {
       //
     }

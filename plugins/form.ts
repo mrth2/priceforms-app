@@ -1,4 +1,4 @@
-import { IFormSubmission } from "~~/types/form";
+import { IForm, IFormSubmission } from "~~/types/form";
 
 export default defineNuxtPlugin(nuxtApp => {
   return {
@@ -19,6 +19,14 @@ export default defineNuxtPlugin(nuxtApp => {
           case 'gbp':
             return '£';
         }
+      },
+      formatPrice: (price: IFormSubmission['minPrice'], currency: IFormSubmission['currency']) => {
+        const formatter = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          maximumFractionDigits: 0,
+          currency,
+        });
+        return formatter.format(price);
       }
     }
   }
