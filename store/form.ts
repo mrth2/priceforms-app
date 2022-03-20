@@ -97,11 +97,10 @@ export const useFormStore = defineStore('form', {
                       id
                       code
                     }
-                  }
-                  button {
-                    promo
-                    return
-                    joining
+                    ... on ComponentPriceFormZipButton {
+                      id
+                      button
+                    }
                   }
                   registerForm {
                     title
@@ -145,6 +144,20 @@ export const useFormStore = defineStore('form', {
                   phone {
                     label
                     number
+                  }
+                  estimationPage {
+                    title
+                    minimum
+                    maximum
+                    note
+                  }
+                  thankyouPage {
+                    title
+                    message
+                    buttonReturn
+                    returnLink
+                    buttonPromo
+                    promoLink
                   }
                   categories (sort: "ordering:ASC", pagination:{pageSize: 50}) {
                     data {

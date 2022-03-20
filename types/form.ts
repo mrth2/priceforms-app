@@ -17,12 +17,8 @@ export interface IForm {
   zip: Array<{
     hint?: string
     code?: string
+    button: string
   }>
-  button: {
-    joining: string
-    return: string
-    promo: string
-  }
   term: string
   registerForm: {
     title: string
@@ -62,6 +58,20 @@ export interface IForm {
   phone: {
     label: string
     number: string
+  }
+  estimationPage: {
+    title: string
+    minimum: string
+    maximum: string
+    note: string
+  }
+  thankyouPage: {
+    title: string
+    message: string
+    buttonReturn: string
+    returnLink: string
+    buttonPromo: string
+    promoLink: string
   }
 }
 

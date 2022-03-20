@@ -12,7 +12,5 @@ useAppStore().setCurrentProgress({
 </script>
 
 <template>
-  <div></div>
+  <ThemeCataniaFormThankyou />
 </template>
-
-<style scoped lang="ts"></style>

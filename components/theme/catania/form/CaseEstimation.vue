@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ChevronLeftIcon } from "@heroicons/vue/solid";
+import { useFormStore } from "~~/store/form";
 import { useSubmissionStore } from "~~/store/submission";
 
 const submissionStore = useSubmissionStore();
@@ -8,6 +9,7 @@ const estimatedResult = computed(() => ({
   maxPrice: submissionStore.submission.maxPrice,
   currency: submissionStore.submission.currency,
 }));
+const translation = computed(() => useFormStore().form.estimationPage);
 defineEmits(["back"]);
 </script>
 
@@ -21,13 +23,13 @@ defineEmits(["back"]);
         </a>
       </div>
     </div>
-    <h1>YOUR CASE ESTIMATE IS:</h1>
+    <h1>{{ translation.title }}</h1>
     <div class="result">
       <div class="result-item">
         <span class="price">
           {{ $formatPrice(estimatedResult.minPrice, estimatedResult.currency) }}
         </span>
-        <span class="label">Minimum</span>
+        <span class="label">{{ translation.minimum }}</span>
       </div>
       <span class="separator"> - </span>
       <div class="result-item">
@@ -35,14 +37,10 @@ defineEmits(["back"]);
           {{ $formatPrice(estimatedResult.maxPrice, estimatedResult.currency) }}
           <strong class="-ml-4">*</strong>
         </span>
-        <span class="label">Maximum</span>
+        <span class="label">{{ translation.maximum }}</span>
       </div>
     </div>
-    <div class="explaination">
-      *This is the fair value range that we use; however be sure to have a
-      skilled attorney review the details of your case as there are hundreds of
-      factors that may either increase or decrease this value.
-    </div>
+    <div class="explaination">{{ translation.note }}</div>
     <CoreButton
       class="text-lg uppercase font-bold px-6"
       @click="$router.push('/thank-you')"
