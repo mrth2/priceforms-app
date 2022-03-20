@@ -19,9 +19,12 @@ export const useSubmissionStore = defineStore('submission', {
   }),
   getters: {
     getTotalEstimation: (state) => {
+      // calculate total estimation, excluding current question
       return (excludeQuestionId: number | null) => {
+        // get all questions in the current category
         const allQuestions = useFormStore().getAllQuestions();
-        let totalMinPrice = 0, totalMaxPrice = 0;
+        let totalMinPrice = 0, totalMaxPrice = 0, highestDiscount = 0;
+        // add up all prices
         state.submission.data
           .filter(d => !excludeQuestionId || d.qid !== excludeQuestionId)
           .forEach(d => {
@@ -36,10 +39,13 @@ export const useSubmissionStore = defineStore('submission', {
             }
             totalMinPrice += minPrice;
             totalMaxPrice += maxPrice;
+            if (d.discount > highestDiscount) highestDiscount = d.discount;
           });
+        // apply discount if any
+        const remain = (100 - highestDiscount) / 100;
         return {
-          minPrice: totalMinPrice,
-          maxPrice: totalMaxPrice,
+          minPrice: Math.ceil(totalMinPrice * remain),
+          maxPrice: Math.ceil(totalMaxPrice * remain),
           currency: state.submission.currency
         }
       }
@@ -54,14 +60,6 @@ export const useSubmissionStore = defineStore('submission', {
     },
     setCurrentEstimation(estimation: IFormPricing) {
       this.current.estimation = estimation;
-    },
-    increaseCurrentEstimation(minPrice: number, maxPrice: number) {
-      this.current.estimation.minPrice += minPrice;
-      this.current.estimation.maxPrice += maxPrice;
-    },
-    decreaseCurrentEstimation(minPrice: number, maxPrice: number) {
-      this.current.estimation.minPrice -= minPrice;
-      this.current.estimation.maxPrice -= maxPrice;
     },
     setSubmission(submission: IFormSubmission) {
       this.submission = submission;
@@ -81,7 +79,7 @@ export const useSubmissionStore = defineStore('submission', {
     setProgress(progress: IFormSubmission['progress']) {
       this.submission.progress = progress;
     },
-    answerQuestion({ question, answer, option, order }: { question: IFormQuestion, answer: string, option?: IFormQuestionOption, order: number }) {
+    answerQuestion({ question, answer, option, order, discount }: { question: IFormQuestion, answer: string, option?: IFormQuestionOption, order: number, discount: number }) {
       // filter out current question from data
       const newData = (this.submission.data as IFormSubmission['data']).filter(d => d.qid !== question.id);
       // append new question answer
@@ -93,7 +91,8 @@ export const useSubmissionStore = defineStore('submission', {
         question: question.question,
         answer,
         at: new Date().toISOString(),
-        order
+        order,
+        discount
       });
       this.submission.data = newData;
       // save data path. IMPORTANT: data path won't be changed the order to keep order of flow
@@ -102,6 +101,10 @@ export const useSubmissionStore = defineStore('submission', {
         this.submission.status = 'partial';
       }
       // save to server as soon as user answer a question
+      this.saveSubmission();
+    },
+    removeAnsweredQuestion(questionId: number) {
+      this.submission.data = (this.submission.data as IFormSubmission['data']).filter(d => d.qid !== questionId);
       this.saveSubmission();
     },
     async saveSubmission() {

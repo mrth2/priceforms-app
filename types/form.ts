@@ -136,6 +136,7 @@ export interface IFormSubmission extends IFormPricing {
     answer: string
     at: string
     order: number
+    discount: number
   }>
   dataPath: IFormCategoryFlow[]
   createdAt: string

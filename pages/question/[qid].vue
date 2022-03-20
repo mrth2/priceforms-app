@@ -34,7 +34,7 @@ function initCurrentQuestionAndOption() {
   );
   if (answered) {
     // answer has optionId
-    if (answered.oid) {
+    if (answered.oid && Number.isInteger(answered.oid)) {
       const option = question.value.options.find((o) => o.id === answered.oid);
       if (option) {
         submissionStore.setCurrentQuestionOption(option);
@@ -174,7 +174,11 @@ function goBack() {
 function goNext() {
   const option = submissionStore.current.option;
   // user must selected an option or question allow no answer
-  if (!option && !question.value.canSelectMulti) return;
+  if (!option && !question.value.canSelectMulti) {
+    // remove the answer of this question from data if found
+    submissionStore.removeAnsweredQuestion(question.value.id);
+    return;
+  }
 
   let nextQuestion: IFormQuestion;
   // next question still in this flow
@@ -187,6 +191,7 @@ function goNext() {
       question: question.value,
       answer: option.toISOString(),
       order: currentQuestionOrder.value,
+      discount: 0,
     });
   } else {
     const realOption = option as IFormQuestionOption;
@@ -195,21 +200,19 @@ function goNext() {
       answer: realOption.value,
       option: realOption,
       order: currentQuestionOrder.value,
+      // apply discount if any
+      discount: realOption.discountPercent || 0,
     });
     // if selected option has next flow, go for it
     if (realOption.nextFlow) {
       const nextFlow = formStore.flows.find(
         (flow) => flow.id === realOption.nextFlow.id
       );
-      console.log(formStore.flows);
-      console.log(realOption);
-      console.log(nextFlow);
       nextQuestion = nextFlow?.questions[0];
-    } 
-    else {
+    } else {
       // if there's no next question in the flow => end form
       if (!nextQuestion) {
-        console.log('end form');
+        console.log("end form");
       }
     }
   }
