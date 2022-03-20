@@ -76,11 +76,8 @@ if (!currentCategory.value) {
 }
 // get all question in current category to calculate progress
 const allQuestions = computed(() => formStore.getAllQuestions());
-const progress = computed(
-  () =>
-    (90 * allQuestions.value.findIndex((q) => q.id === question.value.id) + 1) /
-      allQuestions.value.length +
-    10
+const progress = computed(() =>
+  submissionStore.getCurrentProgress(question.value.id)
 );
 useAppStore().setCurrentProgress({
   label: question.value.title,
@@ -213,7 +210,7 @@ function goNext() {
       // if there's no next question in the flow => end form
       if (!nextQuestion) {
         console.log("end form");
-        router.push('/estimation');
+        router.push("/estimation");
       }
     }
   }

@@ -86,6 +86,10 @@ export const useSubmissionStore = defineStore('submission', {
     setProgress(progress: IFormSubmission['progress']) {
       this.submission.progress = progress;
     },
+    getCurrentProgress(questionId: number) {
+      const allQuestions = useFormStore().getAllQuestions();
+      return (90 * allQuestions.findIndex((q) => q.id === questionId) + 1) / allQuestions.length + 10;
+    },
     answerQuestion({ question, answer, option, order, discount }: { question: IFormQuestion, answer: string, option?: IFormQuestionOption, order: number, discount: number }) {
       // filter out current question from data & following questions in the ordered list
       // because when user answer a question, we need to remove all answered following questions in the data because they may not be valid to the latest updates of user journey
@@ -103,7 +107,8 @@ export const useSubmissionStore = defineStore('submission', {
         discount
       });
       this.submission.data = newData;
-      // save data path. IMPORTANT: data path won't be changed the order to keep order of flow
+      // update progress by current question progress
+      this.setProgress(this.getCurrentProgress(question.id));
       // auto set status to partial if it's not marked as complete
       if (this.submission.status !== 'complete') {
         this.submission.status = 'partial';
