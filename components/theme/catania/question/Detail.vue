@@ -123,13 +123,6 @@ const QuestionOptionComponent = computed(() => {
 .question-detail {
   @apply mt-6 mb-10 flex-1 flex flex-col relative;
 }
-.header-actions {
-  @apply absolute inset-0 bottom-auto;
-  @apply flex flex-row justify-between items-center;
-  .back {
-    @apply cursor-pointer text-catania-secondary font-semibold flex flex-row gap-0.5 items-center;
-  }
-}
 .btn-next {
   @apply uppercase font-bold text-lg h-12 px-6 tracking-wide;
 

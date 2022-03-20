@@ -213,6 +213,7 @@ function goNext() {
       // if there's no next question in the flow => end form
       if (!nextQuestion) {
         console.log("end form");
+        router.push('/estimation');
       }
     }
   }

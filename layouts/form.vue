@@ -22,4 +22,11 @@ const currentProgress = computed(() => useAppStore().currentProgress);
   @apply rounded-lg shadow-main bg-white px-10 flex flex-col items-stretch;
   min-height: calc(100vh - 300px);
 }
+:deep(.header-actions) {
+  @apply absolute inset-0 bottom-auto;
+  @apply flex flex-row justify-between items-center;
+  .back {
+    @apply cursor-pointer text-catania-secondary font-semibold flex flex-row gap-0.5 items-center;
+  }
+}
 </style>
