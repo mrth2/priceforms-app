@@ -17,7 +17,7 @@ const selectedDate = reactive<{
   year: null,
 });
 function initialSelectedDate() {
-  if (props.selected) {
+  if (props.selected && props.selected instanceof Date) {
     selectedDate.month = props.selected.toLocaleString("default", {
       month: "short",
     });
