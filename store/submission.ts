@@ -80,8 +80,9 @@ export const useSubmissionStore = defineStore('submission', {
       this.submission.progress = progress;
     },
     answerQuestion({ question, answer, option, order, discount }: { question: IFormQuestion, answer: string, option?: IFormQuestionOption, order: number, discount: number }) {
-      // filter out current question from data
-      const newData = (this.submission.data as IFormSubmission['data']).filter(d => d.qid !== question.id);
+      // filter out current question from data & following questions in the ordered list
+      // because when user answer a question, we need to remove all answered following questions in the data because they may not be valid to the latest updates of user journey
+      const newData = (this.submission.data as IFormSubmission['data']).filter(d => d.qid !== question.id && d.order <= order);
       // append new question answer
       newData.push({
         fid: question.flowId,

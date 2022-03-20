@@ -167,7 +167,7 @@ function goBack() {
   if (prevQuestion) {
     router.push(`/question/${prevQuestion.id}`);
   } else {
-    // router.push("/cases");
+    router.push("/cases");
   }
 }
 
