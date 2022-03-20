@@ -73,7 +73,7 @@ onMounted(() => {
     }
   }
   .label {
-    @apply text-xs font-semibold text-catania-secondary tracking-wide leading-tight uppercase absolute transform -translate-x-1/2;
+    @apply w-max text-xs font-semibold text-catania-secondary tracking-wide leading-tight uppercase absolute transform -translate-x-1/2;
   }
 }
 </style>
