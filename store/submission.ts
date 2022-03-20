@@ -49,7 +49,14 @@ export const useSubmissionStore = defineStore('submission', {
           currency: state.submission.currency
         }
       }
-    }
+    },
+    getHighestDiscount: (state) => {
+      let highestDiscount = 0;
+      state.submission.data.forEach(d => {
+        if (d.discount && d.discount > highestDiscount) highestDiscount = d.discount;
+      });
+      return highestDiscount;
+    },
   },
   actions: {
     setCurrentQuestion(question: IFormQuestion) {

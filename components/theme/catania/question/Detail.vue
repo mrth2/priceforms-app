@@ -13,12 +13,24 @@ const submissionStore = useSubmissionStore();
 const question = computed(() => submissionStore.current.question);
 const option = computed(() => submissionStore.current.option);
 const submission = computed(() => submissionStore.submission);
-const totalEstimation = computed<IFormPricing>(() => submissionStore.getTotalEstimation(question.value.id));
+const totalEstimation = computed<IFormPricing>(() =>
+  submissionStore.getTotalEstimation(question.value.id)
+);
+// highest discount in percentage
+const highestDiscount = computed(() => submissionStore.getHighestDiscount);
+// remaining percent, use to multiply the price directly ( already calculated the remaining percent )
+const remainingPercent = computed(() => (100 - highestDiscount.value) / 100);
 const estimation = computed<IFormPricing>(() => ({
-  minPrice:
-    totalEstimation.value.minPrice + submissionStore.current.estimation.minPrice,
-  maxPrice:
-    totalEstimation.value.maxPrice + submissionStore.current.estimation.maxPrice,
+  minPrice: Math.ceil(
+    (totalEstimation.value.minPrice +
+      submissionStore.current.estimation.minPrice) *
+      remainingPercent.value
+  ),
+  maxPrice: Math.ceil(
+    (totalEstimation.value.maxPrice +
+      submissionStore.current.estimation.maxPrice) *
+      remainingPercent.value
+  ),
   currency: submission.value.currency,
 }));
 const QuestionOptionComponent = computed(() => {
@@ -57,8 +69,25 @@ const QuestionOptionComponent = computed(() => {
     <div v-if="question.showEstimate" class="estimation">
       <span class="label">YOUR CASE ESTIMATE</span>
       <span class="price">
-        {{ $formatPrice(estimation.minPrice, estimation.currency) }} -
-        {{ $formatPrice(estimation.maxPrice, estimation.currency) }}
+        <template v-if="estimation.minPrice > 0 || estimation.maxPrice > 0">
+          {{ $formatPrice(estimation.minPrice, estimation.currency) }} -
+          {{ $formatPrice(estimation.maxPrice, estimation.currency) }}
+        </template>
+        <template v-else>
+          {{ $getCurrencySymbol(estimation.currency) }}0,000
+        </template>
+        <!-- show discount hint when applied & user selected option -->
+        <strong
+          v-if="
+            highestDiscount > 0 &&
+            option &&
+            (estimation.minPrice > 0 || estimation.maxPrice > 0)
+          "
+          v-tippy="{ content: `Discounted by ${highestDiscount}%` }"
+          class="discount-note"
+        >
+          (*)
+        </strong>
       </span>
     </div>
     <div class="question-content">
@@ -116,13 +145,16 @@ const QuestionOptionComponent = computed(() => {
 
   .label,
   .price {
-    @apply px-5 h-10 border border-catania-secondary rounded text-center leading-9 font-bold;
+    @apply px-5 h-12 border-2 rounded text-center font-bold leading-10;
+  }
+  .discount-note {
+    @apply text-xs absolute mt-2 ml-1 cursor-pointer text-center;
   }
   .label {
-    @apply bg-catania-primary text-white border-r-0 rounded-r-none;
+    @apply bg-catania-primary border-catania-primary text-white border-r-0 rounded-r-none;
   }
   .price {
-    @apply w-60 text-catania-primary border-l-0 rounded-l-none;
+    @apply w-60 border-catania-outline text-catania-primary border-l-0 rounded-l-none;
   }
 }
 .question-content {
