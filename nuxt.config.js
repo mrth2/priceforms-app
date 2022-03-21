@@ -33,10 +33,5 @@ export default defineNuxtConfig({
       postcssOptions: require('./postcss.config.js'),
     },
     transpile: ['@headlessui/vue', '@heroicons/vue'],
-  },
-  vite: {
-    optimizeDeps: {
-      exclude: ['@fortawesome/fontawesome-svg-core']
-    }
   }
 })
