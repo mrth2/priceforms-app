@@ -30,23 +30,24 @@ const question = computed(() => useSubmissionStore().current.question);
 
 <style scoped lang="postcss">
 .options {
-  @apply flex flex-row gap-5 flex-wrap justify-center px-16 lg:px-0;
+  @apply flex flex-col gap-5 flex-wrap justify-center items-center px-16 lg:px-0;
 
   &.hasEstimate {
+    @apply flex-row;
     /* @apply grid grid-cols-2 grid-flow-row-dense; */
 
     .option-item {
       @apply !text-catania-secondary !font-semibold;
+
+      @screen lg {
+        width: calc(50% - 20px);
+      }
     }
   }
 
   .option-item {
     @apply !px-20 !py-6 w-full;
     text-transform: unset !important;
-
-    @screen lg {
-      width: calc(50% - 20px);
-    }
 
     :deep(.btn-content) {
       @apply whitespace-nowrap;
