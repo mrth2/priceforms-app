@@ -4,9 +4,8 @@ import { useSubmissionStore } from "~~/store/submission";
 
 const formStore = useFormStore();
 const submissionStore = useSubmissionStore();
-const submission = computed(() => submissionStore.submission);
+const submission = submissionStore.submission;
 const translation = computed(() => formStore.form.thankyouPage);
-console.log(translation.value)
 const banner = computed(() => formStore.form.thankyouBanner);
 </script>
 
