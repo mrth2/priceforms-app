@@ -158,7 +158,6 @@ export const useSubmissionStore = defineStore('submission', {
         progress: submission?.progress,
         stopAt: submission?.stopAt,
         data: JSON.stringify(submission?.data || []),
-        dataPath: submission?.dataPath?.map(p => p.id),
       };
       // update
       try {

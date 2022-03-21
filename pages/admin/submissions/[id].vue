@@ -49,16 +49,6 @@ const { pending, data } = useAsyncData<{ data: any }>("submission", () =>
             maxPrice
             currency
             data
-            dataPath {
-              id
-              flow {
-                data {
-                  attributes{
-                    name
-                  }
-                }
-              }
-            }
             createdAt
             updatedAt
           }
