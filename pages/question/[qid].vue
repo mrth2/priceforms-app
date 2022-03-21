@@ -2,7 +2,11 @@
 import { useAppStore } from "~~/store/app";
 import { useFormStore } from "~~/store/form";
 import { useSubmissionStore, DEFAULT_ESTIMATION } from "~~/store/submission";
-import { IFormQuestion, IFormQuestionOption } from "~~/types/form";
+import {
+  IFormCategoryFlow,
+  IFormQuestion,
+  IFormQuestionOption,
+} from "~~/types/form";
 import type { ISubmissionOption } from "~~/types/form";
 import ThemeCataniaQuestionDetail from "~~/components/theme/catania/question/Detail.vue";
 
@@ -207,6 +211,13 @@ function goNext() {
     submissionStore.removeAnsweredQuestion(question.value.id);
     return;
   }
+  let otherwiseFlow: IFormCategoryFlow;
+  // parse otherwise Flow if any
+  if (question.value.otherwiseFlow?.id) {
+    otherwiseFlow = formStore.flows.find(
+      (flow) => flow.id === question.value.otherwiseFlow.id
+    );
+  }
 
   let nextQuestion: IFormQuestion;
   // next question still in this flow
@@ -216,11 +227,8 @@ function goNext() {
   // user did not select any answer but this question allow empty
   if (!options.length && question.value.canSelectMulti) {
     // if question has otherwise flow => go to otherwise flow
-    if (question.value.otherwiseFlow?.id) {
-      const otherwiseFlow = formStore.flows.find(
-        (flow) => flow.id === question.value.otherwiseFlow.id
-      );
-      nextQuestion = otherwiseFlow?.questions[0];
+    if (otherwiseFlow) {
+      nextQuestion = otherwiseFlow?.questions?.[0];
     }
   }
   // if question is date picker, simply update data and move on
@@ -261,12 +269,18 @@ function goNext() {
       answers,
     });
   }
+
+  // if there are no nextQuestion in the current flow but there's otherwiseFlow configured
+  if (!nextQuestion && otherwiseFlow) {
+    nextQuestion = otherwiseFlow?.questions?.[0];
+  }
+
   // go to nextQuestion
   if (nextQuestion) {
     router.push(`/question/${nextQuestion.id}`);
   }
-  // if there's no next question in the flow => end form
-  else if (!nextQuestion) {
+  // if still there's no next question in the flow => end form
+  else {
     router.push("/estimation");
   }
 }
