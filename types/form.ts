@@ -73,6 +73,14 @@ export interface IForm {
     buttonPromo: string
     promoLink: string
   }
+  reviews: Array<{
+    id: number
+    name: string
+    avatar: IMedia
+    message: string
+    rating: number
+    at: string
+  }>
 }
 
 export interface IFormCategory {

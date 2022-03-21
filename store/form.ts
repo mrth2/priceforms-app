@@ -180,6 +180,20 @@ export const useFormStore = defineStore('form', {
                       }
                     }
                   }
+                  reviews (sort: "ordering:ASC") {
+                    data {
+                      id
+                      attributes {
+                        name
+                        message
+                        rating
+                        at
+                        avatar {
+                          ...Image
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -209,6 +223,13 @@ export const useFormStore = defineStore('form', {
                 flows: category.attributes.flows.map(item => ({
                   flow: strapiParser(item.flow)
                 })),
+              }
+            }),
+            reviews: (form.reviews as any).data.map(item => {
+              const parsedReview = strapiParser(item);
+              return {
+                ...parsedReview,
+                avatar: strapiParser(item.attributes.avatar, 'avatar'),
               }
             }),
           };
