@@ -120,7 +120,8 @@ function selectOption(opt: ISubmissionOption) {
   // otherwise toggle selected
   else {
     // already selected => de-select
-    if (currentOptions.value.find((o) => o["id"] === opt.id)) {
+    // only apply if the question has next button
+    if (question.value.hasNext && currentOptions.value.find((o) => o["id"] === opt.id)) {
       submissionStore.setCurrentQuestionOptions(
         currentOptions.value.filter((o) => o["id"] !== opt.id)
       );
