@@ -1,5 +1,4 @@
-import pkg from '@fortawesome/fontawesome-svg-core';
-const { library, config } = pkg;
+import { library, config } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import {
   faFacebookF,
