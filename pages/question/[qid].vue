@@ -213,8 +213,18 @@ function goNext() {
   if (currentQuestionIndex.value < currentFlow.value.questions.length - 1) {
     nextQuestion = currentFlow.value.questions[currentQuestionIndex.value + 1];
   }
+  // user did not select any answer but this question allow empty
+  if (!options.length && question.value.canSelectMulti) {
+    // if question has otherwise flow => go to otherwise flow
+    if (question.value.otherwiseFlow?.id) {
+      const otherwiseFlow = formStore.flows.find(
+        (flow) => flow.id === question.value.otherwiseFlow.id
+      );
+      nextQuestion = otherwiseFlow?.questions[0];
+    }
+  }
   // if question is date picker, simply update data and move on
-  if (options[0] instanceof Date) {
+  else if (options[0] instanceof Date) {
     submissionStore.answerQuestion({
       question: question.value,
       order: currentQuestionOrder.value,
@@ -225,7 +235,9 @@ function goNext() {
         },
       ],
     });
-  } else {
+  }
+  // user pick one or more answer
+  else {
     const answers = [];
     for (const option of options) {
       const realOption = option as IFormQuestionOption;
