@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { IFormQuestionOption } from "~~/types/form";
+import { IFormQuestion, IFormQuestionOption } from "~~/types/form";
 
 defineProps<{
+  type: IFormQuestion["type"];
   selected: IFormQuestionOption[];
   options: IFormQuestionOption[];
 }>();
@@ -10,7 +11,13 @@ defineEmits(["selected"]);
 
 <template>
   <!-- condensed options list with reduced margin & padding when more than 6 options -->
-  <div class="options" :class="{ condensed: options.length > 6 }">
+  <div
+    class="options"
+    :class="{
+      condensed: options.length > 6,
+      'image-list': type === 'image_list',
+    }"
+  >
     <div
       v-for="option in options"
       :key="option.id"
@@ -21,8 +28,17 @@ defineEmits(["selected"]);
       @click="$emit('selected', option)"
     >
       <div class="option-item-image">
-        <img class="icon" :src="option.icon.url" />
-        <img class="icon-active" :src="option.iconActive.url" />
+        <img v-if="option.icon" class="icon" :src="option.icon.url" />
+        <img
+          v-if="option.iconActive"
+          class="icon-active"
+          :src="option.iconActive.url"
+        />
+        <img
+          v-else-if="option.icon"
+          class="icon-active"
+          :src="option.icon.url"
+        />
       </div>
       <div class="option-item-title">
         <h2 v-html="option.value.replace(/\\n/g, '<br/>')" />
@@ -34,6 +50,22 @@ defineEmits(["selected"]);
 <style scoped lang="postcss">
 .options {
   @apply flex flex-wrap justify-center gap-4 max-w-xl mx-auto;
+
+  &.image-list {
+    @apply grid grid-cols-4 grid-flow-row-dense max-w-full;
+
+    .option-item {
+      @apply !max-w-full !w-auto !h-auto !p-2;
+
+      .option-item-image {
+        @apply !w-full !max-w-none !h-full flex justify-center items-center;
+      }
+
+      .option-item-title {
+        @apply mt-auto;
+      }
+    }
+  }
 
   &.condensed {
     @apply !my-4;
@@ -52,9 +84,10 @@ defineEmits(["selected"]);
     flex: 1 0 30%;
 
     .option-item-image {
+      @apply h-16 max-w-[64px];
       .icon,
       .icon-active {
-        @apply h-16 max-w-[64px] object-contain;
+        @apply object-contain;
       }
       .icon-active {
         @apply hidden;

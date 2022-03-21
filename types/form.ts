@@ -115,7 +115,7 @@ export interface IFormQuestion {
   id: number
   title: string
   question: string
-  type: 'yes_no' | 'yes_no_icon' | 'date_picker' | 'icon_list' | 'option_list'
+  type: 'yes_no' | 'yes_no_icon' | 'date_picker' | 'icon_list' | 'option_list' | 'image_list'
   description: string
   showEstimate: boolean
   hasNext: boolean

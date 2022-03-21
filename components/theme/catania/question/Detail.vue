@@ -65,6 +65,7 @@ const QuestionOptionComponent = computed(() => {
     case "yes_no_icon":
       return YesNoVue;
     case "icon_list":
+    case "image_list":
       return IconListVue;
     case "option_list":
       return OptionListVue;
