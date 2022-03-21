@@ -19,7 +19,7 @@ const question = computed(() => useSubmissionStore().current.question);
       type="outline"
       class="option-item"
       :class="{
-        selected: selected.find(s => s.id === option.id),
+        selected: selected.find((s) => s.id === option.id),
       }"
       @click="$emit('selected', option)"
     >
@@ -30,13 +30,21 @@ const question = computed(() => useSubmissionStore().current.question);
 
 <style scoped lang="postcss">
 .options {
-  @apply flex flex-col gap-5;
+  @apply flex flex-row gap-5 flex-wrap justify-center px-16 lg:px-0;
 
   &.hasEstimate {
-    @apply grid grid-cols-2 grid-flow-row-dense;
+    /* @apply grid grid-cols-2 grid-flow-row-dense; */
 
     .option-item {
-      @apply !text-catania-secondary !font-semibold;
+      @apply !text-catania-secondary !font-semibold w-full;
+
+      @screen lg {
+        width: calc(50% - 20px);
+      }
+
+      :deep(.btn-content) {
+        @apply whitespace-nowrap;
+      }
     }
   }
 
