@@ -39,6 +39,10 @@ onMounted(() => {
   updateIndicatorTranslate();
   // also on progress changes
   watch(() => props.progress, updateIndicatorTranslate);
+  window.addEventListener("resize", updateIndicatorTranslate);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", updateIndicatorTranslate);
 });
 </script>
 
