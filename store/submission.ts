@@ -129,14 +129,6 @@ export const useSubmissionStore = defineStore('submission', {
       this.submission.data = newData;
       // update progress by current question progress
       this.setProgress(this.getCurrentProgress(question.id));
-      // auto mark as complete if progress is 100%
-      if (this.submission.progress === 100) {
-        this.submission.status = 'complete';
-      }
-      // auto set status to partial if it's not marked as complete
-      else if (this.submission.status !== 'complete') {
-        this.submission.status = 'partial';
-      }
       // save to server as soon as user answer a question
       this.saveSubmission();
     },
@@ -148,14 +140,26 @@ export const useSubmissionStore = defineStore('submission', {
       const strapi = useStrapi4();
       const { id, ...submission } = this.submission as IFormSubmission;
       const totalEstimation = this.getTotalEstimation() as IFormPricing;
+      // auto populate submission status base on current progress
+      let status: IFormSubmission['status'];
+      const progress = submission.progress || 0;
+      if (progress >= 100) {
+        status = 'complete';
+      }
+      else if (progress <= 10) {
+        status = 'register';
+      }
+      else {
+        status = 'partial';
+      }
       const payload = {
         ...totalEstimation,
         zip: submission?.zip,
         subscriber: submission?.subscriber?.id,
         form: submission?.form?.id,
         category: submission?.category?.id,
-        status: submission?.status,
-        progress: submission?.progress,
+        status,
+        progress,
         stopAt: submission?.stopAt,
         data: JSON.stringify(submission?.data || []),
       };
