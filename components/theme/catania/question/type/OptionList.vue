@@ -36,21 +36,21 @@ const question = computed(() => useSubmissionStore().current.question);
     /* @apply grid grid-cols-2 grid-flow-row-dense; */
 
     .option-item {
-      @apply !text-catania-secondary !font-semibold w-full;
-
-      @screen lg {
-        width: calc(50% - 20px);
-      }
-
-      :deep(.btn-content) {
-        @apply whitespace-nowrap;
-      }
+      @apply !text-catania-secondary !font-semibold;
     }
   }
 
   .option-item {
-    @apply !px-20 !py-6;
+    @apply !px-20 !py-6 w-full;
     text-transform: unset !important;
+
+    @screen lg {
+      width: calc(50% - 20px);
+    }
+
+    :deep(.btn-content) {
+      @apply whitespace-nowrap;
+    }
   }
 }
 </style>
