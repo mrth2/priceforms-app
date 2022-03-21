@@ -52,13 +52,18 @@ defineEmits(["selected"]);
   @apply flex flex-wrap justify-center gap-4 max-w-xl mx-auto;
 
   &.image-list {
-    @apply grid grid-cols-4 grid-flow-row-dense max-w-full;
+    @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 grid-flow-row-dense max-w-full;
 
     .option-item {
       @apply !max-w-full !w-auto !h-auto !p-2;
 
       .option-item-image {
         @apply !w-full !max-w-none !h-full flex justify-center items-center;
+
+        .icon,
+        .icon-active {
+          @apply min-w-[60px];
+        }
       }
 
       .option-item-title {
@@ -68,10 +73,10 @@ defineEmits(["selected"]);
   }
 
   &.condensed {
-    @apply !my-4;
+    @apply !my-4 max-w-2xl;
 
     .option-item {
-      @apply h-32;
+      @apply lg:h-32;
       .option-item-title {
         @apply text-xs;
       }
@@ -79,9 +84,12 @@ defineEmits(["selected"]);
   }
 
   .option-item {
-    @apply flex flex-col items-center justify-center gap-1 w-32 h-36 bg-gray-200 cursor-pointer p-4 transition-colors;
-    max-width: calc(100% / 3 - 8px);
-    flex: 1 0 30%;
+    @apply flex flex-col items-center justify-center gap-1 w-full lg:w-32 h-44 md:h-40 lg:h-36 bg-gray-200 cursor-pointer p-4 transition-colors;
+    max-width: calc(100% / 2 - 8px);
+    @screen md {
+      max-width: calc(100% / 3 - 8px);
+      flex: 1 0 30%;
+    }
 
     .option-item-image {
       @apply h-16 max-w-[64px];

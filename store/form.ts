@@ -286,8 +286,10 @@ export const useFormStore = defineStore('form', {
                     }
                     hasNext
                     nextButtonOnTop
+                    backButtonOnBottom
                     showEstimate
                     canSelectMulti
+                    canSelectNone
                     otherwiseFlow {
                       data {
                         id

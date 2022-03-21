@@ -206,7 +206,7 @@ function goBack() {
 function goNext() {
   const options = submissionStore.current.options;
   // user must selected an option or question allow no answer
-  if (!options.length && !question.value.canSelectMulti) {
+  if (!options.length && !question.value.canSelectNone) {
     // remove the answer of this question from data if found
     submissionStore.removeAnsweredQuestion(question.value.id);
     return;
@@ -225,7 +225,7 @@ function goNext() {
     nextQuestion = currentFlow.value.questions[currentQuestionIndex.value + 1];
   }
   // user did not select any answer but this question allow empty
-  if (!options.length && question.value.canSelectMulti) {
+  if (!options.length && question.value.canSelectNone) {
     // if question has otherwise flow => go to otherwise flow
     if (otherwiseFlow) {
       nextQuestion = otherwiseFlow?.questions?.[0];

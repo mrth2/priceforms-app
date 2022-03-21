@@ -120,7 +120,9 @@ export interface IFormQuestion {
   showEstimate: boolean
   hasNext: boolean
   nextButtonOnTop: boolean
+  backButtonOnBottom: boolean
   canSelectMulti: boolean
+  canSelectNone: boolean
   options: IFormQuestionOption[]
   otherwiseFlow: IFormCategoryFlow
   // custom on front end only after load data

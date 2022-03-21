@@ -17,7 +17,7 @@ const hasNext = computed(
 );
 const options = computed(() => submissionStore.current.options);
 const canGoNext = computed(
-  () => question.value.canSelectMulti || options.value.length
+  () => question.value.canSelectNone || options.value.length
 );
 const nextMsg = "Please select at least one option";
 const topButtonTippy = computed(() => ({
@@ -78,7 +78,7 @@ const QuestionOptionComponent = computed(() => {
 <template>
   <div class="question-detail">
     <div class="header-actions">
-      <div>
+      <div v-if="!question.backButtonOnBottom">
         <a class="back" @click="$emit('back')">
           <ChevronLeftIcon class="w-5 h-5 mt-1" />
           BACK
@@ -88,7 +88,7 @@ const QuestionOptionComponent = computed(() => {
       <CoreButton
         v-if="hasNext && question.nextButtonOnTop"
         v-tippy="topButtonTippy"
-        class="btn-next top"
+        class="action-button top"
         :class="{ disabled: !canGoNext }"
         @click="canGoNext && $emit('next')"
       >
@@ -136,11 +136,20 @@ const QuestionOptionComponent = computed(() => {
       />
     </div>
     <div class="footer-actions">
+      <!-- has back button on top -->
+      <CoreButton
+        v-if="question.backButtonOnBottom"
+        type="delete"
+        class="action-button"
+        @click="$emit('back')"
+      >
+        Back
+      </CoreButton>
       <!-- has next button + button not on Top -->
       <CoreButton
         v-if="hasNext && !question.nextButtonOnTop"
         v-tippy="bottomButtonTippy"
-        class="btn-next"
+        class="action-button"
         :class="{ disabled: !canGoNext }"
         @click="canGoNext && $emit('next')"
       >
@@ -154,18 +163,18 @@ const QuestionOptionComponent = computed(() => {
 .question-detail {
   @apply mt-6 mb-10 flex-1 flex flex-col relative;
 }
-.btn-next {
+.action-button {
   @apply uppercase font-bold text-lg h-12 px-6 tracking-wide;
 
   &.top {
     @apply h-10;
   }
   &.disabled {
-    @apply opacity-50 cursor-not-allowed;
+    @apply cursor-not-allowed bg-catania-secondary;
   }
 }
 .footer-actions {
-  @apply flex justify-center;
+  @apply flex justify-center gap-4;
 }
 .estimation {
   @apply flex flex-row justify-center mt-10;
