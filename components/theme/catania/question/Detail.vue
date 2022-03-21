@@ -16,6 +16,20 @@ const hasNext = computed(
   () => question.value.hasNext || question.value.canSelectMulti
 );
 const options = computed(() => submissionStore.current.options);
+const canGoNext = computed(
+  () => question.value.canSelectMulti || options.value.length
+);
+const nextMsg = "Please select at least one option";
+const topButtonTippy = computed(() => ({
+  content: canGoNext.value ? null : nextMsg,
+  interactive: true,
+  placement: "left",
+}));
+const bottomButtonTippy = computed(() => ({
+  content: canGoNext.value ? null : nextMsg,
+  interactive: true,
+  placement: "top",
+}));
 const submission = computed(() => submissionStore.submission);
 const totalEstimation = computed<IFormPricing>(() =>
   submissionStore.getTotalEstimation(question.value.id)
@@ -72,8 +86,10 @@ const QuestionOptionComponent = computed(() => {
       <!-- has next button + button on Top -->
       <CoreButton
         v-if="hasNext && question.nextButtonOnTop"
+        v-tippy="topButtonTippy"
         class="btn-next top"
-        @click="$emit('next')"
+        :class="{ disabled: !canGoNext }"
+        @click="canGoNext && $emit('next')"
       >
         Next
       </CoreButton>
@@ -122,8 +138,10 @@ const QuestionOptionComponent = computed(() => {
       <!-- has next button + button not on Top -->
       <CoreButton
         v-if="hasNext && !question.nextButtonOnTop"
+        v-tippy="bottomButtonTippy"
         class="btn-next"
-        @click="$emit('next')"
+        :class="{ disabled: !canGoNext }"
+        @click="canGoNext && $emit('next')"
       >
         Next
       </CoreButton>
@@ -140,6 +158,9 @@ const QuestionOptionComponent = computed(() => {
 
   &.top {
     @apply h-10;
+  }
+  &.disabled {
+    @apply opacity-50 cursor-not-allowed;
   }
 }
 .footer-actions {
