@@ -3,7 +3,7 @@ import { useSubmissionStore } from "~~/store/submission";
 import { IFormQuestionOption } from "~~/types/form";
 
 defineProps<{
-  selected: IFormQuestionOption;
+  selected: IFormQuestionOption[];
   options: IFormQuestionOption[];
 }>();
 defineEmits(["selected"]);
@@ -19,7 +19,7 @@ const question = computed(() => useSubmissionStore().current.question);
       type="outline"
       class="option-item"
       :class="{
-        selected: option.id === selected?.id,
+        selected: selected.find(s => s.id === option.id),
       }"
       @click="$emit('selected', option)"
     >

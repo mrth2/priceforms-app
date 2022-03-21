@@ -18,6 +18,10 @@ const submissionStore = useSubmissionStore();
 const form = computed(() => formStore.form);
 const categoryForm = computed(() => form.value.categoryForm);
 const submission = computed(() => submissionStore.submission);
+// if submission has no saved zip or subscriber, go back to home
+if (!submission.value?.zip || !submission.value?.subscriber) {
+  router.push("/");
+}
 
 useAppStore().setCurrentProgress({
   label: categoryForm.value.progress,
@@ -26,7 +30,7 @@ useAppStore().setCurrentProgress({
 
 const categories = computed(() => form.value.categories);
 
-const selectedCategory = ref<IFormCategory>(submission.value.category);
+const selectedCategory = ref<IFormCategory>(submission.value?.category);
 function selectCategory(category: IFormCategory) {
   if (selectedCategory.value && selectedCategory.value.id === category.id) {
     selectedCategory.value = null;

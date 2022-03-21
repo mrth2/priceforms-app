@@ -2,7 +2,7 @@
 import { IFormQuestionOption } from "~~/types/form";
 
 defineProps<{
-  selected: IFormQuestionOption;
+  selected: IFormQuestionOption[];
   options: IFormQuestionOption[];
 }>();
 defineEmits(["selected"]);
@@ -16,7 +16,7 @@ defineEmits(["selected"]);
       :key="option.id"
       class="option-item"
       :class="{
-        selected: option.id === selected?.id,
+        selected: selected.find((s) => s.id === option.id),
       }"
       @click="$emit('selected', option)"
     >

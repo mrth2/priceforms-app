@@ -154,3 +154,5 @@ export interface IFormSubmission extends IFormPricing {
 }
 
 export type ISubmissionOption = IFormQuestionOption | Date | null;
+
+export type ISubmissionEstimation = IFormPricing & { qid: number | null };

@@ -4,7 +4,9 @@ import { ThumbDownIcon, ThumbUpIcon } from "@heroicons/vue/outline";
 
 const props = defineProps<{
   type: IFormQuestion["type"];
-  selected: IFormQuestionOption | { id: "yes" | "no", value: 'YES' | 'NO' };
+  selected: Array<
+    IFormQuestionOption | { id: "yes" | "no"; value: "YES" | "NO" }
+  >;
   options: IFormQuestionOption[];
 }>();
 defineEmits(["selected"]);
@@ -26,7 +28,7 @@ const options = computed(() => {
 });
 
 function isSelected(opt: typeof options.value[0]) {
-  return opt.id === props.selected?.id;
+  return props.selected.find((s) => s.id === opt.id);
 }
 function getIcon(opt: typeof options.value[0]) {
   if (opt.value === "YES") {

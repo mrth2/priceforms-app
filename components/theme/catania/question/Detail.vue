@@ -11,7 +11,11 @@ defineEmits(["selected", "next", "back"]);
 
 const submissionStore = useSubmissionStore();
 const question = computed(() => submissionStore.current.question);
-const option = computed(() => submissionStore.current.option);
+// auto apply next button if question hasNext or can select multi option
+const hasNext = computed(
+  () => question.value.hasNext || question.value.canSelectMulti
+);
+const options = computed(() => submissionStore.current.options);
 const submission = computed(() => submissionStore.submission);
 const totalEstimation = computed<IFormPricing>(() =>
   submissionStore.getTotalEstimation(question.value.id)
@@ -20,19 +24,27 @@ const totalEstimation = computed<IFormPricing>(() =>
 const highestDiscount = computed(() => submissionStore.getHighestDiscount);
 // remaining percent, use to multiply the price directly ( already calculated the remaining percent )
 const remainingPercent = computed(() => (100 - highestDiscount.value) / 100);
-const estimation = computed<IFormPricing>(() => ({
-  minPrice: Math.ceil(
-    (totalEstimation.value.minPrice +
-      submissionStore.current.estimation.minPrice) *
-      remainingPercent.value
-  ),
-  maxPrice: Math.ceil(
-    (totalEstimation.value.maxPrice +
-      submissionStore.current.estimation.maxPrice) *
-      remainingPercent.value
-  ),
-  currency: submission.value.currency,
-}));
+const estimation = computed<IFormPricing>(() => {
+  return {
+    minPrice: Math.ceil(
+      (totalEstimation.value.minPrice +
+        // plus the current estimate price if it's the same question
+        (submissionStore.current.estimation.qid === question.value.id
+          ? submissionStore.current.estimation.minPrice
+          : 0)) *
+        remainingPercent.value
+    ),
+    maxPrice: Math.ceil(
+      (totalEstimation.value.maxPrice +
+        // plus the current estimate price if it's the same question
+        (submissionStore.current.estimation.qid === question.value.id
+          ? submissionStore.current.estimation.maxPrice
+          : 0)) *
+        remainingPercent.value
+    ),
+    currency: submission.value.currency,
+  };
+});
 const QuestionOptionComponent = computed(() => {
   switch (question.value.type) {
     case "yes_no":
@@ -59,7 +71,7 @@ const QuestionOptionComponent = computed(() => {
       </div>
       <!-- has next button + button on Top -->
       <CoreButton
-        v-if="question.hasNext && question.nextButtonOnTop"
+        v-if="hasNext && question.nextButtonOnTop"
         class="btn-next top"
         @click="$emit('next')"
       >
@@ -80,7 +92,7 @@ const QuestionOptionComponent = computed(() => {
         <strong
           v-if="
             highestDiscount > 0 &&
-            option &&
+            options.length &&
             (estimation.minPrice > 0 || estimation.maxPrice > 0)
           "
           v-tippy="{ content: `Discounted by ${highestDiscount}%` }"
@@ -101,7 +113,7 @@ const QuestionOptionComponent = computed(() => {
       <Component
         :is="QuestionOptionComponent"
         :type="question.type"
-        :selected="option"
+        :selected="options"
         :options="question.options"
         @selected="$emit('selected', $event)"
       />
@@ -109,7 +121,7 @@ const QuestionOptionComponent = computed(() => {
     <div class="footer-actions">
       <!-- has next button + button not on Top -->
       <CoreButton
-        v-if="question.hasNext && !question.nextButtonOnTop"
+        v-if="hasNext && !question.nextButtonOnTop"
         class="btn-next"
         @click="$emit('next')"
       >

@@ -3,7 +3,7 @@ import { ChevronDownIcon } from "@heroicons/vue/solid";
 import { useAppStore } from "~~/store/app";
 
 const props = defineProps<{
-  selected: Date | null;
+  selected: Date[] | null;
 }>();
 const emit = defineEmits(["selected"]);
 
@@ -17,12 +17,16 @@ const selectedDate = reactive<{
   year: null,
 });
 function initialSelectedDate() {
-  if (props.selected && props.selected instanceof Date) {
-    selectedDate.month = props.selected.toLocaleString("default", {
+  if (
+    props.selected &&
+    props.selected.length &&
+    props.selected[0] instanceof Date
+  ) {
+    selectedDate.month = props.selected[0].toLocaleString("default", {
       month: "short",
     });
-    selectedDate.year = props.selected.getFullYear();
-    selectedDate.day = props.selected.getDate();
+    selectedDate.year = props.selected[0].getFullYear();
+    selectedDate.day = props.selected[0].getDate();
   }
 }
 initialSelectedDate();

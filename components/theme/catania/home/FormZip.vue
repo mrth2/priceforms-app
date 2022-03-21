@@ -11,6 +11,7 @@ const zipHint = computed(() => form.value.zip.find((item) => item.hint)?.hint);
 const zipCodes = computed(() =>
   form.value.zip.filter((item) => item.code).map((item) => item.code)
 );
+const zipButton = computed(() => form.value.zip.find((item) => item.button)?.button);
 
 const inputCode = ref("");
 const formInput = ref();
@@ -64,7 +65,7 @@ async function checkZip() {
           }"
           @click="checkZip"
         >
-          {{ form.button.joining }}
+          {{ zipButton }}
         </CoreButton>
       </div>
       <div class="agreement">

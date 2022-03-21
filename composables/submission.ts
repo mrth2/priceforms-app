@@ -15,13 +15,12 @@ export const getSubmission = (): IFormSubmission => {
 
 export const storeSubmission = (submission: IFormSubmission) => {
   try {
-    if (typeof window.localStorage !== 'undefined') {
+    if (typeof window.localStorage !== 'undefined' && submission) {
       localStorage.setItem(LS_KEY, JSON.stringify(submission));
     }
   } catch (e) {
     console.log(e);
   }
-  return null;
 };
 
 export const clearSubmission = () => {
@@ -32,5 +31,4 @@ export const clearSubmission = () => {
   } catch (e) {
     console.log(e);
   }
-  return null;
 };

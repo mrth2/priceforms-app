@@ -9,6 +9,9 @@ export default defineNuxtPlugin(nuxtApp => {
     if (submissionFromLS) {
       submissionStore.setSubmission(submissionFromLS);
     }
+    else {
+      clearSubmission();
+    }
 
     // subscribe to changes and reflect on LS
     submissionStore.$subscribe(async (mutation, state) => {
@@ -16,5 +19,5 @@ export default defineNuxtPlugin(nuxtApp => {
       storeSubmission(state.submission);
     });
     console.log('app:created:done');
-  })
+  });
 });

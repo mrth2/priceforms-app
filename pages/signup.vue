@@ -19,6 +19,10 @@ const registerForm = computed(() => form.value.registerForm);
 
 const submissionStore = useSubmissionStore();
 const submission = computed(() => submissionStore.submission);
+// if submission has no saved zip, go back to home
+if (!submission.value.zip) {
+  router.push("/");
+}
 
 useAppStore().setCurrentProgress({
   label: registerForm.value.progress,
@@ -115,6 +119,7 @@ async function signUp() {
     // direct to cases
     router.push("/cases");
   } catch (e) {
+    console.dir(e);
     error.value = e.error?.message || e.message;
     await nextTick();
     if (signupButton.value) {
