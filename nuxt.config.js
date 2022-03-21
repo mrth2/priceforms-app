@@ -2,7 +2,8 @@ import { defineNuxtConfig } from 'nuxt3'
 
 // https://v3.nuxtjs.org/docs/directory-structure/nuxt.config
 export default defineNuxtConfig({
-  ssr: process.env.NODE_ENV === 'development' ? false : true,
+  // ssr: process.env.NODE_ENV === 'development' ? false : true,
+  ssr: false,
   css: ['@fortawesome/fontawesome-svg-core/styles.css'],
   meta: {
     title: "PriceForms",
@@ -36,7 +37,7 @@ export default defineNuxtConfig({
   },
   vite: {
     optimizeDeps: {
-      include: ['@fortawesome/*']
+      include: ['@fortawesome/fontawesome-svg-core']
     }
   }
 })
