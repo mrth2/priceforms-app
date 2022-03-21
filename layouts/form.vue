@@ -19,7 +19,7 @@ const currentProgress = computed(() => useAppStore().currentProgress);
 
 <style scoped lang="postcss">
 .form-content {
-  @apply rounded-lg shadow-main bg-white px-10 flex flex-col items-stretch;
+  @apply rounded-lg shadow-main bg-white px-10 flex flex-col items-stretch mb-6 lg:mb-auto;
   min-height: calc(100vh - 300px);
 }
 :deep(.header-actions) {
