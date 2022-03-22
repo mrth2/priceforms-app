@@ -82,8 +82,8 @@ const Footer = computed(() =>
   }
 
   .page {
-    @apply bg-cover pb-10;
     padding: 0 var(--site-padding);
+    @apply bg-cover pb-5;
     min-height: calc(
       100vh - var(--header-height, 72px) - var(--footer-height, 88px)
     );
