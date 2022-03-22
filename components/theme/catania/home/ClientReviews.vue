@@ -6,13 +6,14 @@ const reviews = computed(() => formStore.form.reviews);
 </script>
 
 <template>
-  <div class="h-max">
+  <div class="h-max" :class="{ 'py-5': homeStyle === 'reviewBottom' }">
     <h2>CLIENT REVIEWS</h2>
     <ul
       class="list-reviews scroller"
       :class="{
         reviewRight: homeStyle === 'reviewRight',
         reviewBottom: homeStyle === 'reviewBottom',
+        'scroller--sm': homeStyle === 'reviewBottom'
       }"
     >
       <li v-for="item in reviews" :key="item.name" class="review-item">
@@ -54,7 +55,15 @@ h2 {
     margin: 0 10%;
 
     .review-item {
-      max-width: 400px;
+      min-width: 400px;
+
+      @screen md {
+        min-width: 70%;
+      }
+
+      @screen lg {
+        min-width: calc(50% - 8px);
+      }
     }
   }
   &.reviewRight {
@@ -71,7 +80,7 @@ h2 {
     .avatar {
       /* @apply flex flex-row items-center; */
       img {
-        @apply w-12 h-12 rounded-full object-cover mr-3;
+        @apply min-w-max w-12 h-12 rounded-full object-cover mr-3;
       }
     }
     .name {

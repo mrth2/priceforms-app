@@ -18,6 +18,10 @@ const form = computed(() => formStore.form);
 
 <style scoped lang="postcss">
 .intro {
-  @apply grid grid-cols-2;
+  @apply flex flex-col items-center gap-4 md:gap-0 pb-4 md:pb-0;
+
+  @screen md {
+    @apply grid grid-cols-2;
+  }
 }
 </style>

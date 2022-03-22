@@ -26,7 +26,7 @@ const isImage = computed(
 
 <style scoped lang="postcss">
 .intro-banner {
-  @apply max-h-[400px] h-full relative py-4;
+  @apply max-w-full max-h-[400px] h-full relative py-4 overflow-hidden;
 
   img {
     @apply object-cover w-full h-full;

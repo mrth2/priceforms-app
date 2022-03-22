@@ -35,7 +35,7 @@ const copyright = computed(() =>
   @apply pt-6 pb-12 bg-white;
 }
 .footer {
-  @apply max-w-form flex flex-row justify-between w-full text-xs font-light;
+  @apply max-w-form flex flex-col sm:flex-row items-center sm:justify-between w-full text-xs font-light;
 
   .policies {
     @apply flex gap-2 md:gap-4 xl:gap-6 font-normal;
