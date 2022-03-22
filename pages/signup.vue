@@ -208,10 +208,10 @@ async function signUp() {
           {{ registerForm.button }}
         </CoreButton>
       </div>
-      <NuxtLink to="/" class="back">
+      <!-- <NuxtLink to="/" class="back">
         <ChevronLeftIcon class="w-5 h-5 mt-1" />
         BACK
-      </NuxtLink>
+      </NuxtLink> -->
     </form>
   </div>
 </template>
