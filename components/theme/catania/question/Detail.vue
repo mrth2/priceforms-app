@@ -36,8 +36,15 @@ const totalEstimation = computed<IFormPricing>(() =>
 );
 // highest discount in percentage
 const highestDiscount = computed(() => submissionStore.getHighestDiscount);
+// highest bonus in percentage
+const highestBonus = computed(() => submissionStore.getHighestBonus);
 // remaining percent, use to multiply the price directly ( already calculated the remaining percent )
-const remainingPercent = computed(() => (100 - highestDiscount.value) / 100);
+const remainingPercent = computed(() => {
+  if (highestBonus.value > 0) {
+    return (100 + highestBonus.value) / 100;
+  }
+  return (100 - highestDiscount.value) / 100;
+});
 const estimation = computed<IFormPricing>(() => {
   return {
     minPrice: Math.ceil(
@@ -58,6 +65,19 @@ const estimation = computed<IFormPricing>(() => {
     ),
     currency: submission.value.currency,
   };
+});
+const discountNoteTippy = computed(() => {
+  if (highestBonus.value) {
+    return {
+      content: "Increased by " + highestBonus.value + "%",
+    };
+  } 
+  if (highestDiscount.value) {
+    return {
+      content: `Discounted by ${highestDiscount}%`,
+    };
+  }
+  return null;
 });
 const QuestionOptionComponent = computed(() => {
   switch (question.value.type) {
@@ -108,11 +128,11 @@ const QuestionOptionComponent = computed(() => {
         <!-- show discount hint when applied & user selected option -->
         <strong
           v-if="
-            highestDiscount > 0 &&
+            (highestDiscount > 0 || highestBonus > 0) &&
             options.length &&
             (estimation.minPrice > 0 || estimation.maxPrice > 0)
           "
-          v-tippy="{ content: `Discounted by ${highestDiscount}%` }"
+          v-tippy="discountNoteTippy"
           class="discount-note"
         >
           (*)

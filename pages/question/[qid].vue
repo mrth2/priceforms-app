@@ -6,6 +6,7 @@ import {
   IFormCategoryFlow,
   IFormQuestion,
   IFormQuestionOption,
+ISubmissionAnswer,
 } from "~~/types/form";
 import type { ISubmissionOption } from "~~/types/form";
 import ThemeCataniaQuestionDetail from "~~/components/theme/catania/question/Detail.vue";
@@ -241,13 +242,14 @@ function goNext() {
         {
           answer: options[0].toISOString(),
           discount: 0,
+          bonus: 0,
         },
       ],
     });
   }
   // user pick one or more answer
   else {
-    const answers = [];
+    const answers: ISubmissionAnswer[] = [];
     for (const option of options) {
       const realOption = option as IFormQuestionOption;
       answers.push({
@@ -255,6 +257,7 @@ function goNext() {
         option: realOption,
         // apply discount if any
         discount: realOption.discountPercent || 0,
+        bonus: realOption.bonusPercent || 0,
       });
       // if selected option has next flow, go for it
       if (realOption.nextFlow) {

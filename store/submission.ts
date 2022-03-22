@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { strapiParser } from "~~/services/helper";
-import { IForm, IFormQuestion, IFormQuestionOption, IFormSubmission, IFormPricing, ISubmissionEstimation } from "~~/types/form";
+import { IForm, IFormQuestion, IFormQuestionOption, IFormSubmission, IFormPricing, ISubmissionEstimation, ISubmissionAnswer } from "~~/types/form";
 import type { ISubmissionOption } from "~~/types/form";
 import { useAppStore } from "./app";
 import { useFormStore } from "./form";
@@ -30,7 +30,7 @@ export const useSubmissionStore = defineStore('submission', {
         }
         // get all questions in the current category
         const allQuestions = useFormStore().getAllQuestions();
-        let totalMinPrice = 0, totalMaxPrice = 0, highestDiscount = 0;
+        let totalMinPrice = 0, totalMaxPrice = 0, highestDiscount = 0, highestBonus = 0;
         // add up all prices
         state.submission.data
           .filter(d => !excludeQuestionId || d.qid !== excludeQuestionId)
@@ -47,9 +47,16 @@ export const useSubmissionStore = defineStore('submission', {
             totalMinPrice += minPrice;
             totalMaxPrice += maxPrice;
             if (d.discount > highestDiscount) highestDiscount = d.discount;
+            if (d.bonus > highestBonus) highestBonus = d.bonus;
           });
         // apply discount if any
-        const remain = (100 - highestDiscount) / 100;
+        let remain = 1;
+        if (highestBonus > 0) {
+          remain = (100 + highestBonus) / 100;
+        }
+        else {
+          remain = (100 - highestDiscount) / 100;
+        }
         return {
           minPrice: Math.ceil(totalMinPrice * remain),
           maxPrice: Math.ceil(totalMaxPrice * remain),
@@ -64,6 +71,13 @@ export const useSubmissionStore = defineStore('submission', {
       });
       return highestDiscount;
     },
+    getHighestBonus: (state) => {
+      let highestBonus = 0;
+      state.submission.data.forEach(d => {
+        if (d.bonus && d.bonus > highestBonus) highestBonus = d.bonus;
+      });
+      return highestBonus;
+    }
   },
   actions: {
     setCurrentQuestion(question: IFormQuestion) {
@@ -101,11 +115,7 @@ export const useSubmissionStore = defineStore('submission', {
     answerQuestion(payload: {
       question: IFormQuestion,
       order: number,
-      answers: Array<{
-        answer: string,
-        option?: IFormQuestionOption,
-        discount: number
-      }>,
+      answers: ISubmissionAnswer[],
     }) {
       // filter out current question from data & following questions in the ordered list
       // because when user answer a question, we need to remove all answered following questions in the data because they may not be valid to the latest updates of user journey
@@ -113,7 +123,7 @@ export const useSubmissionStore = defineStore('submission', {
       const newData = (this.submission.data as IFormSubmission['data'])?.filter(d => d.qid !== question.id && d.order <= order);
       // append new answers
       for (const item of answers) {
-        const { answer, option, discount } = item;
+        const { answer, option, discount, bonus } = item;
         newData.push({
           fid: question.flowId,
           qid: question.id,
@@ -123,7 +133,8 @@ export const useSubmissionStore = defineStore('submission', {
           answer,
           at: new Date().toISOString(),
           order,
-          discount
+          discount,
+          bonus
         });
       }
       this.submission.data = newData;

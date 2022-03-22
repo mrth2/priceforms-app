@@ -108,6 +108,7 @@ export interface IFormQuestionOption extends IFormPricing {
   icon: IMedia
   iconActive: IMedia
   discountPercent: number
+  bonusPercent: number
   nextFlow: IFormCategoryFlow
 }
 
@@ -157,6 +158,7 @@ export interface IFormSubmission extends IFormPricing {
     at: string
     order: number
     discount: number
+    bonus: number
   }>
   createdAt: string
   updatedAt: string
@@ -165,3 +167,10 @@ export interface IFormSubmission extends IFormPricing {
 export type ISubmissionOption = IFormQuestionOption | Date | null;
 
 export type ISubmissionEstimation = IFormPricing & { qid: number | null };
+
+export type ISubmissionAnswer = {
+  answer: string,
+  option?: IFormQuestionOption,
+  discount: number
+  bonus: number
+}

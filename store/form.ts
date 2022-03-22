@@ -274,6 +274,7 @@ export const useFormStore = defineStore('form', {
                       maxPrice
                       currency
                       discountPercent
+                      bonusPercent
                       icon {
                         ...Image
                       }
