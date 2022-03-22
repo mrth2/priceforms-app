@@ -59,7 +59,7 @@ export const useFormStore = defineStore('form', {
         return result;
       }
     },
-    getCurrentCategory: (state) => state.categories.find((c) => c.id === useSubmissionStore().submission?.category?.id),
+    getCurrentCategories: (state) => state.categories.filter((c) => useSubmissionStore().submission?.categories?.find(sc => sc.id === c.id)),
   },
   actions: {
     // load form & categories metadata
@@ -261,6 +261,11 @@ export const useFormStore = defineStore('form', {
                 id
                 attributes {
                   name
+                  category {
+                    data {
+                      id
+                    }
+                  }
                   questions(pagination:{pageSize: 50}) {
                     id
                     title
@@ -332,6 +337,7 @@ export const useFormStore = defineStore('form', {
             // return flow with parsed questions
             return {
               ...flow,
+              category: strapiParser(flow.category, 'category'),
               questions
             }
           });
@@ -353,9 +359,9 @@ export const useFormStore = defineStore('form', {
       });
     },
     getAllQuestions(): IFormQuestion[] {
-      return this.getCurrentCategory?.flows.reduce((acc, item) => {
-        return acc.concat(item?.flow?.questions || []);
-      }, [] as IFormQuestion[]) || [];
+      return (this.getCurrentCategories as IFormCategory[])
+        .reduce((acc, category) => acc.concat(category.flows.map(item => item.flow)), [] as IFormCategoryFlow[])
+        .reduce((acc, flow) => acc.concat(flow?.questions || []), [] as IFormQuestion[])
     }
   }
 });

@@ -6,7 +6,7 @@ import {
   IFormCategoryFlow,
   IFormQuestion,
   IFormQuestionOption,
-ISubmissionAnswer,
+  ISubmissionAnswer,
 } from "~~/types/form";
 import type { ISubmissionOption } from "~~/types/form";
 import ThemeCataniaQuestionDetail from "~~/components/theme/catania/question/Detail.vue";
@@ -79,9 +79,9 @@ watch(
   }
 );
 
-const currentCategory = computed(() => formStore.getCurrentCategory);
+const currentCategories = computed(() => formStore.getCurrentCategories);
 // back to category page if no category selected
-if (!currentCategory.value) {
+if (!currentCategories.value || !currentCategories.value.length) {
   router.push("/cases");
 }
 // get all question in current category to calculate progress
@@ -94,11 +94,13 @@ useAppStore().setCurrentProgress({
   value: progress.value,
 });
 
-const currentFlow = computed(
-  () =>
-    currentCategory.value.flows.find(
-      (item) => item.flow.id === question.value.flowId
-    ).flow
+const currentFlow = computed(() =>
+  currentCategories.value
+    .reduce(
+      (acc, cat) => acc.concat(cat.flows.map((item) => item.flow)),
+      [] as IFormCategoryFlow[]
+    )
+    .find((flow) => flow.id === question.value.flowId)
 );
 const currentQuestionIndex = computed(() =>
   currentFlow.value.questions.findIndex((q) => q.id === question.value.id)
@@ -122,7 +124,10 @@ function selectOption(opt: ISubmissionOption) {
   else {
     // already selected => de-select
     // only apply if the question has next button
-    if (question.value.hasNext && currentOptions.value.find((o) => o["id"] === opt.id)) {
+    if (
+      question.value.hasNext &&
+      currentOptions.value.find((o) => o["id"] === opt.id)
+    ) {
       submissionStore.setCurrentQuestionOptions(
         currentOptions.value.filter((o) => o["id"] !== opt.id)
       );
@@ -221,16 +226,22 @@ function goNext() {
     );
   }
 
+  // determining nextQuestion & nextFlow, sometimes it won't be the current flow ( which means user can jump to any flow in any category )
   let nextQuestion: IFormQuestion;
+  let nextFlow: IFormCategoryFlow;
   // next question still in this flow
   if (currentQuestionIndex.value < currentFlow.value.questions.length - 1) {
     nextQuestion = currentFlow.value.questions[currentQuestionIndex.value + 1];
+    nextFlow = currentFlow.value;
   }
   // user did not select any answer but this question allow empty
   if (!options.length && question.value.canSelectNone) {
     // if question has otherwise flow => go to otherwise flow
     if (otherwiseFlow) {
       nextQuestion = otherwiseFlow?.questions?.[0];
+      nextFlow = otherwiseFlow;
+      saveNextFlowCategory(nextFlow);
+      submissionStore.saveSubmission();
     }
   }
   // if question is date picker, simply update data and move on
@@ -261,12 +272,15 @@ function goNext() {
       });
       // if selected option has next flow, go for it
       if (realOption.nextFlow) {
-        const nextFlow = formStore.flows.find(
+        const realNextFlow = formStore.flows.find(
           (flow) => flow.id === realOption.nextFlow.id
         );
-        nextQuestion = nextFlow?.questions[0];
+        nextQuestion = realNextFlow?.questions[0];
+        nextFlow = realNextFlow;
       }
     }
+    // save category first
+    saveNextFlowCategory(nextFlow);
     submissionStore.answerQuestion({
       question: question.value,
       order: currentQuestionOrder.value,
@@ -286,6 +300,23 @@ function goNext() {
   // if still there's no next question in the flow => end form
   else {
     router.push("/estimation");
+  }
+}
+
+function saveNextFlowCategory(nextFlow: IFormCategoryFlow) {
+  if (nextFlow) {
+    // append the nextFlow category to submission categories list
+    const nextFlowCategory = formStore.categories.find(
+      (c) => c.id === nextFlow.category.id
+    );
+    if (
+      nextFlowCategory &&
+      !submissionStore.submission.categories.find(
+        (sc) => sc.id === nextFlowCategory.id
+      )
+    ) {
+      submissionStore.setCategories([nextFlowCategory], true);
+    }
   }
 }
 </script>

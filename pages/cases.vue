@@ -40,8 +40,10 @@ function selectCategory(category: IFormCategory) {
 }
 async function goNext() {
   if (!selectedCategory.value) return;
-  // set category to storage
-  submissionStore.setCategory(selectedCategory.value);
+  // set main category
+  submissionStore.setMainCategory(selectedCategory.value);
+  // set main category to category list ( submission can belong to multiple categories )
+  submissionStore.setCategories([selectedCategory.value]);
   submissionStore.saveSubmission();
   // go to next page
   const firstQuestion = formStore.getStartQuestion(selectedCategory.value.id);

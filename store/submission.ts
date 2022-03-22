@@ -98,8 +98,16 @@ export const useSubmissionStore = defineStore('submission', {
     setSubscriber(subscriber: IFormSubmission['subscriber']) {
       this.submission.subscriber = subscriber;
     },
-    setCategory(category: IFormSubmission['category']) {
+    setMainCategory(category: IFormSubmission['category']) {
       this.submission.category = category;
+    },
+    setCategories(categories: IFormSubmission['category'][], append = false) {
+      if (append) {
+        this.submission.categories.push(...categories);
+      }
+      else {
+        this.submission.categories = categories;
+      }
     },
     setStatus(status: IFormSubmission['status']) {
       this.submission.status = status;
@@ -109,6 +117,7 @@ export const useSubmissionStore = defineStore('submission', {
     },
     getCurrentProgress(questionId: number) {
       const allQuestions = useFormStore().getAllQuestions();
+      console.log(allQuestions)
       return (90 * allQuestions.findIndex((q) => q.id === questionId) + 1) / allQuestions.length + 10;
     },
     // send the answers in array to allow multi options
@@ -169,6 +178,7 @@ export const useSubmissionStore = defineStore('submission', {
         subscriber: submission?.subscriber?.id,
         form: submission?.form?.id,
         category: submission?.category?.id,
+        categories: submission?.categories?.map(c => c.id),
         status,
         progress,
         stopAt: submission?.stopAt,

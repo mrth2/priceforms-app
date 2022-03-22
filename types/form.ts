@@ -145,6 +145,7 @@ export interface IFormSubmission extends IFormPricing {
   subscriber: ISubscriber
   form: IForm
   category: IFormCategory
+  categories: IFormCategory[]
   status: 'register' | 'partial' | 'complete'
   progress: number
   stopAt: string
