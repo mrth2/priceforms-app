@@ -197,7 +197,7 @@ const QuestionOptionComponent = computed(() => {
   @apply flex-1 flex flex-col justify-center items-center;
 
   :deep(h1) {
-    @apply text-3xl font-extrabold text-catania-primary my-0 pt-6 !important;
+    @apply text-3xl font-extrabold text-catania-primary my-0 pt-4 !important;
 
     &.wrap {
       @apply px-16;

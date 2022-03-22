@@ -14,6 +14,7 @@ defineEmits(["selected"]);
   <div
     class="options"
     :class="{
+      narrowed: options.length > 10,
       condensed: options.length > 6,
       'image-list': type === 'image_list',
     }"
@@ -83,16 +84,24 @@ defineEmits(["selected"]);
     }
   }
 
+  &.condensed.narrowed {
+    .option-item {
+      @screen md {
+        max-width: calc(25% - 16px);
+      }
+    }
+  }
+
   .option-item {
     @apply flex flex-col items-center justify-center gap-1 w-full lg:w-32 h-44 md:h-40 lg:h-36 bg-gray-200 cursor-pointer p-4 transition-colors;
-    max-width: calc(100% / 2 - 8px);
+    max-width: calc(50% - 8px);
     @screen md {
       max-width: calc(100% / 3 - 8px);
       flex: 1 0 30%;
     }
 
     .option-item-image {
-      @apply h-16 max-w-[64px];
+      @apply h-16 max-w-[64px] flex items-center;
       .icon,
       .icon-active {
         @apply object-contain;
