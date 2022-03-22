@@ -93,6 +93,7 @@ export const useFormStore = defineStore('form', {
                     }
                     text
                     youtube
+                    autoplay
                   }
                   thankyouBanner {
                     media {
@@ -100,6 +101,7 @@ export const useFormStore = defineStore('form', {
                     }
                     text
                     youtube
+                    autoplay
                   }
                   zip {
                     ... on ComponentPriceFormText {

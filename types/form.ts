@@ -6,6 +6,7 @@ interface IFormBanner {
   text: string
   media: IMedia
   youtube: string
+  autoplay: boolean
 }
 
 export interface IForm {

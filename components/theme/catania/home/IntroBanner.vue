@@ -13,7 +13,14 @@ const isImage = computed(
     form.value.introBanner.media.url.includes(".png")
 );
 const isYoutube = computed(() => form.value.introBanner.youtube);
-const youtubeEmbedLink = computed(() => form.value.introBanner.youtube.replace(/www.youtube.com\/watch\?v=(.*)/g, "www.youtube-nocookie.com/embed/$1?controls=0"));
+const youtubeEmbedLink = computed(() =>
+  form.value.introBanner.youtube.replace(
+    /www.youtube.com\/watch\?v=(.*)/g,
+    `www.youtube-nocookie.com/embed/$1?controls=0&mute=1${
+      form.value.introBanner.autoplay ? "&autoplay=1" : ""
+    }`
+  )
+);
 </script>
 
 <template>
