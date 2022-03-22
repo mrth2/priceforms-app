@@ -6,7 +6,7 @@ const form = computed(() => formStore.form);
 </script>
 
 <template>
-  <div class="styleB">
+  <div>
     <h1>{{ form.title }}</h1>
     <div class="intro">
       <ThemeCataniaHomeIntroBanner />

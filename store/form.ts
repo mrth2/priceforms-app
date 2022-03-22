@@ -81,12 +81,14 @@ export const useFormStore = defineStore('form', {
                       ...Image
                     }
                     text
+                    youtube
                   }
                   thankyouBanner {
                     media {
                       ...Image
                     }
                     text
+                    youtube
                   }
                   zip {
                     ... on ComponentPriceFormText {

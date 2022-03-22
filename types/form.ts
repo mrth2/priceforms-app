@@ -2,18 +2,18 @@ import { IMedia } from "./media"
 import { ISubscriber } from "./subscriber"
 import { IUser } from "./user"
 
+interface IFormBanner {
+  text: string
+  media: IMedia
+  youtube: string
+}
+
 export interface IForm {
   id: number
   title: string
   subDomain: string
-  introBanner: {
-    text: string
-    media: IMedia
-  }
-  thankyouBanner: {
-    text: string
-    media: IMedia
-  }
+  introBanner: IFormBanner
+  thankyouBanner: IFormBanner
   zip: Array<{
     hint?: string
     code?: string
