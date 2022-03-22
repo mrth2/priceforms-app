@@ -29,7 +29,7 @@ const youtubeEmbedLink = computed(() => form.value.introBanner.youtube.replace(/
       allowfullscreen
     />
     <video v-else-if="isVideo">
-      <source :src="youtubeEmbedLink" type="video/mp4" />
+      <source :src="form.introBanner.media.url" type="video/mp4" />
     </video>
     <img v-else-if="isImage" :src="form.introBanner.media.url" />
     <p v-else-if="form.introBanner.text">{{ form.introBanner.text }}</p>

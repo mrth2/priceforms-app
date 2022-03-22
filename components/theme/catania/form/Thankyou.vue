@@ -41,7 +41,10 @@ const youtubeEmbedLink = computed(() =>
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen
       />
-      <img v-else-if="banner.media" :src="banner.media.url" alt="Thank you" />
+      <video v-else-if="isVideo">
+        <source :src="banner.media.url" type="video/mp4" />
+      </video>
+      <img v-else-if="isImage" :src="banner.media.url" alt="Thank you" />
       <p v-else-if="banner.text">{{ banner.text }}</p>
     </div>
     <div class="actions">
