@@ -73,7 +73,11 @@ function validatePhone() {
   return true;
 }
 function validateEmail() {
-  if (!userInput.email.includes("@")) {
+  if (
+    !/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+      userInput.email
+    )
+  ) {
     errors.email = "Please enter a valid email";
     return false;
   }
