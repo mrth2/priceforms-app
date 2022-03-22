@@ -76,6 +76,10 @@ h1 {
   }
 }
 .actions {
-  @apply flex justify-center gap-4 mt-6;
+  @apply flex flex-col sm:flex-row justify-center gap-4 mt-6 mb-6 md:mb-0;
+  
+  :deep(button) {
+    @apply w-full;
+  }
 }
 </style>
