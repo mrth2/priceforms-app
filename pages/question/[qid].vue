@@ -213,7 +213,11 @@ function goBack() {
       const answeredInOtherCategory = submission.value.data
         // filter out the current flow of current question
         .filter(
-          (d) => !currentQuestionInData || d.cid !== currentQuestionInData.cid
+          (d) =>
+            !currentQuestionInData ||
+            (d.cid !== currentQuestionInData.cid &&
+              // but must has lower order than current question
+              d.order < currentQuestionInData.order)
         )
         // sort DESC by order in data
         .sort((a, b) => b.order - a.order)?.[0]; // get the first question in the list
