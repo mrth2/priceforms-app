@@ -15,7 +15,7 @@ const zipButton = computed(() => form.value.zip.find((item) => item.button)?.but
 
 const inputCode = ref("");
 const formInput = ref();
-const termAgreed = ref(false);
+const termAgreed = ref(true);
 
 async function checkZip() {
   if (!termAgreed.value) return;
