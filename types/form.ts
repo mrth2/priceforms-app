@@ -128,6 +128,7 @@ export interface IFormQuestion {
   otherwiseFlow: IFormCategoryFlow
   // custom on front end only after load data
   flowId: IFormCategoryFlow['id']
+  catId: IFormCategory['id']
 }
 
 export interface IFormCategoryFlow {
@@ -150,6 +151,7 @@ export interface IFormSubmission extends IFormPricing {
   progress: number
   stopAt: string
   data: Array<{
+    cid: number
     fid: number
     qid: number
     oid?: number

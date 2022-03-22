@@ -59,7 +59,18 @@ export const useFormStore = defineStore('form', {
         return result;
       }
     },
-    getCurrentCategories: (state) => state.categories.filter((c) => useSubmissionStore().submission?.categories?.find(sc => sc.id === c.id)),
+    getCurrentCategories: (state) => {
+      const submissionStore = useSubmissionStore();
+      return state.categories
+        // sort out categories which are not in the submission
+        .filter((c) => submissionStore.submission?.categories?.find(sc => sc.id === c.id))
+        // reorder to get main category on top
+        .sort((a, b) => {
+          if (a.id === submissionStore.submission.category.id) return -1;
+          if (b.id === submissionStore.submission.category.id) return 1;
+          return 0;
+        });
+    },
   },
   actions: {
     // load form & categories metadata
@@ -313,6 +324,8 @@ export const useFormStore = defineStore('form', {
           this.flows = data.formCategoryFlows.data.map((_flow) => {
             // parse flow
             const flow = strapiParser(_flow) as IFormCategoryFlow;
+            // parse category
+            const category = strapiParser(flow.category, 'category') as IFormCategory;
             // parse flow questions
             const questions = flow.questions.map((_question: IFormCategoryFlow['questions'][0]) => {
               // parse question options
@@ -332,12 +345,13 @@ export const useFormStore = defineStore('form', {
                 options,
                 otherwiseFlow: strapiParser(_question.otherwiseFlow, 'otherwiseFlow'),
                 flowId: flow.id,
+                catId: category.id,
               }
             });
             // return flow with parsed questions
             return {
               ...flow,
-              category: strapiParser(flow.category, 'category'),
+              category,
               questions
             }
           });

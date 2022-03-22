@@ -108,7 +108,7 @@ const currentQuestionIndex = computed(() =>
 const currentQuestionOrder = computed(() => {
   const index = allQuestions.value.findIndex((q) => q.id === question.value.id);
   if (index > -1) {
-    return index + 1;
+    return index + 2;
   }
   return 1;
 });
@@ -189,7 +189,11 @@ function goBack() {
     const currentQuestionInData = submission.value.data.find(
       (d) => d.qid === question.value.id
     );
-    const answered = submission.value.data
+    const answeredInCurrentCategory = submission.value.data
+      // filter out only category of this question
+      .filter(
+        (d) => currentQuestionInData && d.cid === currentQuestionInData.cid
+      )
       // sort DESC by order in data
       .sort((a, b) => b.order - a.order)
       // get the first one after current question
@@ -199,8 +203,25 @@ function goBack() {
         (d) => !currentQuestionInData || d.order < currentQuestionInData.order
       );
     // found => assign the prevQuestion
-    if (answered) {
-      prevQuestion = allQuestions.value.find((q) => q.id === answered.qid);
+    if (answeredInCurrentCategory) {
+      prevQuestion = allQuestions.value.find(
+        (q) => q.id === answeredInCurrentCategory.qid
+      );
+    }
+    // else try to find in other answer without current flow
+    else {
+      const answeredInOtherCategory = submission.value.data
+        // filter out the current flow of current question
+        .filter(
+          (d) => !currentQuestionInData || d.cid !== currentQuestionInData.cid
+        )
+        // sort DESC by order in data
+        .sort((a, b) => b.order - a.order)?.[0]; // get the first question in the list
+      if (answeredInOtherCategory) {
+        prevQuestion = allQuestions.value.find(
+          (q) => q.id === answeredInOtherCategory.qid
+        );
+      }
     }
   }
   if (prevQuestion) {

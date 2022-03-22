@@ -117,7 +117,6 @@ export const useSubmissionStore = defineStore('submission', {
     },
     getCurrentProgress(questionId: number) {
       const allQuestions = useFormStore().getAllQuestions();
-      console.log(allQuestions)
       return (90 * allQuestions.findIndex((q) => q.id === questionId) + 1) / allQuestions.length + 10;
     },
     // send the answers in array to allow multi options
@@ -134,6 +133,7 @@ export const useSubmissionStore = defineStore('submission', {
       for (const item of answers) {
         const { answer, option, discount, bonus } = item;
         newData.push({
+          cid: question.catId,
           fid: question.flowId,
           qid: question.id,
           oid: option?.id ?? null,
