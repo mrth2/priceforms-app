@@ -58,7 +58,14 @@ function initCurrentQuestionAndOption() {
       // answer is non option ( for yes / no question)
       else if (["yes_no", "yes_no_icon"].includes(question.value.type)) {
         options.push({
-          id: answered.answer.toLowerCase(),
+          id: null,
+          value: answered.answer,
+        } as unknown as IFormQuestionOption);
+      }
+      // answer is just a text
+      else if (["text_input", "text_area"].includes(question.value.type)) {
+        options.push({
+          id: null,
           value: answered.answer,
         } as unknown as IFormQuestionOption);
       }

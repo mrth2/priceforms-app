@@ -17,18 +17,21 @@ const options = computed(() => {
   }
   return [
     {
-      id: "yes",
+      id: null,
       value: "YES",
     },
     {
-      id: "no",
+      id: null,
       value: "NO",
     },
   ];
 });
 
 function isSelected(opt: typeof options.value[0]) {
-  return props.selected.find((s) => s.id === opt.id);
+  return props.selected.find(
+    (s) =>
+      (typeof s.id === "number" && s.id === opt.id) || s.value === opt.value
+  );
 }
 function getIcon(opt: typeof options.value[0]) {
   if (opt.value === "YES") {
@@ -42,6 +45,7 @@ function getIcon(opt: typeof options.value[0]) {
   <div class="options">
     <CoreButton
       v-for="option in options"
+      :key="option.value"
       type="outline"
       :class="{
         selected: isSelected(option),

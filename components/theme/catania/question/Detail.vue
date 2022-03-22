@@ -5,6 +5,7 @@ import YesNoVue from "./type/YesNo.vue";
 import IconListVue from "./type/IconList.vue";
 import DatePickerVue from "./type/DatePicker.vue";
 import OptionListVue from "./type/OptionList.vue";
+import TextInputVue from "./type/TextInput.vue";
 import { useSubmissionStore } from "~~/store/submission";
 
 defineEmits(["selected", "next", "back"]);
@@ -71,7 +72,7 @@ const discountNoteTippy = computed(() => {
     return {
       content: "Increased by " + highestBonus.value + "%",
     };
-  } 
+  }
   if (highestDiscount.value) {
     return {
       content: `Discounted by ${highestDiscount}%`,
@@ -91,6 +92,9 @@ const QuestionOptionComponent = computed(() => {
       return OptionListVue;
     case "date_picker":
       return DatePickerVue;
+    case "text_input":
+    case "text_area":
+      return TextInputVue;
   }
 });
 </script>
