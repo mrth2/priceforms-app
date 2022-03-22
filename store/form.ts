@@ -130,6 +130,7 @@ export const useFormStore = defineStore('form', {
                   categoryForm {
                     title
                     progress
+                    hasNext
                   }
                   theme
                   headerStyle

@@ -35,6 +35,7 @@ export interface IForm {
   categoryForm: {
     title: string
     progress: string
+    hasNext: boolean
   }
   categories: IFormCategory[]
   logo: IMedia

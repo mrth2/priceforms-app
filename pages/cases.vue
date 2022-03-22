@@ -32,10 +32,15 @@ const categories = computed(() => form.value.categories);
 
 const selectedCategory = ref<IFormCategory>(submission.value?.category);
 function selectCategory(category: IFormCategory) {
-  if (selectedCategory.value && selectedCategory.value.id === category.id) {
+  // allow unselecting category if hasNext button
+  if (categoryForm.value.hasNext && selectedCategory.value && selectedCategory.value.id === category.id) {
     selectedCategory.value = null;
   } else {
     selectedCategory.value = category;
+  }
+  // auto go next
+  if (!categoryForm.value.hasNext) {
+    goNext();
   }
 }
 async function goNext() {
@@ -82,6 +87,7 @@ async function goNext() {
         BACK
       </CoreButton>
       <CoreButton
+        v-if="categoryForm.hasNext"
         :type="selectedCategory ? 'primary' : 'secondary'"
         @click="goNext"
       >
