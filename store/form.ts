@@ -305,6 +305,7 @@ export const useFormStore = defineStore('form', {
                           id
                         }
                       }
+                      endOfFlow
                     }
                     hasNext
                     nextButtonOnTop

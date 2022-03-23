@@ -112,6 +112,7 @@ export interface IFormQuestionOption extends IFormPricing {
   discountPercent: number
   bonusPercent: number
   nextFlow: IFormCategoryFlow
+  endOfFlow: boolean
 }
 
 export interface IFormQuestion {

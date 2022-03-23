@@ -325,8 +325,13 @@ function goNext() {
     nextQuestion = otherwiseFlow?.questions?.[0];
   }
 
+  // if there's option with endOfFlow set to true, then end of flow
+  const isEndOfFlow = options.find((o) => o?.["endOfFlow"]);
+  if (isEndOfFlow) {
+    router.push("/estimation");
+  }
   // go to nextQuestion
-  if (nextQuestion) {
+  else if (nextQuestion) {
     router.push(`/question/${nextQuestion.id}`);
   }
   // if still there's no next question in the flow => end form
