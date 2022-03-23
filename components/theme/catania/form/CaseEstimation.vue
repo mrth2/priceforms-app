@@ -3,6 +3,8 @@ import { ChevronLeftIcon } from "@heroicons/vue/solid";
 import { useFormStore } from "~~/store/form";
 import { useSubmissionStore } from "~~/store/submission";
 
+defineEmits(["back"]);
+
 const submissionStore = useSubmissionStore();
 const estimatedResult = computed(() => ({
   minPrice: submissionStore.submission.minPrice,
@@ -10,7 +12,9 @@ const estimatedResult = computed(() => ({
   currency: submissionStore.submission.currency,
 }));
 const translation = computed(() => useFormStore().form.estimationPage);
-defineEmits(["back"]);
+const showPrice = computed(
+  () => estimatedResult.value.minPrice > 0 || estimatedResult.value.maxPrice > 0
+);
 </script>
 
 <template>
@@ -24,23 +28,35 @@ defineEmits(["back"]);
       </div>
     </div>
     <h1>{{ translation.title }}</h1>
-    <div class="result">
-      <div class="result-item">
-        <span class="price">
-          {{ $formatPrice(estimatedResult.minPrice, estimatedResult.currency) }}
-        </span>
-        <span class="label">{{ translation.minimum }}</span>
+    <template v-if="showPrice">
+      <div class="result">
+        <div class="result-item">
+          <span class="price">
+            {{
+              $formatPrice(estimatedResult.minPrice, estimatedResult.currency)
+            }}
+          </span>
+          <span class="label">{{ translation.minimum }}</span>
+        </div>
+        <span class="separator"> - </span>
+        <div class="result-item">
+          <span class="price">
+            {{
+              $formatPrice(estimatedResult.maxPrice, estimatedResult.currency)
+            }}
+            <strong class="-ml-4">*</strong>
+          </span>
+          <span class="label">{{ translation.maximum }}</span>
+        </div>
       </div>
-      <span class="separator"> - </span>
-      <div class="result-item">
-        <span class="price">
-          {{ $formatPrice(estimatedResult.maxPrice, estimatedResult.currency) }}
-          <strong class="-ml-4">*</strong>
-        </span>
-        <span class="label">{{ translation.maximum }}</span>
+      <div class="explaination">{{ translation.note }}</div>
+    </template>
+    <template v-else>
+      <div class="text-center mb-8 text-base font-medium">
+        <h3 class="text-xl font-extrabold leading-10">Unknown at this time.</h3>
+        <p>We will reach out to you if we can help you with your case.</p>
       </div>
-    </div>
-    <div class="explaination">{{ translation.note }}</div>
+    </template>
     <CoreButton
       class="text-lg uppercase font-bold px-6"
       @click="$router.push('/thank-you')"
