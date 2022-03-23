@@ -92,7 +92,7 @@ export const useFormStore = defineStore('form', {
                       ...Image
                     }
                     text
-                    youtube
+                    remoteVideo
                     autoplay
                   }
                   thankyouBanner {
@@ -100,7 +100,7 @@ export const useFormStore = defineStore('form', {
                       ...Image
                     }
                     text
-                    youtube
+                    remoteVideo
                     autoplay
                   }
                   zip {

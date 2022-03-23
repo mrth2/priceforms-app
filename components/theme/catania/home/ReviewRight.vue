@@ -10,7 +10,7 @@ const form = computed(() => formStore.form);
     <h1>{{ form.title }}</h1>
     <div class="grid grid-rows-2 lg:grid-rows-none lg:grid-cols-2 gap-6">
       <div class="intro">
-        <ThemeCataniaHomeIntroBanner />
+        <ThemeCataniaFormBanner :banner="form.introBanner" />
         <ThemeCataniaHomeFormZip />
       </div>
       <ThemeCataniaHomeClientReviews />

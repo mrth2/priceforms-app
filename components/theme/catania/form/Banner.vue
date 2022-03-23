@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { useFormStore } from "~~/store/form";
+import { IFormBanner } from "~~/types/form";
+
+const props = defineProps<{
+  banner: IFormBanner;
+}>();
 
 const formStore = useFormStore();
 const form = computed(() => formStore.form);
-const hasMedia = computed(() => form.value.introBanner.media);
 const isVideo = computed(() =>
   form.value.introBanner.media.url.includes(".mp4")
 );
@@ -12,25 +16,38 @@ const isImage = computed(
     form.value.introBanner.media.url.includes(".jpg") ||
     form.value.introBanner.media.url.includes(".png")
 );
-const isYoutube = computed(() => form.value.introBanner.youtube);
-const youtubeEmbedLink = computed(() =>
-  form.value.introBanner.youtube.replace(
-    /www.youtube.com\/watch\?v=(.*)/g,
-    `www.youtube-nocookie.com/embed/$1?controls=0&mute=1${
-      form.value.introBanner.autoplay ? "&autoplay=1" : ""
-    }`
-  )
+const isYoutube = computed(() =>
+  props.banner.remoteVideo?.includes("youtube.com")
 );
+const isVimeo = computed(() => props.banner.remoteVideo?.includes("vimeo.com"));
+const isRemoteVideo = computed(() => isYoutube.value || isVimeo.value);
+const embedLink = computed(() => {
+  if (isYoutube.value) {
+    return props.banner.remoteVideo.replace(
+      /www.youtube.com\/watch\?v=(.*)/g,
+      `www.youtube-nocookie.com/embed/$1?controls=0&mute=1${
+        props.banner.autoplay ? "&autoplay=1" : ""
+      }`
+    );
+  } else if (isVimeo.value) {
+    return props.banner.remoteVideo.replace(
+      /\/\/vimeo.com\/(\d+)/g,
+      `//player.vimeo.com/video/$1?h=c0c7c63ea5${
+        props.banner.autoplay ? "&autoplay=1" : ""
+      }&color=4690CB&title=0&byline=0&portrait=1`
+    );
+  }
+});
 </script>
 
 <template>
-  <div class="intro-banner">
+  <div class="banner">
     <iframe
-      v-if="isYoutube"
+      v-if="isRemoteVideo"
       width="100%"
-      height="368"
-      :src="youtubeEmbedLink"
-      title="YouTube video player"
+      height="100%"
+      :src="embedLink"
+      title="Banner"
       frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen
@@ -44,7 +61,7 @@ const youtubeEmbedLink = computed(() =>
 </template>
 
 <style scoped lang="postcss">
-.intro-banner {
+.banner {
   @apply max-w-full max-h-[400px] h-full relative py-4 overflow-hidden;
 
   img {

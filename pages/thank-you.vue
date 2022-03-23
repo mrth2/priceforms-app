@@ -13,7 +13,7 @@ useAppStore().setCurrentProgress({
 // if no subscriber, go back to home
 const submissionStore = useSubmissionStore();
 if (!submissionStore.submission?.subscriber) {
-  useRouter().push("/");
+  // useRouter().push("/");
 }
 onMounted(() => {
   // when thankyou page is shown, clear the submission in 3 sec

@@ -2,10 +2,10 @@ import { IMedia } from "./media"
 import { ISubscriber } from "./subscriber"
 import { IUser } from "./user"
 
-interface IFormBanner {
+export interface IFormBanner {
   text: string
   media: IMedia
-  youtube: string
+  remoteVideo: string
   autoplay: boolean
 }
 
