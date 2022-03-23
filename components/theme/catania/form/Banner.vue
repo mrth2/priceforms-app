@@ -1,20 +1,15 @@
 <script setup lang="ts">
-import { useFormStore } from "~~/store/form";
 import { IFormBanner } from "~~/types/form";
 
 const props = defineProps<{
   banner: IFormBanner;
 }>();
 
-const formStore = useFormStore();
-const form = computed(() => formStore.form);
-const isVideo = computed(() =>
-  form.value.introBanner.media.url.includes(".mp4")
-);
+const isVideo = computed(() => props.banner.media.url.includes(".mp4"));
 const isImage = computed(
   () =>
-    form.value.introBanner.media.url.includes(".jpg") ||
-    form.value.introBanner.media.url.includes(".png")
+    props.banner.media.url.includes(".jpg") ||
+    props.banner.media.url.includes(".png")
 );
 const isYoutube = computed(() =>
   props.banner.remoteVideo?.includes("youtube.com")
@@ -52,11 +47,16 @@ const embedLink = computed(() => {
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen
     />
-    <video v-else-if="isVideo">
-      <source :src="form.introBanner.media.url" type="video/mp4" />
+    <video
+      v-else-if="isVideo"
+      controls
+      :autoplay="banner.autoplay"
+      :muted="banner.autoplay"
+    >
+      <source :src="banner.media.url" type="video/mp4" />
     </video>
-    <img v-else-if="isImage" :src="form.introBanner.media.url" />
-    <p v-else-if="form.introBanner.text">{{ form.introBanner.text }}</p>
+    <img v-else-if="isImage" :src="banner.media.url" />
+    <p v-else-if="banner.text">{{ banner.text }}</p>
   </div>
 </template>
 
