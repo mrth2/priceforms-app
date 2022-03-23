@@ -9,7 +9,7 @@ const form = computed(() => formStore.form);
   <div>
     <h1>{{ form.title }}</h1>
     <div class="intro">
-      <ThemeCataniaFormBanner :banner="form.introBanner" class="!h-96" />
+      <ThemeCataniaFormBanner :banner="form.introBanner" />
       <ThemeCataniaHomeFormZip />
     </div>
     <ThemeCataniaHomeClientReviews />

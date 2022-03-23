@@ -29,18 +29,16 @@ const embedLink = computed(() => {
       /\/\/vimeo.com\/(\d+)/g,
       `//player.vimeo.com/video/$1?h=c0c7c63ea5${
         props.banner.autoplay ? "&autoplay=1" : ""
-      }&color=4690CB&title=0&byline=0&portrait=1`
+      }&color=4690CB`
     );
   }
 });
 </script>
 
 <template>
-  <div class="banner">
+  <div class="banner" :class="{ remote: isRemoteVideo }">
     <iframe
       v-if="isRemoteVideo"
-      width="100%"
-      height="100%"
       :src="embedLink"
       title="Banner"
       frameborder="0"
@@ -62,10 +60,17 @@ const embedLink = computed(() => {
 
 <style scoped lang="postcss">
 .banner {
-  @apply max-w-full max-h-[400px] h-full relative py-4 overflow-hidden;
+  @apply max-w-full w-full max-h-[400px] h-full relative my-4 overflow-hidden;
+  &.remote {
+    @apply w-full !max-h-full h-0;
+    padding-bottom: 56.25%;
+  }
 
   img {
     @apply object-cover w-full h-full;
+  }
+  iframe {
+    @apply absolute inset-0 w-full h-full;
   }
 }
 </style>
