@@ -222,10 +222,10 @@ async function signUp() {
 
 <style scoped lang="postcss">
 h1 {
-  @apply !text-4xl text-center !mb-0;
+  @apply !text-xl md:!text-3xl lg:!text-4xl text-center !mb-0;
 }
 p {
-  @apply text-lg font-medium text-center text-red-600;
+  @apply text-sm md:text-base lg:text-lg font-medium text-center text-red-600;
 }
 form {
   @apply flex flex-col gap-6 max-w-xl mx-auto py-8;
@@ -233,9 +233,9 @@ form {
   .form-group {
     @apply relative;
     .form-input {
-      @apply h-12 indent-4 leading-none text-lg transition-all;
+      @apply h-10 md:h-12 indent-4 leading-none text-base md:text-lg transition-all;
       &.focusing {
-        @apply text-base;
+        @apply text-sm md:text-base pt-2;
       }
     }
     .placeholder {
@@ -257,7 +257,15 @@ form {
     @apply flex justify-center;
 
     :deep(button) {
-      @apply uppercase font-bold text-lg h-12;
+      @apply uppercase font-bold lg:h-12;
+
+      @screen md {
+        @apply text-base;
+      }
+
+      @screen lg {
+        @apply text-lg;
+      }
     }
   }
   .back {

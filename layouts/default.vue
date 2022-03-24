@@ -67,15 +67,25 @@ const Footer = computed(() =>
   max-width: 100vw;
 
   &.left {
-    --header-height: 82px;
+    --header-height: 70px;
+
+    @screen xs {
+      --header-height: 55px;
+    }
+
+    @screen md {
+      --header-height: 82px;
+    }
   }
 
   --site-padding: theme("padding.2");
+  --footer-height: 56px;
   @screen sm {
     --site-padding: theme("padding.4");
   }
   @screen md {
     --site-padding: theme("padding.6");
+    --footer-height: 88px;
   }
   @screen lg {
     --site-padding: theme("padding.8");
