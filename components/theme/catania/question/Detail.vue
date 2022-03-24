@@ -120,7 +120,10 @@ const QuestionOptionComponent = computed(() => {
       </CoreButton>
     </div>
     <div v-if="question.showEstimate" class="estimation">
-      <span class="label">YOUR CASE ESTIMATE</span>
+      <span class="label">
+        <span> YOUR CASE</span>
+        <strong>ESTIMATE</strong>
+      </span>
       <span class="price">
         <template v-if="estimation.minPrice > 0 || estimation.maxPrice > 0">
           {{ $formatPrice(estimation.minPrice, estimation.currency) }} -
@@ -148,7 +151,7 @@ const QuestionOptionComponent = computed(() => {
       <h1 :class="{ wrap: question.question.split(' ').length > 8 }">
         {{ question.question }}
       </h1>
-      <p v-if="question.description" class="text-catania-secondary">
+      <p v-if="question.description" class="text-sm lg:text-base text-catania-secondary">
         {{ question.description }}
       </p>
       <Component
@@ -185,13 +188,13 @@ const QuestionOptionComponent = computed(() => {
 
 <style scoped lang="postcss">
 .question-detail {
-  @apply mt-6 mb-10 flex-1 flex flex-col relative;
+  @apply mt-2 md:mt-4 lg:mt-6 mb-2 md:mb-5 lg:mb-10 flex-1 flex flex-col relative;
 }
 .action-button {
-  @apply uppercase font-bold text-lg h-12 px-6 tracking-wide;
+  @apply uppercase font-bold text-sm lg:text-base lg:h-12 px-6 tracking-wide;
 
   &.top {
-    @apply h-10;
+    @apply h-8 lg:h-10;
   }
   &.disabled {
     @apply cursor-not-allowed bg-catania-secondary;
@@ -201,37 +204,44 @@ const QuestionOptionComponent = computed(() => {
   @apply flex justify-center gap-4;
 }
 .estimation {
-  @apply flex flex-row justify-center mt-10;
+  @apply flex flex-row justify-center mt-4 lg:mt-10;
 
   .label,
   .price {
-    @apply px-5 h-12 border-2 rounded text-center font-bold leading-10;
+    @apply px-2 lg:px-5 h-auto lg:h-12 border-2 rounded text-center font-bold leading-8 lg:leading-10 text-sm lg:text-base;
   }
   .discount-note {
     @apply text-xs absolute mt-2 ml-1 cursor-pointer text-center;
   }
   .label {
-    @apply bg-catania-primary border-catania-primary text-white border-r-0 rounded-r-none;
+    @apply bg-catania-primary border-catania-primary text-white border-r-0 rounded-r-none flex items-center justify-end gap-1 leading-9 text-justify;
+    span {
+      @apply hidden xs:inline-block;
+    }
+    strong {
+      @apply inline-block mt-0.5;
+    }
   }
   .price {
     @apply w-60 border-catania-outline text-catania-primary border-l-0 rounded-l-none;
+    @apply flex items-center justify-center;
   }
 }
 .question-content {
   @apply flex-1 flex flex-col justify-center items-center;
 
   :deep(h1) {
-    @apply text-3xl font-extrabold text-catania-primary my-0 pt-4 !important;
+    @apply text-2xl lg:text-3xl font-extrabold text-catania-primary my-0 pt-4 !important;
 
     &.wrap {
-      @apply px-16;
+      @apply px-6 md:px-12 lg:px-16;
     }
   }
 
   :deep(.options) {
-    @apply my-10;
+    @apply my-10 w-full xs:w-auto;
     button {
-      @apply px-8 h-10 text-lg uppercase text-catania-primary font-extrabold transition-colors;
+      @apply px-8 h-10 text-base lg:text-lg uppercase text-catania-primary font-extrabold transition-colors;
 
       &.selected,
       &:hover {

@@ -30,7 +30,7 @@ const question = computed(() => useSubmissionStore().current.question);
 
 <style scoped lang="postcss">
 .options {
-  @apply flex flex-col gap-5 flex-wrap justify-center items-center px-16 lg:px-0;
+  @apply flex flex-col gap-5 flex-wrap justify-center items-center px-8 md:px-16 lg:px-0;
 
   &.hasEstimate {
     @apply flex-row;

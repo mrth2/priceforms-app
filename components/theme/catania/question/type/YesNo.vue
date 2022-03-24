@@ -61,7 +61,7 @@ function getIcon(opt: typeof options.value[0]) {
 
 <style scoped lang="postcss">
 .options {
-  @apply flex flex-row gap-6;
+  @apply flex flex-row gap-6 justify-center;
 
   :deep(button) {
     &.hasIcon {

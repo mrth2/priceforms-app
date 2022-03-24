@@ -69,7 +69,7 @@ const Footer = computed(() =>
   &.left {
     --header-height: 70px;
 
-    @screen xs {
+    @screen 2xs {
       --header-height: 55px;
     }
 
