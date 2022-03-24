@@ -10,7 +10,7 @@ const props = withDefaults(
   }
 );
 const progressBar = ref<HTMLElement>();
-const indicatorSize = 12;
+const indicatorSize = ref(12);
 const indicatorTranslateX = ref<number>(null);
 const indicatorStyle = computed(() => ({
   transform: indicatorTranslateX.value
@@ -21,9 +21,12 @@ const labelWidth = ref<number>(0);
 const labelTranslateX = computed(() => {
   let result = null;
   if (indicatorTranslateX.value) {
-    result = indicatorTranslateX.value + indicatorSize;
+    result = indicatorTranslateX.value + indicatorSize.value;
     result = Math.max(result, labelWidth.value / 2);
-    result = Math.min(result, progressBar.value.getBoundingClientRect().width - labelWidth.value / 2);
+    result = Math.min(
+      result,
+      progressBar.value.getBoundingClientRect().width - labelWidth.value / 2
+    );
   }
   return result;
 });
@@ -38,9 +41,17 @@ const activeBarStyle = computed(() => {
   };
 });
 function updateIndicatorTranslate() {
+  // update indicator size
+  if (window.innerWidth < 768) {
+    indicatorSize.value = 8;
+  } else {
+    indicatorSize.value = 12;
+  }
+  // update indicator translate x
   indicatorTranslateX.value =
     Math.ceil((progressBar.value.offsetWidth * props.progress) / 100) -
-    indicatorSize;
+    indicatorSize.value;
+  // update labelWidth
   const rect = progressBar.value
     .querySelector(".label")
     .getBoundingClientRect();
@@ -72,19 +83,23 @@ onBeforeUnmount(() => {
 
 <style scoped lang="postcss">
 .progress-bar {
-  @apply pt-12 pb-8 relative;
+  @apply pt-6 md:pt-8 lg:pt-12 pb-6 lg:pb-8 relative;
 
   .progress {
-    @apply relative w-full h-3 drop-shadow mb-3;
+    @apply relative w-full h-2 md:h-3 drop-shadow mb-3;
     .slide {
       @apply bg-gray-200 h-full rounded-lg;
     }
     .active {
-      @apply rounded-lg bg-catania-button h-3 absolute top-0 left-0 w-0;
+      @apply rounded-lg bg-catania-button h-2 md:h-3 absolute top-0 left-0 w-0;
       transition: width 400ms ease-out;
     }
     .indicator {
-      @apply bg-catania-button absolute h-6 w-6 rounded-full left-0 -top-1.5 transition-transform duration-500 ease-out;
+      @apply bg-catania-button absolute rounded-full left-0 transition-transform duration-500 ease-out;
+      @apply h-4 w-4 -top-1;
+      @screen md {
+        @apply h-6 w-6 -top-1.5;
+      }
     }
   }
   .label {
