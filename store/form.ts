@@ -268,7 +268,7 @@ export const useFormStore = defineStore('form', {
                 form: {subDomain: {eq : "${subDomain}"}}
               },
               pagination: {
-                pageSize: 50
+                pageSize: 100
               }
             ) {
               data {
