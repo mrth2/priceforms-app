@@ -33,7 +33,11 @@ const categories = computed(() => form.value.categories);
 const selectedCategory = ref<IFormCategory>(submission.value?.category);
 function selectCategory(category: IFormCategory) {
   // allow unselecting category if hasNext button
-  if (categoryForm.value.hasNext && selectedCategory.value && selectedCategory.value.id === category.id) {
+  if (
+    categoryForm.value.hasNext &&
+    selectedCategory.value &&
+    selectedCategory.value.id === category.id
+  ) {
     selectedCategory.value = null;
   } else {
     selectedCategory.value = category;
@@ -59,7 +63,7 @@ async function goNext() {
 </script>
 
 <template>
-  <div class="p-6">
+  <div class="py-4 lg:p-6">
     <h1>{{ categoryForm.title }}</h1>
 
     <div class="categories">
@@ -99,10 +103,10 @@ async function goNext() {
 
 <style scoped lang="postcss">
 h1 {
-  @apply !text-4xl text-center !mb-6 !pt-2;
+  @apply !text-lg md:!text-2xl lg:!text-4xl text-center md:!mb-6 !pt-2;
 }
 .categories {
-  @apply flex flex-wrap flex-row justify-center gap-4 pb-6 max-w-xl mx-auto;
+  @apply flex flex-wrap flex-row justify-center gap-2 md:gap-4 pb-4 md:pb-6 max-w-xl mx-auto;
 
   .category-item {
     @apply flex flex-col items-center justify-center gap-1 w-32 h-36 bg-gray-200 cursor-pointer p-4 transition-colors;
@@ -120,7 +124,8 @@ h1 {
       @apply text-center text-sm leading-4 h-6;
     }
     &.selected,
-    &:hover {
+    &:hover,
+    &:active {
       &:not(.disabled) {
         @apply bg-catania-primary;
         .icon-active {
