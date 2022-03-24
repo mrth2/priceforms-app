@@ -111,7 +111,7 @@ function submitDate() {
 
 <style scoped lang="postcss">
 .options {
-  @apply flex flex-row gap-4;
+  @apply flex flex-col sm:flex-row items-center gap-4;
 
   .option-item {
     @apply relative;

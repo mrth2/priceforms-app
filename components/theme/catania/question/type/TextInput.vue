@@ -71,6 +71,6 @@ function onSubmit() {
   @apply text-center mt-10 h-10 text-xl font-semibold;
 }
 .form-area {
-  @apply mt-10 px-3 py-2 text-xl border border-catania-secondary rounded min-h-[200px] w-full;
+  @apply mt-10 px-3 py-2 text-base sm:text-lg md:text-xl border border-catania-secondary rounded min-h-[200px] w-full;
 }
 </style>
