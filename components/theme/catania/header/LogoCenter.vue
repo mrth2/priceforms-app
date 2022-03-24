@@ -35,19 +35,19 @@ const socials = computed(() => formStore.socialIcons);
 <style scoped lang="postcss">
 .header {
   @apply w-full bg-catania-primary;
-  @apply !py-6 relative;
+  @apply !py-3 md:!py-6 relative;
 
   max-width: 100vw;
 
   --max-side-width: calc(100vw / 2 - theme("width.36") / 2 - theme("width.4"));
 
   .header-cta {
-    @apply text-base text-white;
+    @apply text-xs sm:text-sm md:text-base text-white;
 
     max-width: var(--max-side-width);
   }
   .header-logo {
-    @apply bg-catania-primary border-2 border-t-0 border-white w-36 px-4 pb-4 pt-12 mx-auto;
+    @apply bg-catania-primary border-2 border-t-0 border-white w-28 md:w-36 px-2 md:px-4 pb-2 md:pb-4 pt-6 md:pt-12 mx-auto;
     @apply absolute left-1/2 transform -translate-x-1/2;
 
     img {
@@ -60,7 +60,11 @@ const socials = computed(() => formStore.socialIcons);
     max-width: var(--max-side-width);
 
     .social-icon {
-      @apply max-h-5 w-5 text-white;
+      @apply max-h-4 w-4 text-white;
+
+      @screen md {
+        @apply max-h-5 w-5;
+      }
     }
   }
 }

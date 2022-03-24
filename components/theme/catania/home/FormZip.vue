@@ -36,7 +36,7 @@ async function checkZip() {
 </script>
 
 <template>
-  <div class="form-register">
+  <div class="form-zip">
     <form>
       <h3>ENTER YOUR ZIP CODE TO BEGIN</h3>
       <div class="form-group">
@@ -77,11 +77,11 @@ async function checkZip() {
 </template>
 
 <style scoped lang="postcss">
-.form-register {
-  @apply pl-4 text-center;
+.form-zip {
+  @apply text-center;
 
   h3 {
-    @apply text-catania-primary font-extrabold text-lg;
+    @apply text-catania-primary font-extrabold md:text-lg;
   }
 
   .form-group {

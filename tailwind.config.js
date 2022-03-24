@@ -25,6 +25,9 @@ module.exports = {
       },
       boxShadow: {
         main: '0 0 15px rgba(0, 0, 0, 0.2)'
+      },
+      screens: {
+        xs: '480px',
       }
     },
   },

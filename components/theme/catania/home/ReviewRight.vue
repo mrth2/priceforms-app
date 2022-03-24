@@ -8,7 +8,7 @@ const form = computed(() => formStore.form);
 <template>
   <div>
     <h1>{{ form.title }}</h1>
-    <div class="grid grid-rows-2 lg:grid-rows-none lg:grid-cols-2 gap-6">
+    <div class="review-right">
       <div class="intro">
         <ThemeCataniaFormBanner :banner="form.introBanner" />
         <ThemeCataniaHomeFormZip />
@@ -19,8 +19,14 @@ const form = computed(() => formStore.form);
 </template>
 
 <style scoped lang="postcss">
+.review-right {
+  @apply grid lg:grid-rows-none lg:grid-cols-2 lg:grid-flow-col-dense items-center gap-4 lg:gap-6;
+}
 .intro {
-  @apply grid grid-flow-row pb-4 h-full px-5;
-  max-height: 650px;
+  @apply flex flex-col pb-4 h-min px-5;
+
+  @screen lg {
+    max-height: 650px;
+  }
 }
 </style>

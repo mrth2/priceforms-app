@@ -14,7 +14,7 @@ const socials = computed(() => formStore.socialIcons);
       <NuxtLink class="header-logo" to="/">
         <img v-if="logo" :src="logo" :alt="form?.title" />
       </NuxtLink>
-      <div class="flex flex-col ml-auto py-4 gap-2">
+      <div class="header-right">
         <span class="header-cta">
           Call NOW for a FREE Consultation
           <a :href="`tel:${phone.number}`">
@@ -40,15 +40,19 @@ const socials = computed(() => formStore.socialIcons);
 .header {
   @apply max-w-form mx-auto;
 
+  .header-right {
+    @apply flex flex-col ml-auto py-2 md:py-4 gap-2 pl-28;
+  }
+
   .header-cta {
-    @apply text-base text-white font-extralight;
+    @apply text-xs sm:text-sm md:text-base text-white font-extralight text-right;
 
     strong {
       @apply font-bold;
     }
   }
   .header-logo {
-    @apply bg-catania-primary w-36 px-4 pb-4 pt-12 mx-auto;
+    @apply bg-catania-primary w-28 md:w-36 px-2 md:px-4 pb-2 md:pb-4 pt-6 md:pt-12 mx-auto;
     @apply absolute rounded-b-xl;
 
     img {
@@ -59,7 +63,10 @@ const socials = computed(() => formStore.socialIcons);
   .header-social {
     @apply flex flex-row gap-4 items-center flex-wrap justify-end;
     .social-icon {
-      @apply w-4 max-h-4 text-white;
+      @apply text-white w-3 max-h-3;
+      @screen md {
+        @apply w-4 max-h-4;
+      }
     }
   }
 }

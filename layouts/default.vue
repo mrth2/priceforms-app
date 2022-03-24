@@ -89,7 +89,7 @@ const Footer = computed(() =>
     );
 
     :deep(h1) {
-      @apply text-catania-primary font-extrabold text-center pt-16 mb-8 text-3xl uppercase;
+      @apply text-catania-primary font-extrabold text-center pt-6 md:pt-12 lg:pt-16 mb-4 md:mb-6 lg:mb-8 text-xl md:text-3xl uppercase;
     }
   }
 

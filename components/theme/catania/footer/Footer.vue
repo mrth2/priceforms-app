@@ -30,9 +30,12 @@ const copyright = computed(() =>
 
 <style scoped lang="postcss">
 .footer-container {
-  @apply top-auto bottom-0 mx-auto flex justify-center shadow-main;
+  @apply top-auto bottom-0 mx-auto flex justify-center shadow-main bg-white;
   padding: 0 var(--site-padding);
-  @apply pt-6 pb-12 bg-white;
+  @apply py-3 sm:py-5;
+  @screen md {
+    @apply pt-6 pb-12;
+  }
 }
 .footer {
   @apply max-w-form flex flex-col sm:flex-row items-center sm:justify-between w-full text-xs font-light;

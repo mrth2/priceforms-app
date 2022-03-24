@@ -15,7 +15,11 @@
 @layer components {
   .scroller {
     &::-webkit-scrollbar {
-      @apply w-2.5 h-2.5;
+      @apply w-1.5 h-1.5;
+      
+      @screen md {
+        @apply w-2.5 h-2.5;
+      }
     }
     &::-webkit-scrollbar-thumb {
       @apply bg-catania-button rounded-md border-none w-2;
