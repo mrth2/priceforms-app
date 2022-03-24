@@ -87,6 +87,7 @@ export const useFormStore = defineStore('form', {
                 id
                 attributes {
                   title
+                  gtagId
                   introBanner {
                     media {
                       ...Image

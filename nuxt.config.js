@@ -21,7 +21,7 @@ export default defineNuxtConfig({
   ],
   buildModules: [
     '@nuxtjs/strapi',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
   ],
   strapi: {
     url: process.env.API_URL || 'http://localhost:1337',
@@ -37,6 +37,7 @@ export default defineNuxtConfig({
   },
   vite: {
     optimizeDeps: {
+      // include fontawesome library to optimize to avoid commonjs deps
       include: ['@fortawesome/fontawesome-svg-core']
     }
   }

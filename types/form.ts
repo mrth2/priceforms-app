@@ -83,6 +83,7 @@ export interface IForm {
     rating: number
     at: string
   }>
+  gtagId: string
 }
 
 export interface IFormCategory {
