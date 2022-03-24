@@ -44,7 +44,7 @@ const showPrice = computed(
             {{
               $formatPrice(estimatedResult.maxPrice, estimatedResult.currency)
             }}
-            <strong class="-ml-4">*</strong>
+            <strong class="price-note">*</strong>
           </span>
           <span class="label">{{ translation.maximum }}</span>
         </div>
@@ -68,16 +68,21 @@ const showPrice = computed(
 
 <style scoped lang="postcss">
 .estimation {
-  @apply flex-1 flex flex-col justify-center items-center px-4 relative;
+  @apply flex-1 flex flex-col justify-center items-center px-4 relative w-full;
 }
 .result {
-  @apply flex flex-row w-max gap-3 text-catania-primary text-[52px] font-extrabold;
+  @apply flex flex-col xs:flex-row items-center w-max gap-0 xs:gap-3 text-catania-primary text-2xl xs:text-4xl sm:text-5xl lg:text-[52px] !leading-normal font-extrabold;
 
   .result-item {
     @apply flex flex-col justify-center items-center;
 
     .label {
       @apply font-bold;
+    }
+    .price {
+      .price-note {
+        @apply -ml-1 sm:-ml-2 md:-ml-3 lg:-ml-4;
+      }
     }
   }
   .label {
