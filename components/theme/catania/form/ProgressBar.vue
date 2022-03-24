@@ -17,9 +17,16 @@ const indicatorStyle = computed(() => ({
     ? `translateX(${indicatorTranslateX.value}px)`
     : null,
 }));
-const labelTranslateX = computed(() =>
-  indicatorTranslateX.value ? indicatorTranslateX.value + indicatorSize : null
-);
+const labelWidth = ref<number>(0);
+const labelTranslateX = computed(() => {
+  let result = null;
+  if (indicatorTranslateX.value) {
+    result = indicatorTranslateX.value + indicatorSize;
+    result = Math.max(result, labelWidth.value / 2);
+    result = Math.min(result, progressBar.value.getBoundingClientRect().width - labelWidth.value / 2);
+  }
+  return result;
+});
 const labelStyle = computed(() => ({
   left: labelTranslateX.value ? `${labelTranslateX.value}px` : null,
 }));
@@ -34,6 +41,10 @@ function updateIndicatorTranslate() {
   indicatorTranslateX.value =
     Math.ceil((progressBar.value.offsetWidth * props.progress) / 100) -
     indicatorSize;
+  const rect = progressBar.value
+    .querySelector(".label")
+    .getBoundingClientRect();
+  labelWidth.value = rect.width;
 }
 onMounted(() => {
   updateIndicatorTranslate();
