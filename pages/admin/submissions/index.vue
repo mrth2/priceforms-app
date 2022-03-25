@@ -57,6 +57,9 @@ async function fetchData() {
       page: filters.page,
       pageSize: filters.limit,
     },
+    sort: [
+      'createdAt:DESC'
+    ]
   } as Strapi4RequestParams;
   if (filters.dates.length === 2) {
     params.filters.createdAt = {
