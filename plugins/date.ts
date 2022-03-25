@@ -17,7 +17,7 @@ export default defineNuxtPlugin(nuxtApp => {
         let hh = date.getHours();
         let mm = date.getMinutes();
 
-        let AmOrPm = hh >= 12 ? 'AM' : 'AM';
+        let AmOrPm = hh >= 12 ? 'PM' : 'AM';
         hh = (hh % 12) || 12;
 
         if (recently) {

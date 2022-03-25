@@ -22,6 +22,24 @@ const { $dateFormat } = useNuxtApp();
 
 const strapi = useStrapi4();
 
+const sortAsc = ref(true);
+type SortField = "updated" | "status" | "name" | "progress";
+const sortBy = ref<SortField>("updated");
+const sortParams = computed(() => {
+  let order = "DESC";
+  if (sortAsc.value) {
+    order = "ASC";
+  }
+  switch (sortBy.value) {
+    case "name":
+      return [`subscriber.firstName:${order}`, `subscriber.lastName:${order}`];
+    case "progress":
+      return [`progress:${order}`];
+    case "status":
+      return [`status:${order}`];
+  }
+  return [`updatedAt:${order}`];
+});
 const filters = reactive({
   status: ["register", "partial", "complete"] as Array<
     "register" | "partial" | "complete"
@@ -32,8 +50,8 @@ const filters = reactive({
 });
 const appStore = useAppStore();
 const loading = computed(() => appStore.isLoading);
-async function fetchData() {
-  appStore.setLoading(true);
+async function fetchData(loading = true) {
+  if (loading) appStore.setLoading(true);
   const params = {
     fields: [
       "zip",
@@ -57,9 +75,7 @@ async function fetchData() {
       page: filters.page,
       pageSize: filters.limit,
     },
-    sort: [
-      'createdAt:DESC'
-    ]
+    sort: sortParams.value,
   } as Strapi4RequestParams;
   if (filters.dates.length === 2) {
     params.filters.createdAt = {
@@ -75,7 +91,7 @@ async function fetchData() {
   return result;
 }
 
-const { data } = await useAsyncData("form-submissions", fetchData);
+const { data } = await useAsyncData("form-submissions", () => fetchData());
 watch(
   filters,
   async () => {
@@ -83,10 +99,10 @@ watch(
   },
   { deep: true }
 );
+watch([sortBy, sortAsc], async () => {
+  data.value = await fetchData(false);
+});
 
-const sortAsc = ref(true);
-type SortField = "updated" | "status" | "name" | "progress";
-const sortBy = ref<SortField>("updated");
 function sortClasses(type: SortField) {
   return {
     "transform -rotate-180": sortAsc.value,
@@ -97,62 +113,25 @@ function sortClasses(type: SortField) {
 const submissions = computed(() => {
   if (!data.value) return [];
   try {
-    return data.value.data
-      .map((s) => ({
-        id: s.id,
-        ...s.attributes,
-        category: {
-          id: s.attributes.category?.data?.id,
-          ...s.attributes.category?.data?.attributes,
-        },
-        form: {
-          id: s.attributes.form?.data?.id,
-          ...s.attributes.form?.data?.attributes,
-        },
-        subscriber: {
-          id: s.attributes.subscriber?.data?.id,
-          ...s.attributes.subscriber?.data?.attributes,
-          fullName: useNuxtApp().$fullname(
-            s.attributes.subscriber?.data?.attributes
-          ),
-        },
-      }))
-      .sort((a, b) => {
-        // sort by updatedAt
-        if (sortBy.value === "updated") {
-          if (sortAsc.value) {
-            return (
-              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-            );
-          } else {
-            return (
-              new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
-            );
-          }
-        }
-        // sort by status name
-        if (sortBy.value === "status") {
-          if (sortAsc.value) {
-            return a.status.localeCompare(b.status);
-          } else {
-            return b.status.localeCompare(a.status);
-          }
-        }
-        // sort by progress
-        if (sortBy.value === "progress") {
-          if (sortAsc.value) {
-            return b.progress - a.progress;
-          } else {
-            return a.progress - b.progress;
-          }
-        }
-        // sort by user name
-        if (sortAsc.value) {
-          return a.subscriber.fullName.localeCompare(b.subscriber.fullName);
-        } else {
-          return b.subscriber.fullName.localeCompare(a.subscriber.fullName);
-        }
-      });
+    return data.value.data.map((s) => ({
+      id: s.id,
+      ...s.attributes,
+      category: {
+        id: s.attributes.category?.data?.id,
+        ...s.attributes.category?.data?.attributes,
+      },
+      form: {
+        id: s.attributes.form?.data?.id,
+        ...s.attributes.form?.data?.attributes,
+      },
+      subscriber: {
+        id: s.attributes.subscriber?.data?.id,
+        ...s.attributes.subscriber?.data?.attributes,
+        fullName: useNuxtApp().$fullname(
+          s.attributes.subscriber?.data?.attributes
+        ),
+      },
+    }));
   } catch (e) {
     console.error(e);
     return [];
@@ -337,9 +316,8 @@ async function deleteSubmission() {
                     :class="sortClasses('name')"
                   />
                 </th>
-                <th scope="col" class="heading">Form</th>
-                <th scope="col" class="heading">Zip Code</th>
-                <th
+                <th scope="col" class="heading">Case type</th>
+                <!-- <th
                   scope="col"
                   class="heading sortable"
                   @click="
@@ -354,8 +332,7 @@ async function deleteSubmission() {
                     class="sort-icon"
                     :class="sortClasses('status')"
                   />
-                </th>
-                <th scope="col" class="heading">Price</th>
+                </th> -->
                 <th
                   scope="col"
                   class="heading sortable"
@@ -372,7 +349,6 @@ async function deleteSubmission() {
                     :class="sortClasses('progress')"
                   />
                 </th>
-                <th scope="col" class="heading">Stoped At</th>
                 <th
                   scope="col"
                   class="heading sortable"
@@ -383,14 +359,14 @@ async function deleteSubmission() {
                     }
                   "
                 >
-                  Last Updated
+                  Date/Updated
                   <ArrowNarrowDownIcon
                     class="sort-icon"
                     :class="sortClasses('updated')"
                   />
                 </th>
                 <th scope="col" class="relative px-6 py-3">
-                  <span class="sr-only">Edit</span>
+                  <span class="sr-only">Action</span>
                 </th>
               </tr>
             </thead>
@@ -420,31 +396,17 @@ async function deleteSubmission() {
                 </td>
                 <td class="row">
                   <div class="text-sm text-gray-900 uppercase">
-                    {{ item.form.subDomain }}
-                  </div>
-                  <div class="text-sm text-gray-500">
-                    Case: {{ item.category.title }}
+                    {{ item.category.title }}
                   </div>
                 </td>
                 <td class="row">
-                  {{ item.zip }}
-                </td>
-                <td class="row">
+                  <span>{{ item.progress }}%</span>
                   <span
-                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize"
+                    class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize"
                     :class="$getStatusClass(item.status, false)"
                   >
                     {{ item.status }}
                   </span>
-                </td>
-                <td class="row text-sm">
-                  {{ item.minPrice }} ~ {{ item.maxPrice }} ({{
-                    item.currency
-                  }})
-                </td>
-                <td class="row">{{ item.progress }}%</td>
-                <td class="row !text-xs !whitespace-normal w-16 capitalize">
-                  {{ item.stopAt.toLowerCase() || "Just signed up" }}
                 </td>
                 <td class="row">
                   {{ $dateFormat(item.updatedAt) }}
@@ -456,13 +418,13 @@ async function deleteSubmission() {
                   >
                     View
                   </NuxtLink>
-                  |
+                  <!-- |
                   <a
                     class="action__item text-red-600 hover:text-red-900"
                     @click="deletingSubmission = item"
                   >
                     Delete
-                  </a>
+                  </a> -->
                 </td>
               </tr>
             </tbody>
@@ -545,11 +507,12 @@ async function deleteSubmission() {
   @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-max whitespace-nowrap;
 
   &.sortable {
-    @apply flex flex-row gap-1.5 cursor-pointer;
+    /* @apply flex flex-row gap-1.5 cursor-pointer; */
+    @apply table-cell relative cursor-pointer;
   }
 
   .sort-icon {
-    @apply w-4 h-4 opacity-0;
+    @apply w-4 h-4 opacity-0 absolute block top-3 left-2 transition-transform;
     &.current {
       @apply opacity-100 !important;
     }
