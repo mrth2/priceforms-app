@@ -26,6 +26,7 @@ const socialIcons = [{
 
 export const useFormStore = defineStore('form', {
   state: () => ({
+    is404: false,
     form: null as IForm,
     flows: [] as IFormCategoryFlow[],
     // list of categories which have it's flows organized by flow order
@@ -75,7 +76,7 @@ export const useFormStore = defineStore('form', {
   actions: {
     // load form & categories metadata
     async loadForm() {
-      if (this.form) return;
+      if (this.form || this.is404) return;
       const graphql = useStrapiGraphQL();
       const subDomain = useSubDomain();
       try {
@@ -257,7 +258,7 @@ export const useFormStore = defineStore('form', {
     },
     // load all flows of the forms over all categories
     async loadFlows() {
-      if (this.flows.length) return;
+      if (this.flows.length || this.is404) return;
       const graphql = useStrapiGraphQL();
       const subDomain = useSubDomain();
       try {
@@ -381,6 +382,9 @@ export const useFormStore = defineStore('form', {
       return (this.getCurrentCategories as IFormCategory[])
         .reduce((acc, category) => acc.concat(category.flows.map(item => item.flow)), [] as IFormCategoryFlow[])
         .reduce((acc, flow) => acc.concat(flow?.questions || []), [] as IFormQuestion[])
+    },
+    set404(flag: boolean) {
+      this.is404 = flag;
     }
   }
 });

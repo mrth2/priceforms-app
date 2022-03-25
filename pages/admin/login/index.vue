@@ -28,13 +28,6 @@ const onSubmit = async () => {
   }
   loading.value = false;
 };
-const subdomain = computed(() => {
-  try {
-    return useNuxtApp().$useSubdomain();
-  } catch (e) {
-    return "";
-  }
-});
 </script>
 
 <template>

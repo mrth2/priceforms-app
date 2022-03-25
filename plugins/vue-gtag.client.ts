@@ -8,7 +8,7 @@ export default defineNuxtPlugin(nuxtApp => {
   let gtagSetup = false;
   formStore.$subscribe(() => {
     if (!gtagSetup) {
-      if (formStore.form.gtagId) {
+      if (formStore.form?.gtagId) {
         nuxtApp.vueApp.use(VueGtag, {
           property: {
             id: formStore.form.gtagId,
