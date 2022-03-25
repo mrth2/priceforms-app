@@ -17,7 +17,9 @@ if (!submissionStore.submission?.subscriber) {
 }
 onMounted(() => {
   // when thankyou page is shown, clear the submission in 3 sec
-  setTimeout(() => {
+  setTimeout(async () => {
+    submissionStore.setStopAt("Finished");
+    await submissionStore.saveSubmission();
     submissionStore.setSubmission({});
   }, 3000);
 });

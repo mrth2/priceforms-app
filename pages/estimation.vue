@@ -20,6 +20,7 @@ if (!submissionStore.submission?.subscriber) {
 // auto set progress to 100%
 onMounted(() => {
   submissionStore.setProgress(100);
+  submissionStore.setStopAt('Estimation');
   submissionStore.saveSubmission();
 });
 

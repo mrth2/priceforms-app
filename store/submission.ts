@@ -100,6 +100,8 @@ export const useSubmissionStore = defineStore('submission', {
     },
     setMainCategory(category: IFormSubmission['category']) {
       this.submission.category = category;
+      // also set stopAt
+      this.submission.stopAt = `Case selected: ${category.title}`;
     },
     setCategories(categories: IFormSubmission['category'][], append = false) {
       if (append) {
@@ -114,6 +116,9 @@ export const useSubmissionStore = defineStore('submission', {
     },
     setProgress(progress: IFormSubmission['progress']) {
       this.submission.progress = progress;
+    },
+    setStopAt(stopAt: IFormSubmission['stopAt']) {
+      this.submission.stopAt = stopAt;
     },
     getCurrentProgress(questionId: number) {
       const allQuestions = useFormStore().getAllQuestions();
@@ -146,6 +151,7 @@ export const useSubmissionStore = defineStore('submission', {
           bonus
         });
       }
+      this.submission.stopAt = `Question: ${question.question}`;
       this.submission.data = newData;
       // update progress by current question progress
       this.setProgress(this.getCurrentProgress(question.id));
