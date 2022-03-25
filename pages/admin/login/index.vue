@@ -45,23 +45,10 @@ const subdomain = computed(() => {
       <div>
         <img
           v-if="logo"
-          class="mx-auto h-12 w-auto"
+          class="mx-auto h-24 w-auto"
           :src="logo"
           alt="PriceForms"
         />
-        <h2 class="mt-6 text-center text-3xl font-semibold">
-          Sign in to
-          <span class="capitalize font-semibold underline">{{
-            subdomain
-          }}</span>
-          dashboard
-        </h2>
-        <p class="mt-2 text-center text-sm">
-          Or
-          <a href="/join-us" class="font-medium underline"
-            >become our new awesome client!</a
-          >
-        </p>
       </div>
       <form @submit.prevent="onSubmit" class="mt-8 space-y-6">
         <input type="hidden" name="remember" value="true" />
