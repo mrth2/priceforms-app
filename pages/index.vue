@@ -14,6 +14,6 @@ const homeStyle = computed(() => useFormStore().getHomeStyle);
 
 <style scoped lang="postcss">
 :deep(.intro) {
-  @apply max-w-form bg-white px-4 mx-auto items-center rounded shadow-main;
+  @apply max-w-form bg-white px-2 sm:px-4 mx-auto items-center rounded shadow-main;
 }
 </style>

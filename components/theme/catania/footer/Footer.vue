@@ -38,7 +38,7 @@ const copyright = computed(() =>
   }
 }
 .footer {
-  @apply max-w-form flex flex-col sm:flex-row items-center sm:justify-between w-full text-xs font-light;
+  @apply max-w-form flex flex-col sm:flex-row items-center sm:justify-between w-full text-xs font-light text-center;
 
   .policies {
     @apply flex gap-2 md:gap-4 xl:gap-6 font-normal;

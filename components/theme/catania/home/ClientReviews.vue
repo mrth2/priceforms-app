@@ -92,7 +92,7 @@ h2 {
   }
 
   .review-header {
-    @apply flex flex-row justify-between w-full;
+    @apply flex flex-col gap-2 sm:gap-0 sm:flex-row justify-between w-full;
 
     .avatar {
       /* @apply flex flex-row items-center; */

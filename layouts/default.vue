@@ -104,8 +104,54 @@ const Footer = computed(() =>
   }
 
   :deep(.header) {
-    @apply flex flex-row justify-between items-center;
+    @apply flex md:flex-row justify-between items-center;
     padding: 0 var(--site-padding);
+
+    &.header-center {
+      @screen max-sm {
+        @apply static flex-col mt-8 !p-0 items-start;
+
+        .header-cta {
+          @apply absolute inset-0 bottom-auto text-catania-primary max-w-none text-base tracking-tighter pt-1 text-center;
+        }
+        .header-logo {
+          @apply w-40 pt-2;
+        }
+        .header-social {
+          @apply max-w-none py-7 pl-3 pr-5 w-full gap-3;
+
+          & > a:nth-child(4) {
+            @apply ml-auto;
+          }
+
+          .social-icon {
+            @apply w-[18px] max-h-[18px];
+
+            &[data-icon="youtube"] {
+              @apply w-5 max-h-5;
+            }
+          }
+        }
+      }
+      @media screen and (max-width: 360px) {
+        .header-cta {
+          @apply text-xs pt-2;
+        }
+        .header-logo {
+          @apply w-32;
+        }
+        .header-social {
+          @apply px-2 gap-1.5 py-5;
+          .social-icon {
+            @apply w-4 max-h-4;
+
+            &[data-icon="youtube"] {
+              @apply w-5 max-h-5;
+            }
+          }
+        }
+      }
+    }
   }
 }
 </style>
