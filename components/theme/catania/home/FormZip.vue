@@ -11,10 +11,12 @@ const zipHint = computed(() => form.value.zip.find((item) => item.hint)?.hint);
 const zipCodes = computed(() =>
   form.value.zip.filter((item) => item.code).map((item) => item.code)
 );
-const zipButton = computed(() => form.value.zip.find((item) => item.button)?.button);
+const zipButton = computed(
+  () => form.value.zip.find((item) => item.button)?.button
+);
 
 const inputCode = ref("");
-const formInput = ref();
+const formInput = ref<HTMLElement & { $tippy: any }>();
 const termAgreed = ref(true);
 
 async function checkZip() {
@@ -33,11 +35,13 @@ async function checkZip() {
     router.push("/signup");
   }
 }
+
+const inputFocusing = ref(false);
 </script>
 
 <template>
   <div class="form-zip">
-    <form>
+    <form @submit.prevent="checkZip">
       <h3>ENTER YOUR ZIP CODE TO BEGIN</h3>
       <div class="form-group">
         <input
@@ -52,8 +56,11 @@ async function checkZip() {
           v-model.trim="inputCode"
           type="text"
           placeholder="Enter zip code"
+          @focus="inputFocusing = true"
+          @blur="inputFocusing = false"
         />
         <CoreButton
+          :is-submit="true"
           class="uppercase"
           :class="{ 'opacity-50': !termAgreed }"
           v-tippy="{
@@ -63,7 +70,6 @@ async function checkZip() {
             trigger: 'mouseenter',
             placement: 'top',
           }"
-          @click="checkZip"
         >
           {{ zipButton }}
         </CoreButton>
