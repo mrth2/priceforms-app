@@ -44,7 +44,6 @@ function autoScrollDownOnMobile() {
       top:
         formInput.value.offsetTop +
         formInput.value.parentElement.offsetHeight -
-        document.querySelector(".container").scrollTop -
         window.innerHeight,
       behavior: "smooth",
     });
