@@ -75,7 +75,7 @@ const discountNoteTippy = computed(() => {
   }
   if (highestDiscount.value) {
     return {
-      content: `Discounted by ${highestDiscount}%`,
+      content: `Discounted by ${highestDiscount.value}%`,
     };
   }
   return null;
