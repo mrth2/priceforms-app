@@ -265,6 +265,22 @@ form {
           @apply fill-red-700 stroke-red-700 stroke-1;
         }
       }
+
+      @media screen and (max-width: theme("screens.xs")) {
+        @apply text-sm top-2 right-1;
+
+        :deep(svg) {
+          @apply w-4 h-4;
+        }
+      }
+
+      @media screen and (max-width: 300px) {
+        @apply text-[11px] top-9 gap-0.5;
+
+        :deep(svg) {
+          @apply w-2.5 h-2.5 mt-0.5;
+        }
+      }
     }
   }
   .btn-signup {
