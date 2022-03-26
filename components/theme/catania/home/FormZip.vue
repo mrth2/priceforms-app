@@ -36,7 +36,26 @@ async function checkZip() {
   }
 }
 
+// if zip input is focused, auto scroll the page to make sure input field is showing on the viewport ( especially if mobile keyboard is open )
 const inputFocusing = ref(false);
+function autoScrollDownOnMobile() {
+  if (inputFocusing.value) {
+    document.querySelector(".container").scrollTo({
+      top:
+        formInput.value.offsetTop +
+        formInput.value.parentElement.offsetHeight -
+        document.querySelector(".container").scrollTop -
+        window.innerHeight,
+      behavior: "smooth",
+    });
+  }
+}
+onMounted(() => {
+  window.addEventListener("resize", autoScrollDownOnMobile);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", autoScrollDownOnMobile);
+});
 </script>
 
 <template>
