@@ -151,7 +151,10 @@ const QuestionOptionComponent = computed(() => {
       <h1 :class="{ wrap: question.question.split(' ').length > 8 }">
         {{ question.question }}
       </h1>
-      <p v-if="question.description" class="text-sm lg:text-base text-catania-secondary">
+      <p
+        v-if="question.description"
+        class="text-sm lg:text-base text-catania-secondary"
+      >
         {{ question.description }}
       </p>
       <Component
@@ -242,9 +245,13 @@ const QuestionOptionComponent = computed(() => {
     button {
       @apply px-8 h-10 text-base lg:text-lg uppercase text-catania-primary font-extrabold transition-colors;
 
-      &.selected,
-      &:hover {
+      &.selected {
         @apply bg-catania-primary !text-white border-catania-primary;
+      }
+      @media (hover: hover) {
+        &:hover {
+          @apply bg-catania-primary !text-white border-catania-primary;
+        }
       }
     }
   }

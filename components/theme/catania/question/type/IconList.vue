@@ -27,6 +27,8 @@ defineEmits(["selected"]);
         selected: selected.find((s) => s.id === option.id),
       }"
       @click="$emit('selected', option)"
+      @mouseenter="($event) => ($event.target as HTMLElement).classList.add('hovering')"
+      @mouseleave="($event) => ($event.target as HTMLElement).classList.remove('hovering')"
     >
       <div class="option-item-image">
         <img v-if="option.icon" class="icon" :src="option.icon.url" />
@@ -114,7 +116,7 @@ defineEmits(["selected"]);
       @apply text-gray-600 text-center text-sm leading-4 h-6;
     }
     &.selected,
-    &:hover {
+    &.hovering {
       @apply bg-catania-primary;
       .icon-active {
         @apply block;

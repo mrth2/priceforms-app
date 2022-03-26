@@ -132,8 +132,7 @@ h1 {
       @apply text-center text-sm leading-4 h-6;
     }
     &.selected,
-    &:hover,
-    &:active {
+    &:hover {
       &:not(.disabled) {
         @apply bg-catania-primary;
         .icon-active {
