@@ -5,6 +5,7 @@ import CoreButton from "~~/components/core/Button.vue";
 import { ISubscriber } from "~~/types/subscriber";
 import { useSubmissionStore } from "~~/store/submission";
 import { useAppStore } from "~~/store/app";
+import { useGtag } from "vue-gtag-next";
 
 definePageMeta({
   layout: "form",
@@ -100,6 +101,7 @@ const buttonTippy = computed(() => ({
   trigger: "manual",
 }));
 
+const { config: gtagConfig, event: gtagEvent } = useGtag();
 async function signUp() {
   if (loading.value) return;
   error.value = null;
@@ -110,6 +112,7 @@ async function signUp() {
       method: "PATCH",
       body: userInput,
     });
+    // update submission with subscriber
     const submission = submissionStore.submission;
     submissionStore.setSubmission({
       ...submission,
@@ -120,6 +123,17 @@ async function signUp() {
       subscriber,
     });
     submissionStore.saveSubmission();
+    // config gtag with user id
+    gtagConfig({
+      user_id: subscriber.id,
+    });
+    // send event login
+    gtagEvent("login", {
+      method: "email",
+      user_id: subscriber.id,
+      user_email: subscriber.email,
+      user_name: useNuxtApp().$fullname(subscriber),
+    });
     // direct to cases
     router.push("/cases");
   } catch (e) {

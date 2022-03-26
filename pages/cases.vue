@@ -4,6 +4,7 @@ import { useAppStore } from "~~/store/app";
 import { useFormStore } from "~~/store/form";
 import { useSubmissionStore } from "~~/store/submission";
 import { IFormCategory } from "~~/types/form";
+import { useGtag } from "vue-gtag-next";
 
 definePageMeta({
   layout: "form",
@@ -47,6 +48,8 @@ function selectCategory(category: IFormCategory) {
     goNext();
   }
 }
+
+const { event: gtagEvent } = useGtag();
 async function goNext() {
   if (!selectedCategory.value) return;
   // set main category
@@ -54,6 +57,11 @@ async function goNext() {
   // set main category to category list ( submission can belong to multiple categories )
   submissionStore.setCategories([selectedCategory.value]);
   submissionStore.saveSubmission();
+  // set event select case
+  gtagEvent("select_case", {
+    case_id: selectedCategory.value.id,
+    case_title: selectedCategory.value.title,
+  });
   // go to next page
   const firstQuestion = formStore.getStartQuestion(selectedCategory.value.id);
   if (firstQuestion) {

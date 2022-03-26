@@ -1,5 +1,6 @@
-import VueGtag from 'vue-gtag-next';
+import VueGtag, { useGtag } from 'vue-gtag-next';
 import { useFormStore } from '~~/store/form';
+import { useSubmissionStore } from '~~/store/submission';
 
 export default defineNuxtPlugin(nuxtApp => {
   const formStore = useFormStore();
@@ -15,11 +16,25 @@ export default defineNuxtPlugin(nuxtApp => {
           },
           appName: 'PriceForms',
           enabled: true,
-          pageTrackerScreenviewEnabled: true
+          pageTrackerScreenviewEnabled: true,
         }, router);
         // setup gtag only once
         gtagSetup = true;
       }
+    }
+  });
+
+  const submissionStore = useSubmissionStore();
+  let subscriberInitialized = false;
+  submissionStore.$subscribe(() => {
+    if (!subscriberInitialized) {
+      const { config } = useGtag();
+      if (submissionStore.submission?.subscriber?.id) {
+        config({
+          user_id: submissionStore.submission.subscriber.id
+        });
+      }
+      subscriberInitialized = true;
     }
   });
 });

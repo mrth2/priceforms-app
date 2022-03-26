@@ -10,6 +10,7 @@ import {
 } from "~~/types/form";
 import type { ISubmissionOption } from "~~/types/form";
 import ThemeCataniaQuestionDetail from "~~/components/theme/catania/question/Detail.vue";
+import { useGtag } from "vue-gtag-next";
 
 definePageMeta({
   layout: "form",
@@ -242,6 +243,7 @@ function goBack() {
   }
 }
 
+const { event: gtagEvent } = useGtag();
 function goNext() {
   const options = submissionStore.current.options;
   // user must selected an option or question allow no answer
@@ -324,6 +326,12 @@ function goNext() {
   if (!nextQuestion && otherwiseFlow) {
     nextQuestion = otherwiseFlow?.questions?.[0];
   }
+
+  // add event to GA
+  gtagEvent("answer_question", {
+    question_id: question.value.id,
+    question_title: question.value.title,
+  });
 
   // if there's option with endOfFlow set to true, then end of flow
   const isEndOfFlow = options.find((o) => o?.["endOfFlow"]);
