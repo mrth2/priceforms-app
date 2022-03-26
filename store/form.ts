@@ -226,11 +226,11 @@ export const useFormStore = defineStore('form', {
             logo: strapiParser(form.logo, 'logo'),
             introBanner: {
               ...form.introBanner,
-              media: strapiParser(form.introBanner.media)
+              media: strapiParser(form.introBanner?.media)
             },
             thankyouBanner: {
               ...form.thankyouBanner,
-              media: strapiParser(form.thankyouBanner.media)
+              media: strapiParser(form.thankyouBanner?.media)
             },
             categories: categories.map((category) => {
               const parsedCategory = strapiParser(category);
@@ -253,6 +253,7 @@ export const useFormStore = defineStore('form', {
           };
         }
       } catch (e) {
+        console.dir(e);
         console.log(e.message);
       }
     },
