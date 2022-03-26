@@ -52,6 +52,13 @@ const question = computed(() => useSubmissionStore().current.question);
     :deep(.btn-content) {
       @apply whitespace-nowrap;
     }
+
+    @media screen and (max-width: theme("screens.xs")) {
+      @apply !h-auto !py-2 !px-2;
+      :deep(.btn-content) {
+        @apply whitespace-normal;
+      }
+    }
   }
 }
 </style>
