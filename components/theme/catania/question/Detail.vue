@@ -223,8 +223,7 @@ const QuestionOptionComponent = computed(() => {
     }
   }
   .price {
-    @apply w-60 border-catania-outline text-catania-primary border-l-0 rounded-l-none;
-    @apply flex items-center justify-center;
+    @apply w-60 border-catania-outline text-catania-primary border-l-0 rounded-l-none pt-0.5;
   }
 }
 .question-content {
