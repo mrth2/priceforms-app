@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ImageFragment } from '~/types/graphql';
+import { ImageFragment, FlowFragment } from '~/types/graphql';
 import { strapiParser } from '~~/services/helper';
 import { IForm, IFormCategory, IFormCategoryFlow, IFormQuestion } from '~~/types/form';
 import { useSubmissionStore } from './submission';
@@ -177,27 +177,6 @@ export const useFormStore = defineStore('form', {
                     buttonPromo
                     promoLink
                   }
-                  categories (sort: "ordering:ASC", pagination:{pageSize: 50}) {
-                    data {
-                      id
-                      attributes {
-                        title
-                        icon {
-                          ...Image
-                        }
-                        iconActive {
-                          ...Image
-                        }
-                        flows(pagination: {pageSize: 50}) {
-                          flow {
-                            data {
-                              id
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
                   reviews (sort: "ordering:ASC") {
                     data {
                       id
@@ -219,7 +198,6 @@ export const useFormStore = defineStore('form', {
         `);
         if (data?.forms?.data?.length) {
           const form = strapiParser(data.forms.data[0]) as IForm;
-          const categories = (form.categories as any).data;
           this.form = {
             ...form,
             favicon: strapiParser(form.favicon, 'favicon'),
@@ -232,17 +210,6 @@ export const useFormStore = defineStore('form', {
               ...form.thankyouBanner,
               media: strapiParser(form.thankyouBanner?.media)
             },
-            categories: categories.map((category) => {
-              const parsedCategory = strapiParser(category);
-              return {
-                ...parsedCategory,
-                icon: strapiParser(category.attributes.icon, 'icon'),
-                iconActive: strapiParser(category.attributes.iconActive, 'iconActive'),
-                flows: category.attributes.flows.map(item => ({
-                  flow: strapiParser(item.flow)
-                })),
-              }
-            }),
             reviews: (form.reviews as any).data.map(item => {
               const parsedReview = strapiParser(item);
               return {
@@ -253,8 +220,97 @@ export const useFormStore = defineStore('form', {
           };
         }
       } catch (e) {
-        console.dir(e);
         console.log(e.message);
+      }
+    },
+    // load categories
+    async loadCategories() {
+      if (this.categories.length) return;
+      const graphql = useStrapiGraphQL();
+      const subDomain = useSubDomain();
+      try {
+        const { data } = await graphql(`
+          ${ImageFragment}
+          query Categories {
+            categories: formCategories (
+              filters: {
+                form: { subDomain: { eq: "${subDomain}" } }
+              },
+              sort: "ordering:ASC", 
+              pagination: { pageSize: 50 }
+            ) {
+              data {
+                id
+                attributes {
+                  title
+                  icon {
+                    ...Image
+                  }
+                  iconActive {
+                    ...Image
+                  }
+                  flows(pagination: {pageSize: 50}) {
+                    flow {
+                      data {
+                        id
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `)
+        if (data?.categories?.data?.length) {
+          const categories = data.categories.data;
+          this.categories = categories.map((category) => {
+            const parsedCategory = strapiParser(category);
+            return {
+              ...parsedCategory,
+              icon: strapiParser(category.attributes.icon, 'icon'),
+              iconActive: strapiParser(category.attributes.iconActive, 'iconActive'),
+              flows: category.attributes.flows.map(item => ({
+                flow: strapiParser(item.flow)
+              })),
+            }
+          });
+        }
+      } catch (e) {
+        console.log(e.message);
+      }
+    },
+    parseFlow(_flow: IFormCategoryFlow) {
+      // parse flow
+      const flow = strapiParser(_flow) as IFormCategoryFlow;
+      // parse category
+      const category = strapiParser(flow.category, 'category') as IFormCategory;
+      // parse flow questions
+      const questions = flow.questions.map((_question: IFormCategoryFlow['questions'][0]) => {
+        // parse question options
+        const options = _question.options.map((_option) => {
+          return {
+            ..._option,
+            id: parseInt(`${_option.id}`),
+            icon: strapiParser(_option.icon, 'icon'),
+            iconActive: strapiParser(_option.iconActive, 'iconActive'),
+            nextFlow: strapiParser(_option.nextFlow, 'nextFlow'),
+          }
+        });
+        // return parsed options & nextFlow
+        return {
+          ..._question,
+          id: parseInt(`${_question.id}`),
+          options,
+          otherwiseFlow: strapiParser(_question.otherwiseFlow, 'otherwiseFlow'),
+          flowId: flow.id,
+          catId: category.id,
+        }
+      });
+      // return flow with parsed questions
+      return {
+        ...flow,
+        category,
+        questions
       }
     },
     // load all flows of the forms over all categories
@@ -265,6 +321,7 @@ export const useFormStore = defineStore('form', {
       try {
         const { data } = await graphql(`
           ${ImageFragment}
+          ${FlowFragment}
           query FLOWS {
             formCategoryFlows(
               filters: {
@@ -274,94 +331,35 @@ export const useFormStore = defineStore('form', {
                 pageSize: 100
               }
             ) {
-              data {
-                id
-                attributes {
-                  name
-                  category {
-                    data {
-                      id
-                    }
-                  }
-                  questions(pagination:{pageSize: 50}) {
-                    id
-                    title
-                    description
-                    type
-                    question
-                    options(pagination:{pageSize: 20}) {
-                      id
-                      value
-                      minPrice
-                      maxPrice
-                      currency
-                      discountPercent
-                      bonusPercent
-                      icon {
-                        ...Image
-                      }
-                      iconActive {
-                        ...Image
-                      }
-                      nextFlow {
-                        data {
-                          id
-                        }
-                      }
-                      endOfFlow
-                    }
-                    hasNext
-                    nextButtonOnTop
-                    backButtonOnBottom
-                    showEstimate
-                    canSelectMulti
-                    canSelectNone
-                    otherwiseFlow {
-                      data {
-                        id
-                      }
-                    }
-                  }
-                }
-              }
+              ...Flow
             }
           }
         `);
         if (data?.formCategoryFlows?.data?.length) {
-          this.flows = data.formCategoryFlows.data.map((_flow) => {
-            // parse flow
-            const flow = strapiParser(_flow) as IFormCategoryFlow;
-            // parse category
-            const category = strapiParser(flow.category, 'category') as IFormCategory;
-            // parse flow questions
-            const questions = flow.questions.map((_question: IFormCategoryFlow['questions'][0]) => {
-              // parse question options
-              const options = _question.options.map((_option) => {
-                return {
-                  ..._option,
-                  id: parseInt(`${_option.id}`),
-                  icon: strapiParser(_option.icon, 'icon'),
-                  iconActive: strapiParser(_option.iconActive, 'iconActive'),
-                  nextFlow: strapiParser(_option.nextFlow, 'nextFlow'),
-                }
-              });
-              // return parsed options & nextFlow
-              return {
-                ..._question,
-                id: parseInt(`${_question.id}`),
-                options,
-                otherwiseFlow: strapiParser(_question.otherwiseFlow, 'otherwiseFlow'),
-                flowId: flow.id,
-                catId: category.id,
-              }
-            });
-            // return flow with parsed questions
-            return {
-              ...flow,
-              category,
-              questions
+          this.flows = data.formCategoryFlows.data.map((_flow) => this.parseFlow(_flow));
+        }
+      } catch (e) {
+        console.log(e.message);
+      }
+    },
+    // load flow by id
+    async loadFlowById(id: number) {
+      if (this.flows.find(f => f.id === id) || this.is404) return;
+      const graphql = useStrapiGraphQL();
+      try {
+        const { data } = await graphql(`
+          ${ImageFragment}
+          ${FlowFragment}
+          query FLOW {
+            flow: formCategoryFlow (id: ${id}) {
+              ...Flow
             }
-          });
+          }
+        `)
+        if (data?.flow?.data) {
+          const flow = this.parseFlow(data?.flow?.data);
+          // push flow with parsed questions to list of flows
+          this.flows.push(flow);
         }
       } catch (e) {
         console.log(e.message);
@@ -369,8 +367,8 @@ export const useFormStore = defineStore('form', {
     },
     // initialize category tree, with ordered flows inside each category
     initCategories() {
-      if (!this.form || !this.flows.length) return;
-      this.categories = (this.form.categories as IFormCategory[]).map((category) => {
+      if (!this.categories.length || !this.flows.length) return;
+      this.categories = (this.categories as IFormCategory[]).map((category) => {
         return {
           ...category,
           flows: category.flows.map(item => ({

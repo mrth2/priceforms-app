@@ -29,7 +29,7 @@ useAppStore().setCurrentProgress({
   value: 10,
 });
 
-const categories = computed(() => form.value.categories);
+const categories = computed(() => formStore.categories);
 
 const selectedCategory = ref<IFormCategory>(submission.value?.category);
 function selectCategory(category: IFormCategory) {
