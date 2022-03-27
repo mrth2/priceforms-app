@@ -1,5 +1,4 @@
 import { useFormStore } from "~~/store/form";
-import { useSubmissionStore } from "~~/store/submission";
 
 export default defineNuxtRouteMiddleware(async (to) => {
   const is404 = to.name === "404";
@@ -7,7 +6,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // always fetch forms & flows
   const formStore = useFormStore();
   const requests = [
-    formStore.loadForm(),
+    formStore.loadFormRest(),
   ];
   const isOnAdmin = to.path.includes('/admin');
   // on admin, load only the forms
@@ -18,17 +17,17 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const requireCategories = to.path.includes('/cases');
   const requireLoadingFlows = to.path.includes('/question') || to.path.includes('/cases');
   if (requireCategories) {
-    requests.push(formStore.loadCategories());
+    requests.push(formStore.loadCategoriesRest());
   }
   if (requireLoadingFlows) {
-    requests.push(formStore.loadFlows());
+    requests.push(formStore.loadFlowsRest());
     await Promise.all(requests);
   }
   else {
     await Promise.all(requests);
     Promise.all([
-      formStore.loadCategories(),
-      formStore.loadFlows(),
+      formStore.loadCategoriesRest(),
+      formStore.loadFlowsRest(),
     ]).then(() => {
       // init category tree
       formStore.initCategories();

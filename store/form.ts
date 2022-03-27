@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia';
-import { ImageFragment, FlowFragment } from '~/types/graphql';
+// import { ImageFragment, FlowFragment } from '~/types/graphql';
 import { strapiParser } from '~~/services/helper';
 import { IForm, IFormCategory, IFormCategoryFlow, IFormQuestion } from '~~/types/form';
 import { useSubmissionStore } from './submission';
+import { FlowQuery, MediaQuery } from '~~/types/rest';
 
 const socialIcons = [{
   type: 'facebook',
@@ -74,8 +75,207 @@ export const useFormStore = defineStore('form', {
     },
   },
   actions: {
+    // parse flow data from strapi
+    parseFlow(_flow: IFormCategoryFlow) {
+      // parse flow
+      const flow = strapiParser(_flow) as IFormCategoryFlow;
+      // parse category
+      const category = strapiParser(flow.category, 'category') as IFormCategory;
+      // parse flow questions
+      const questions = flow.questions.map((_question: IFormCategoryFlow['questions'][0]) => {
+        // parse question options
+        const options = _question.options.map((_option) => {
+          return {
+            ..._option,
+            id: parseInt(`${_option.id}`),
+            icon: strapiParser(_option.icon, 'icon'),
+            iconActive: strapiParser(_option.iconActive, 'iconActive'),
+            nextFlow: strapiParser(_option.nextFlow, 'nextFlow'),
+          }
+        });
+        // return parsed options & nextFlow
+        return {
+          ..._question,
+          id: parseInt(`${_question.id}`),
+          options,
+          otherwiseFlow: strapiParser(_question.otherwiseFlow, 'otherwiseFlow'),
+          flowId: flow.id,
+          catId: category.id,
+        }
+      });
+      // return flow with parsed questions
+      return {
+        ...flow,
+        category,
+        questions
+      }
+    },
+    // load main form integrated with current subdomain
+    async loadFormRest() {
+      if (this.form || this.is404) return;
+      const params = {
+        filters: {
+          subDomain: {
+            $eq: useSubDomain()
+          }
+        },
+        fields: ['id', 'title', 'gtagId', 'theme', 'headerStyle', 'homeStyle', 'term'],
+        populate: {
+          introBanner: {
+            fields: ['text', 'remoteVideo', 'autoplay'],
+            populate: {
+              media: MediaQuery
+            }
+          },
+          thankyouBanner: {
+            fields: ['text', 'remoteVideo', 'autoplay'],
+            populate: {
+              media: MediaQuery
+            }
+          },
+          zip: '*',
+          registerForm: {
+            fields: ['title', 'description', 'progress', 'button'],
+            populate: {
+              placeholder: {
+                fields: ['firstName', 'lastName', 'email', 'phone']
+              }
+            }
+          },
+          categoryForm: {
+            fields: ['title', 'progress', 'hasNext']
+          },
+          socialLinks: {
+            fields: ['facebook', 'instagram', 'twitter', 'youtube', 'linkedin']
+          },
+          footer: {
+            fields: ['policy', 'sitemap', 'disclaimer', 'copyright']
+          },
+          logo: MediaQuery,
+          favicon: MediaQuery,
+          phone: {
+            fields: ['label', 'number']
+          },
+          estimationPage: {
+            fields: ['title', 'minimum', 'maximum', 'note']
+          },
+          thankyouPage: {
+            fields: ['title', 'message', 'buttonReturn', 'returnLink', 'buttonPromo', 'promoLink']
+          },
+          reviews: {
+            fields: ['id', 'name', 'message', 'rating', 'at'],
+            populate: {
+              avatar: MediaQuery
+            },
+            sort: ['ordering:ASC'],
+          }
+        }
+      };
+      try {
+        const { data } = await useStrapiClient()<{ data: IForm[] }>('forms', { params });
+        if (data?.length) {
+          const form = strapiParser(data[0]) as IForm;
+          this.form = {
+            ...form,
+            favicon: strapiParser(form.favicon, 'favicon'),
+            logo: strapiParser(form.logo, 'logo'),
+            introBanner: {
+              ...form.introBanner,
+              media: strapiParser(form.introBanner?.media)
+            },
+            thankyouBanner: {
+              ...form.thankyouBanner,
+              media: strapiParser(form.thankyouBanner?.media)
+            },
+            reviews: (form.reviews as any).data.map(item => {
+              const parsedReview = strapiParser(item);
+              return {
+                ...parsedReview,
+                avatar: strapiParser(item.attributes.avatar, 'avatar'),
+              }
+            }),
+          };
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    // load categories
+    async loadCategoriesRest() {
+      if (this.categories.length) return;
+      const params = {
+        filters: {
+          form: {
+            subDomain: {
+              $eq: useSubDomain()
+            }
+          }
+        },
+        sort: ['ordering:ASC'],
+        pagination: {
+          pageSize: 50
+        },
+        fields: ['id', 'title'],
+        populate: {
+          icon: MediaQuery,
+          iconActive: MediaQuery,
+          flows: {
+            populate: {
+              flow: {
+                fields: ['id']
+              }
+            },
+            pagination: {
+              pageSize: 50
+            }
+          }
+        }
+      };
+      try {
+        const { data } = await useStrapiClient()<{ data: any }>('form-categories', { params });
+        if (data?.length) {
+          this.categories = data.map((category) => {
+            const parsedCategory = strapiParser(category);
+            return {
+              ...parsedCategory,
+              icon: strapiParser(category.attributes.icon, 'icon'),
+              iconActive: strapiParser(category.attributes.iconActive, 'iconActive'),
+              flows: category.attributes.flows.map(item => ({
+                flow: strapiParser(item.flow),
+              })),
+            }
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    // load all flows of the forms over all categories
+    async loadFlowsRest() {
+      if (this.flows.length || this.is404) return;
+      const params = {
+        filters: {
+          form: {
+            subDomain: {
+              $eq: useSubDomain()
+            }
+          }
+        },
+        pagination: {
+          page: 1,
+          pageSize: 100
+        },
+        ...FlowQuery
+      }
+      try {
+        const { data } = await useStrapiClient()<{ data: IFormCategoryFlow[] }>('form-category-flows', { params })
+        this.flows = data.map(d => this.parseFlow(d)).sort((a, b) => a.id - b.id);
+      } catch (e) {
+        console.error(e);
+      }
+    },
     // load form & categories metadata
-    async loadForm() {
+    /* async loadForm() {
       if (this.form || this.is404) return;
       const graphql = useStrapiGraphQL();
       const subDomain = useSubDomain();
@@ -222,9 +422,9 @@ export const useFormStore = defineStore('form', {
       } catch (e) {
         console.log(e.message);
       }
-    },
+    }, */
     // load categories
-    async loadCategories() {
+    /* async loadCategories() {
       if (this.categories.length) return;
       const graphql = useStrapiGraphQL();
       const subDomain = useSubDomain();
@@ -278,43 +478,9 @@ export const useFormStore = defineStore('form', {
       } catch (e) {
         console.log(e.message);
       }
-    },
-    parseFlow(_flow: IFormCategoryFlow) {
-      // parse flow
-      const flow = strapiParser(_flow) as IFormCategoryFlow;
-      // parse category
-      const category = strapiParser(flow.category, 'category') as IFormCategory;
-      // parse flow questions
-      const questions = flow.questions.map((_question: IFormCategoryFlow['questions'][0]) => {
-        // parse question options
-        const options = _question.options.map((_option) => {
-          return {
-            ..._option,
-            id: parseInt(`${_option.id}`),
-            icon: strapiParser(_option.icon, 'icon'),
-            iconActive: strapiParser(_option.iconActive, 'iconActive'),
-            nextFlow: strapiParser(_option.nextFlow, 'nextFlow'),
-          }
-        });
-        // return parsed options & nextFlow
-        return {
-          ..._question,
-          id: parseInt(`${_question.id}`),
-          options,
-          otherwiseFlow: strapiParser(_question.otherwiseFlow, 'otherwiseFlow'),
-          flowId: flow.id,
-          catId: category.id,
-        }
-      });
-      // return flow with parsed questions
-      return {
-        ...flow,
-        category,
-        questions
-      }
-    },
+    }, */
     // load all flows of the forms over all categories
-    async loadFlows() {
+    /* async loadFlows() {
       if (this.flows.length || this.is404) return;
       const graphql = useStrapiGraphQL();
       const subDomain = useSubDomain();
@@ -341,9 +507,9 @@ export const useFormStore = defineStore('form', {
       } catch (e) {
         console.log(e.message);
       }
-    },
+    }, */
     // load flow by id
-    async loadFlowById(id: number) {
+    /* async loadFlowById(id: number) {
       if (this.flows.find(f => f.id === id) || this.is404) return;
       const graphql = useStrapiGraphQL();
       try {
@@ -364,7 +530,7 @@ export const useFormStore = defineStore('form', {
       } catch (e) {
         console.log(e.message);
       }
-    },
+    }, */
     // initialize category tree, with ordered flows inside each category
     initCategories() {
       if (!this.categories.length || !this.flows.length) return;

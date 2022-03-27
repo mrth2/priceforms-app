@@ -1,4 +1,4 @@
-export const ImageFragment = `
+/* export const ImageFragment = `
   fragment Image on UploadFileEntityResponse {
     data {
       attributes {
@@ -61,4 +61,4 @@ export const FlowFragment = `
       }
     }
   }
-`;
+`; */
