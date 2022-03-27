@@ -15,47 +15,34 @@ definePageMeta({
 
 const route = useRoute();
 const router = useRouter();
-const graphql = useStrapiGraphQL();
 const appStore = useAppStore();
 appStore.setLoading(true);
 const { pending, data } = useAsyncData<{ data: any }>("submission", () =>
-  graphql(`
-    query SUBMISSION {
-      formSubmission(id: ${route.params.id}) {
-        data {
-          id
-          attributes {
-            zip
-            category {
-              data {
-                attributes{
-                  title
-                }
-              }
-            }
-            subscriber {
-              data {
-                attributes {
-                  firstName
-                  lastName
-                  email
-                }
-              }
-            }
-            status
-            stopAt
-            progress
-            minPrice
-            maxPrice
-            currency
-            data
-            createdAt
-            updatedAt
-          }
-        }
-      }
-    }
-  `)
+  useStrapiClient()(`form-submissions/${route.params.id}`, {
+    params: {
+      fields: [
+        "id",
+        "zip",
+        "status",
+        "stopAt",
+        "progress",
+        "minPrice",
+        "maxPrice",
+        "currency",
+        "data",
+        "updatedAt",
+        "createdAt",
+      ],
+      populate: {
+        category: {
+          fields: ["title"],
+        },
+        subscriber: {
+          fields: ["firstName", "lastName", "email"],
+        },
+      },
+    },
+  })
 );
 watch(pending, () => {
   if (!pending.value && !submission.value) {
