@@ -1,10 +1,29 @@
 import { Ref } from "nuxt3/dist/app/compat/capi";
 import { IUser } from "~~/types/user";
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
   const isOnAdmin = to.path.includes('/admin');
+
+  const { magicToken } = to.query;
+  // if magicToken found, verify token and override current client login
+  if (isOnAdmin && magicToken) {
+    const formOwner = await useStrapiClient()<IUser>('/users/me', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${magicToken}`
+      }
+    });
+    // form owner must be valid and own this form subdomain
+    if (formOwner && formOwner.isOwner && formOwner.ownedForms.length && formOwner.ownedForms.includes(useSubDomain())) {
+      useStrapiAuth().setToken(magicToken as string);
+      if (typeof window !== 'undefined') {
+        const cleanedUrl = to.fullPath.replace(new RegExp(`([\?\&])magicToken=${magicToken}`, 'g'), '$1');
+        window.location.href = cleanedUrl;
+      }
+    }
+  }
+
   const isOnAuth = to.path.includes('/admin/login') || to.path.includes('/admin/logout');
-  const isOnSignUp = to.path === '/signup';
   const user = useStrapiUser() as Ref<IUser>;
   if (isOnAdmin && !isOnAuth) {
     // check for user
@@ -21,11 +40,5 @@ export default defineNuxtRouteMiddleware((to, from) => {
     ) {
       return navigateTo('/');
     }
-  }
-  // if normal user trying to access signup page but already logged in, direct to /cases page
-  else if (isOnSignUp) {
-    // if (user.value) {
-    //   return navigateTo('/cases');
-    // }
   }
 });
