@@ -12,10 +12,14 @@ import {
   CurrencyEuroIcon,
   CalculatorIcon,
   StopIcon,
+  MailIcon,
+  PhoneIcon,
+  UserIcon
 } from "@heroicons/vue/solid";
 
 const props = defineProps<{
   submission: IFormSubmission;
+  subscriber: IFormSubmission["subscriber"];
 }>();
 const submissionStatusIcon = computed(() => {
   if (props.submission) {
@@ -48,6 +52,36 @@ const iconClass = computed(() =>
   <aside v-if="submission">
     <h2 class="sr-only">Details</h2>
     <div class="details">
+      <div class="detail-item">
+        <UserIcon
+          class="detail-item-icon"
+          :class="iconClass"
+          aria-hidden="true"
+        />
+        <span class="detail-item-text">
+          {{ $fullname(subscriber) }}
+        </span>
+      </div>
+      <div class="detail-item">
+        <MailIcon
+          class="detail-item-icon"
+          :class="iconClass"
+          aria-hidden="true"
+        />
+        <span class="detail-item-text">
+          {{ subscriber.email }}
+        </span>
+      </div>
+      <div class="detail-item">
+        <PhoneIcon
+          class="detail-item-icon"
+          :class="iconClass"
+          aria-hidden="true"
+        />
+        <span class="detail-item-text">
+          {{ subscriber.phone || 'N/A' }}
+        </span>
+      </div>
       <div class="detail-item">
         <Component
           :is="submissionStatusIcon"
@@ -108,7 +142,9 @@ const iconClass = computed(() =>
       </div>
       <div class="detail-item">
         <CalculatorIcon class="detail-item-icon" :class="iconClass" />
-        <span class="detail-item-text">Progress: {{ submission.progress }}%</span>
+        <span class="detail-item-text"
+          >Progress: {{ submission.progress }}%</span
+        >
       </div>
       <div class="detail-item">
         <StopIcon class="detail-item-icon" :class="iconClass" />

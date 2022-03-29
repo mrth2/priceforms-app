@@ -38,7 +38,7 @@ const { pending, data } = useAsyncData<{ data: any }>("submission", () =>
           fields: ["title"],
         },
         subscriber: {
-          fields: ["firstName", "lastName", "email"],
+          fields: ["firstName", "lastName", "email", "phone"],
         },
       },
     },
@@ -57,7 +57,7 @@ const submission = computed<IFormSubmission>(() =>
 );
 // reorder data by question order ASC
 const submissionData = computed(() =>
-  submission.value?.data.sort((a, b) => a.order - b.order)
+  submission.value?.data.sort((a, b) => b.order - a.order)
 );
 const category = computed<IFormCategory>(() =>
   pending.value || !submission.value
@@ -122,7 +122,11 @@ async function deleteSubmission() {
               </Button>
             </div>
           </div>
-          <SubmissionDetail :submission="submission" class="mt-8 xl:hidden" />
+          <SubmissionDetail
+            :submission="submission"
+            :subscriber="subscriber"
+            class="mt-8 xl:hidden"
+          />
         </div>
       </div>
       <section aria-labelledby="activity-title">
@@ -162,6 +166,7 @@ async function deleteSubmission() {
     </div>
     <SubmissionDetail
       :submission="submission"
+      :subscriber="subscriber"
       class="hidden xl:block xl:pl-8"
     />
 
