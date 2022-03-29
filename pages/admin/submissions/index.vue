@@ -316,6 +316,7 @@ async function deleteSubmission() {
                     :class="sortClasses('name')"
                   />
                 </th>
+                <th scope="col" class="heading">Phone</th>
                 <th scope="col" class="heading">Case type</th>
                 <!-- <th
                   scope="col"
@@ -392,6 +393,11 @@ async function deleteSubmission() {
                         {{ item.subscriber.email }}
                       </div>
                     </div>
+                  </div>
+                </td>
+                <td class="row">
+                  <div class="text-sm text-gray-900 uppercase">
+                    {{ item.subscriber.phone }}
                   </div>
                 </td>
                 <td class="row">
