@@ -22,7 +22,7 @@ const { $dateFormat } = useNuxtApp();
 
 const strapi = useStrapi4();
 
-const sortAsc = ref(true);
+const sortAsc = ref(false);
 type SortField = "updated" | "status" | "name" | "progress";
 const sortBy = ref<SortField>("updated");
 const sortParams = computed(() => {
