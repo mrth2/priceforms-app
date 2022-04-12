@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAppStore } from "~~/store/app";
 import { useFormStore } from "~~/store/form";
 import { useSubmissionStore } from "~~/store/submission";
 
@@ -19,13 +20,25 @@ const inputCode = ref("");
 const formInput = ref<HTMLElement & { $tippy: any }>();
 const termAgreed = ref(true);
 
+const limitDigits = computed(() => form.value.zipRestriction.limitDigits);
+// require zip to be valid if zip is configured to be required and has list of zip codes
+const requireZipCodeCheck = computed(
+  () => zipCodes.value.length > 0 && form.value.zipRestriction.checkCode
+);
 async function checkZip() {
   if (!termAgreed.value) return;
-  if (!/^(\d{5})$/g.test(inputCode.value)) {
+  // check for number of digits via configured limit
+  const pattern = new RegExp(`^(\\d{${limitDigits.value}})$`, "g");
+  // if form require digit limitation, check for match
+  if (
+    form.value.zipRestriction.requireDigit &&
+    !pattern.test(inputCode.value)
+  ) {
     formInput.value.$tippy.show();
     return;
   }
-  if (zipCodes.value.includes(inputCode.value)) {
+  // if form require code validation via zip codes, check for match
+  if (!requireZipCodeCheck.value || zipCodes.value.includes(inputCode.value)) {
     // save submission to storage with zip code
     const submissionStore = useSubmissionStore();
     submissionStore.setSubmission({
@@ -33,6 +46,12 @@ async function checkZip() {
       zip: inputCode.value,
     });
     router.push("/signup");
+  } else {
+    useAppStore().pushNotification({
+      type: "error",
+      title: "Invalid Zip Code",
+      position: "center",
+    });
   }
 }
 

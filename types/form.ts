@@ -20,6 +20,11 @@ export interface IForm {
     code?: string
     button: string
   }>
+  zipRestriction: {
+    checkCode: boolean
+    limitDigits: number
+    requireDigit: boolean
+  }
   term: string
   registerForm: {
     title: string

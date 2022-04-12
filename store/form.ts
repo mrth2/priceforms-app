@@ -133,6 +133,7 @@ export const useFormStore = defineStore('form', {
               media: MediaQuery
             }
           },
+          zipRestriction: '*',
           zip: '*',
           registerForm: {
             fields: ['title', 'description', 'progress', 'button'],
