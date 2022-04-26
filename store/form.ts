@@ -19,7 +19,13 @@ const socialIcons = [{
   icon: 'instagram'
 }, {
   type: 'youtube',
-  icon: 'youtube'
+  icon: 'youtube',
+}, {
+  type: 'googleMap',
+  icon: 'map-location-dot'
+}, {
+  type: 'yelp',
+  icon: 'yelp'
 }] as Array<{
   type: keyof IForm['socialLinks'],
   icon: string

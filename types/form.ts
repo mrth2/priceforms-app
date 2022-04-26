@@ -55,6 +55,8 @@ export interface IForm {
     twitter: string
     youtube: string
     linkedin: string
+    googleMap: string
+    yelp: string
   }
   footer: {
     policy: string
