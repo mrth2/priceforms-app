@@ -5,11 +5,10 @@ const props = defineProps<{
   banner: IFormBanner;
 }>();
 
-const isVideo = computed(() => props.banner.media.url.includes(".mp4"));
+const mediaUrl = computed(() => props.banner?.media?.url || "");
+const isVideo = computed(() => mediaUrl.value.includes(".mp4"));
 const isImage = computed(
-  () =>
-    props.banner.media.url.includes(".jpg") ||
-    props.banner.media.url.includes(".png")
+  () => mediaUrl.value.includes(".jpg") || mediaUrl.value.includes(".png")
 );
 const isYoutube = computed(() =>
   props.banner.remoteVideo?.includes("youtube.com")

@@ -28,7 +28,7 @@ const socials = computed(() => formStore.socialIcons);
             :href="formStore.getSocialUrl(item.type)"
             target="_blank"
           >
-            <FaIcon class="social-icon" :icon="['fab', item.icon]" size="xs" />
+            <FaIcon class="social-icon" :icon="[item.prefix, item.icon]" size="xs" />
           </a>
         </div>
       </div>

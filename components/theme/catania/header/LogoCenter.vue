@@ -12,7 +12,7 @@ const socials = computed(() => formStore.socialIcons);
   <div class="header header-center">
     <span class="header-cta">
       Call NOW for a <strong>FREE</strong> Consultation
-      <a :href="`tel:${phone.number}`">
+      <a v-if="phone?.number" :href="`tel:${phone.number}`">
         <strong>{{ phone.label }}</strong>
       </a>
     </span>
@@ -26,7 +26,7 @@ const socials = computed(() => formStore.socialIcons);
         :href="formStore.getSocialUrl(item.type)"
         target="_blank"
       >
-        <FaIcon class="social-icon" :icon="['fab', item.icon]" size="xs" />
+        <FaIcon class="social-icon" :icon="[item.prefix, item.icon]" size="xs" />
       </a>
     </div>
   </div>

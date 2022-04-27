@@ -8,27 +8,35 @@ import { FlowQuery, MediaQuery } from '~~/types/rest';
 const socialIcons = [{
   type: 'facebook',
   icon: 'facebook-f',
+  prefix: 'fab',
 }, {
   type: 'twitter',
-  icon: 'twitter'
+  icon: 'twitter',
+  prefix: 'fab',
 }, {
   type: 'linkedin',
-  icon: 'linkedin-in'
+  icon: 'linkedin-in',
+  prefix: 'fab',
 }, {
   type: 'instagram',
-  icon: 'instagram'
+  icon: 'instagram',
+  prefix: 'fab',
 }, {
   type: 'youtube',
   icon: 'youtube',
+  prefix: 'fab',
 }, {
   type: 'googleMap',
-  icon: 'map-location-dot'
+  icon: 'map-location-dot',
+  prefix: 'fas',
 }, {
   type: 'yelp',
-  icon: 'yelp'
+  icon: 'yelp',
+  prefix: 'fab',
 }] as Array<{
   type: keyof IForm['socialLinks'],
   icon: string
+  prefix: 'fab' | 'fas'
 }>;
 
 export const useFormStore = defineStore('form', {
@@ -45,7 +53,7 @@ export const useFormStore = defineStore('form', {
     getHeaderStyle: (state) => state.form.headerStyle,
     getHomeStyle: (state) => state.form.homeStyle,
     getSocialUrl: (state) => {
-      return (type: keyof IForm['socialLinks']): string => state.form.socialLinks[type]
+      return (type: keyof IForm['socialLinks']): string => state.form.socialLinks?.[type]
     },
     getFooter: (state) => state.form.footer,
     getPhone: (state) => state.form.phone,
@@ -93,20 +101,20 @@ export const useFormStore = defineStore('form', {
         const options = _question.options.map((_option) => {
           return {
             ..._option,
-            id: parseInt(`${_option.id}`),
-            icon: strapiParser(_option.icon, 'icon'),
-            iconActive: strapiParser(_option.iconActive, 'iconActive'),
-            nextFlow: strapiParser(_option.nextFlow, 'nextFlow'),
+            id: parseInt(`${_option?.id}`),
+            icon: strapiParser(_option?.icon, 'icon'),
+            iconActive: strapiParser(_option?.iconActive, 'iconActive'),
+            nextFlow: strapiParser(_option?.nextFlow, 'nextFlow'),
           }
         });
         // return parsed options & nextFlow
         return {
           ..._question,
-          id: parseInt(`${_question.id}`),
+          id: parseInt(`${_question?.id}`),
           options,
           otherwiseFlow: strapiParser(_question.otherwiseFlow, 'otherwiseFlow'),
-          flowId: flow.id,
-          catId: category.id,
+          flowId: flow?.id,
+          catId: category?.id,
         }
       });
       // return flow with parsed questions

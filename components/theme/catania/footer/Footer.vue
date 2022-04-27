@@ -11,17 +11,20 @@ const copyright = computed(() =>
       )
     : ""
 );
+const hasPolicies = computed(
+  () => footer.value.policy || footer.value.sitemap || footer.value.disclaimer
+);
 </script>
 
 <template>
   <div class="footer-container">
     <div class="footer">
-      <div class="policies">
+      <div v-if="hasPolicies" class="policies">
         <a :href="footer.policy" target="_blank">Privacy Policy</a>
         <a :href="footer.sitemap" target="_blank">Sitemap</a>
         <a :href="footer.disclaimer" target="_blank">Disclaimer</a>
       </div>
-      <div class="copyright">
+      <div class="copyright" :class="{ 'mx-auto': !hasPolicies }">
         {{ copyright }}
       </div>
     </div>

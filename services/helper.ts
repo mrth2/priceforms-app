@@ -1,5 +1,5 @@
 export const strapiParser = (res: any, key?: string) => {
-  const data = res.data;
+  const data = res?.data;
   if (data) {
     if (key && data[key]) {
       return {
@@ -14,7 +14,7 @@ export const strapiParser = (res: any, key?: string) => {
       }
     }
   }
-  else if (res.id) {
+  else if (res?.id) {
     return {
       id: parseInt(res.id),
       ...res.attributes
