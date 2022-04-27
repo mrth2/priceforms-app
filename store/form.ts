@@ -158,7 +158,7 @@ export const useFormStore = defineStore('form', {
             }
           },
           categoryForm: {
-            fields: ['title', 'progress', 'hasNext']
+            fields: ['title', 'progress', 'hasNext', 'buttonOnTop']
           },
           socialLinks: {
             fields: ['facebook', 'instagram', 'twitter', 'youtube', 'linkedin']

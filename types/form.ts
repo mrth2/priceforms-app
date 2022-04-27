@@ -42,6 +42,7 @@ export interface IForm {
     title: string
     progress: string
     hasNext: boolean
+    buttonOnTop: boolean
   }
   categories: IFormCategory[]
   logo: IMedia

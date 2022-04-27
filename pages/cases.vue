@@ -4,7 +4,8 @@ import { useAppStore } from "~~/store/app";
 import { useFormStore } from "~~/store/form";
 import { useSubmissionStore } from "~~/store/submission";
 import { IFormCategory } from "~~/types/form";
-import { useGtag } from "vue-gtag-next";
+import { useGtag, isReady } from "vue-gtag-next";
+import { ChevronLeftIcon } from "@heroicons/vue/solid";
 
 definePageMeta({
   layout: "form",
@@ -58,7 +59,7 @@ async function goNext() {
   submissionStore.setCategories([selectedCategory.value]);
   submissionStore.saveSubmission();
   // set event select case
-  gtagEvent("select_case", {
+  isReady.value && gtagEvent("select_case", {
     case_id: selectedCategory.value.id,
     case_title: selectedCategory.value.title,
   });
@@ -72,9 +73,26 @@ async function goNext() {
 
 <template>
   <div class="py-4 lg:p-6">
+    <div v-if="categoryForm.buttonOnTop" class="cta header-actions">
+      <div>
+        <a class="back" @click="$emit('back')">
+          <ChevronLeftIcon class="w-5 h-5 mt-1" />
+          BACK
+        </a>
+      </div>
+      <!-- has next button + button on Top -->
+      <CoreButton
+        v-if="categoryForm.hasNext"
+        :type="selectedCategory ? 'primary' : 'secondary'"
+        class="!px-8"
+        @click="goNext"
+      >
+        NEXT
+      </CoreButton>
+    </div>
     <h1>{{ categoryForm.title }}</h1>
 
-    <div class="categories">
+    <div class="categories" :class="{ bigger: categories.length <= 2 }">
       <div
         v-for="category in categories"
         :key="category.id"
@@ -94,7 +112,7 @@ async function goNext() {
         </div>
       </div>
     </div>
-    <div class="cta">
+    <div v-if="!categoryForm.buttonOnTop" class="cta">
       <CoreButton type="delete" @click="$router.push('/signup')">
         BACK
       </CoreButton>
@@ -150,8 +168,26 @@ h1 {
       @apply cursor-not-allowed opacity-30;
     }
   }
+
+  &.bigger {
+    @apply mt-10;
+    .category-item {
+      @apply w-52 h-48;
+
+      .category-item-image {
+        .icon,
+        .icon-active {
+          @apply h-24 max-w-[96px] object-contain mb-4;
+        }
+      }
+    }
+  }
 }
 .cta {
   @apply flex justify-center gap-4;
+
+  &.header-actions {
+    @apply mb-10;
+  }
 }
 </style>
