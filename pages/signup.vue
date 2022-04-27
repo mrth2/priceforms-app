@@ -5,7 +5,7 @@ import CoreButton from "~~/components/core/Button.vue";
 import { ISubscriber } from "~~/types/subscriber";
 import { useSubmissionStore } from "~~/store/submission";
 import { useAppStore } from "~~/store/app";
-import { useGtag } from "vue-gtag-next";
+import { useGtag, isReady } from "vue-gtag-next";
 
 definePageMeta({
   layout: "form",
@@ -123,17 +123,20 @@ async function signUp() {
       subscriber,
     });
     submissionStore.saveSubmission();
+    console.log(subscriber);
     // config gtag with user id
-    gtagConfig({
-      user_id: subscriber.id,
-    });
-    // send event login
-    gtagEvent("login", {
-      method: "email",
-      user_id: subscriber.id,
-      user_email: subscriber.email,
-      user_name: useNuxtApp().$fullname(subscriber),
-    });
+    if (isReady.value) {
+      gtagConfig({
+        user_id: subscriber.id,
+      });
+      // send event login
+      gtagEvent("login", {
+        method: "email",
+        user_id: subscriber.id,
+        user_email: subscriber.email,
+        user_name: useNuxtApp().$fullname(subscriber),
+      });
+    }
     // direct to cases
     router.push("/cases");
   } catch (e) {
