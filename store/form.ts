@@ -135,6 +135,9 @@ export const useFormStore = defineStore('form', {
         },
         fields: ['id', 'title', 'gtagId', 'theme', 'headerStyle', 'homeStyle', 'term', 'font'],
         populate: {
+          color: {
+            fields: ['button', 'progress']
+          },
           introBanner: {
             fields: ['text', 'remoteVideo', 'autoplay'],
             populate: {

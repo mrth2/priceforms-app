@@ -16,6 +16,10 @@ export interface IForm {
   introBanner: IFormBanner
   thankyouBanner: IFormBanner
   font: 'Muli' | 'Poppins'
+  color: {
+    button: 'blue' | 'red'
+    progress: 'blue' | 'red'
+  }
   zip: Array<{
     hint?: string
     code?: string

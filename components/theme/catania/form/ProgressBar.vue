@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useFormStore } from "~~/store/form";
+
 const props = withDefaults(
   defineProps<{
     label: string;
@@ -9,6 +11,17 @@ const props = withDefaults(
     progress: 5,
   }
 );
+
+const color = computed(() => useFormStore().form.color);
+const activeBarClasses = computed(() => ({
+  "bg-catania-button-blue": color.value.progress === "blue",
+  "bg-catania-button-red": color.value.progress === "red",
+}));
+const indicatorClasses = computed(() => ({
+  "bg-catania-button-blue": color.value.progress === "blue",
+  "bg-catania-button-red": color.value.progress === "red",
+}));
+
 const progressBar = ref<HTMLElement>();
 const indicatorSize = ref(12);
 const indicatorTranslateX = ref<number>(null);
@@ -71,8 +84,12 @@ onBeforeUnmount(() => {
 <template>
   <div ref="progressBar" class="progress-bar">
     <div class="progress">
-      <div class="active" :style="activeBarStyle" />
-      <div class="indicator" :style="indicatorStyle" />
+      <div class="active" :class="activeBarClasses" :style="activeBarStyle" />
+      <div
+        class="indicator"
+        :class="indicatorClasses"
+        :style="indicatorStyle"
+      />
       <div class="slide" />
     </div>
     <span class="label" :style="labelStyle">
@@ -91,11 +108,11 @@ onBeforeUnmount(() => {
       @apply bg-gray-200 h-full rounded-lg;
     }
     .active {
-      @apply rounded-lg bg-catania-button h-2 md:h-3 absolute top-0 left-0 w-0;
+      @apply rounded-lg h-2 md:h-3 absolute top-0 left-0 w-0;
       transition: width 400ms ease-out;
     }
     .indicator {
-      @apply bg-catania-button absolute rounded-full left-0 transition-transform duration-500 ease-out;
+      @apply absolute rounded-full left-0 transition-transform duration-500 ease-out;
       @apply h-4 w-4 -top-1;
       @screen md {
         @apply h-6 w-6 -top-1.5;

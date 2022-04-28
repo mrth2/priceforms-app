@@ -12,7 +12,10 @@ module.exports = {
         catania: {
           primary: '#143050',
           secondary: '#929192',
-          button: '#4690CB',
+          button: {
+            blue: '#4690CB',
+            red: '#df2835',
+          },
           review: '#F6E34D',
           outline: '#BFBFBF'
         }
