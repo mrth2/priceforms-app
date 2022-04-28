@@ -15,6 +15,7 @@ export interface IForm {
   subDomain: string
   introBanner: IFormBanner
   thankyouBanner: IFormBanner
+  font: 'Muli' | 'Poppins'
   zip: Array<{
     hint?: string
     code?: string
