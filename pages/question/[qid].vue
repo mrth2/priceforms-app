@@ -10,7 +10,7 @@ import {
 } from "~~/types/form";
 import type { ISubmissionOption } from "~~/types/form";
 import ThemeCataniaQuestionDetail from "~~/components/theme/catania/question/Detail.vue";
-import { useGtag } from "vue-gtag-next";
+import { useGtag, isReady } from "vue-gtag-next";
 
 definePageMeta({
   layout: "form",
@@ -328,7 +328,7 @@ function goNext() {
   }
 
   // add event to GA
-  gtagEvent("answer_question", {
+  isReady.value && gtagEvent("answer_question", {
     question_id: question.value.id,
     question_title: question.value.title,
   });
