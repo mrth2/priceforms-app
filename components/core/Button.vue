@@ -22,7 +22,7 @@ const buttonClass = computed(() => {
   if (props.loading) result.push("cursor-wait", "loading");
   switch (props.type) {
     case "primary":
-      if (color.value.button === "red") {
+      if (color.value?.button === "red") {
         result.push("bg-catania-button-red");
       } else {
         result.push("bg-catania-button-blue");

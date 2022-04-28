@@ -13,14 +13,16 @@ const props = withDefaults(
 );
 
 const color = computed(() => useFormStore().form.color);
-const activeBarClasses = computed(() => ({
-  "bg-catania-button-blue": color.value.progress === "blue",
-  "bg-catania-button-red": color.value.progress === "red",
-}));
-const indicatorClasses = computed(() => ({
-  "bg-catania-button-blue": color.value.progress === "blue",
-  "bg-catania-button-red": color.value.progress === "red",
-}));
+const indicatorClasses = computed(() => {
+  const result = [];
+  if (color.value?.progress === "red") {
+    result.push("bg-catania-button-red");
+  } else {
+    result.push("bg-catania-button-blue");
+  }
+  return result;
+});
+const activeBarClasses = computed(() => indicatorClasses.value);
 
 const progressBar = ref<HTMLElement>();
 const indicatorSize = ref(12);
