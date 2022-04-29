@@ -35,7 +35,7 @@ const embedLink = computed(() => {
 </script>
 
 <template>
-  <div class="banner" :class="{ remote: isRemoteVideo }">
+  <div class="banner" :class="{ remote: isRemoteVideo, 'py-2.5': isImage }">
     <iframe
       v-if="isRemoteVideo"
       :src="embedLink"

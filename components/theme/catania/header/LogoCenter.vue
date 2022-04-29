@@ -47,7 +47,7 @@ const socials = computed(() => formStore.socialIcons);
     max-width: var(--max-side-width);
   }
   .header-logo {
-    @apply bg-catania-primary border-2 border-t-0 border-white w-28 md:w-36 px-2 md:px-4 pb-2 md:pb-4 pt-6 md:pt-12 mx-auto;
+    @apply bg-catania-primary border-2 border-t-0 border-white w-28 md:w-40 px-2 md:px-0 pb-2 md:pb-4 pt-6 md:pt-12 mx-auto;
     @apply absolute left-1/2 transform -translate-x-1/2;
 
     img {
