@@ -49,6 +49,7 @@ export const useSubmissionStore = defineStore('submission', {
           return acc;
         }, [0, 0] as [number, number]);
         // add up all prices
+        let dividePriceBy = 1;
         filteredQuestions.forEach(d => {
           const question = allQuestions.find(q => q.id === d.qid);
           let minPrice = 0, maxPrice = 0;
@@ -62,6 +63,12 @@ export const useSubmissionStore = defineStore('submission', {
               else if (option.unit === 'DollarSquareFeet') {
                 minPrice = option.minPrice * totalSquareFeets[0] / option.unitCapacity;
                 maxPrice = option.maxPrice * totalSquareFeets[1] / option.unitCapacity;
+              }
+              // if select this option will divide the price by this value, store the maximum division
+              if (Number.isInteger(option.dividePriceBy) && option.dividePriceBy > 0) {
+                if (dividePriceBy < option.dividePriceBy) {
+                  dividePriceBy = option.dividePriceBy;
+                }
               }
             }
           }
@@ -79,8 +86,8 @@ export const useSubmissionStore = defineStore('submission', {
           remain = (100 - highestDiscount) / 100;
         }
         return {
-          minPrice: Math.ceil(totalMinPrice * remain),
-          maxPrice: Math.ceil(totalMaxPrice * remain),
+          minPrice: Math.ceil(totalMinPrice * remain / dividePriceBy),
+          maxPrice: Math.ceil(totalMaxPrice * remain / dividePriceBy),
           currency: state.submission.currency
         }
       }
