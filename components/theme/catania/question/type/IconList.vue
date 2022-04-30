@@ -31,7 +31,7 @@ defineEmits(["selected"]);
       @mouseenter="($event) => ($event.target as HTMLElement).classList.add('hovering')"
       @mouseleave="($event) => ($event.target as HTMLElement).classList.remove('hovering')"
     >
-      <div class="option-item-image">
+      <div v-if="option.icon || option.iconActive" class="option-item-image">
         <img v-if="option.icon" class="icon" :src="option.icon.url" />
         <img
           v-if="option.iconActive"
@@ -98,16 +98,16 @@ defineEmits(["selected"]);
   &.scaled {
     @apply !w-full max-w-none px-5;
     .option-item {
-      @apply md:h-44;
+      @apply md:h-48 md:max-h-48;
 
       .option-item-image {
-        @apply max-w-[100px] h-auto mb-4;
+        /* @apply mb-4; */
       }
     }
   }
 
   .option-item {
-    @apply flex flex-col items-center justify-center gap-1 w-full lg:w-32 h-44 md:h-40 lg:h-36 bg-gray-200 cursor-pointer p-4 transition-colors;
+    @apply flex flex-col items-center justify-center gap-1 w-full lg:w-32 max-h-48 h-48 md:max-h-44 md:h-44 lg:h-40 bg-gray-200 cursor-pointer px-2 transition-colors overflow-hidden;
     max-width: calc(50% - 8px);
     @screen md {
       max-width: calc(100% / 3 - 8px);
@@ -115,17 +115,18 @@ defineEmits(["selected"]);
     }
 
     .option-item-image {
-      @apply h-16 max-w-[64px] flex items-center;
+      @apply max-w-[96px] flex items-center pt-4 mb-auto;
+      @apply h-full;
       .icon,
       .icon-active {
-        @apply object-contain;
+        @apply object-cover;
       }
       .icon-active {
         @apply hidden;
       }
     }
     .option-item-title {
-      @apply text-gray-600 text-center text-sm leading-4 h-6;
+      @apply text-gray-600 text-center text-sm leading-4 mb-4 flex items-end justify-center;
     }
     &.selected,
     &.hovering {
