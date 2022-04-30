@@ -20,7 +20,9 @@ const hasNext = computed(
     !["text_input", "text_area"].includes(question.value.type) &&
     (question.value.hasNext ||
       question.value.canSelectMulti ||
-      question.value.type === "estimation")
+      question.value.type === "estimation" ||
+      // or options has input
+      !!question.value.options.find((o) => o.isInput))
 );
 const options = computed(() => submissionStore.current.options);
 const canGoNext = computed(

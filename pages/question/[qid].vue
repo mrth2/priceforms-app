@@ -165,8 +165,10 @@ function selectOption(opt: ISubmissionOption & { input?: string }) {
   // if question has next button => wait for next button click
   // auto go next if question is input or area type
   if (
-    question.value.hasNext &&
-    !["text_input", "text_area"].includes(question.value.type)
+    (question.value.hasNext &&
+      !["text_input", "text_area"].includes(question.value.type)) ||
+    // or question has input option
+    question.value.options.find((o) => o.isInput)
   ) {
     return;
   }
@@ -352,7 +354,6 @@ function goNext() {
       question_id: question.value.id,
       question_title: question.value.title,
     });
-  console.log(currentFlow.value);
   // if there's option with endOfFlow set to true, then end of flow
   const isEndOfFlow = options.find((o) => o?.["endOfFlow"]);
   if (isEndOfFlow) {
