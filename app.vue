@@ -5,6 +5,7 @@ const formStore = useFormStore();
 const font = computed(() => formStore.form.font);
 // append root font config
 onMounted(() => {
+  if (font.value) {
   const style = document.createElement("style");
   style.innerHTML = `
     :root {
@@ -12,6 +13,7 @@ onMounted(() => {
     }
   `;
   document.head.appendChild(style);
+  }
 });
 </script>
 
