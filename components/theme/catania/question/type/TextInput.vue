@@ -2,6 +2,7 @@
 import { useSubmissionStore } from "~~/store/submission";
 import { IFormQuestion, IFormQuestionOption } from "~~/types/form";
 import { ChevronRightIcon } from "@heroicons/vue/solid";
+import { useAppStore } from "~~/store/app";
 
 const props = defineProps<{
   type: IFormQuestion["type"];
@@ -24,6 +25,15 @@ watch(
 if (props.selected.length) userInput.value = props.selected?.[0]?.value;
 
 function onSubmit() {
+  if (userInput.value === "") {
+    useAppStore().pushNotification({
+      type: "error",
+      title: "Please fill in your answer",
+      message: "We need your roof's current condition to proceed",
+      position: 'center',
+    });
+    return;
+  }
   emit("selected", { id: null, value: userInput.value });
 }
 </script>
