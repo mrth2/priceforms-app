@@ -36,7 +36,7 @@ const buttonClass = computed(() => {
       result.push("bg-red-600", "hover:bg-red-400", "text-white");
       break;
     case "ghost":
-      result.push("bg-transparent");
+      result.push("bg-transparent", "shadow-none");
       break;
     case "outline":
       result.push("border-2", "border-gray-300", "hover:border-gray-600");

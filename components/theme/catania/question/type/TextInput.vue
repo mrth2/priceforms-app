@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useSubmissionStore } from "~~/store/submission";
 import { IFormQuestion, IFormQuestionOption } from "~~/types/form";
+import { ChevronRightIcon } from "@heroicons/vue/solid";
 
 const props = defineProps<{
   type: IFormQuestion["type"];
@@ -23,7 +24,7 @@ watch(
 if (props.selected.length) userInput.value = props.selected?.[0]?.value;
 
 function onSubmit() {
-  emit('selected', { id: null, value: userInput })
+  emit("selected", { id: null, value: userInput.value });
 }
 </script>
 
@@ -48,12 +49,20 @@ function onSubmit() {
       placeholder="Enter your answer"
       autofocus
     />
-    <div class="w-full md:w-auto">
+    <div class="w-full md:w-auto flex flex-row gap-3">
+      <CoreButton class="h-10 text-xl w-full px-8 uppercase" @click="onSubmit">
+        Next
+      </CoreButton>
       <CoreButton
-        class="h-10 text-xl w-full uppercase"
-        @click="onSubmit"
+        v-if="question.canSelectNone"
+        type="ghost"
+        class="text-xl text-catania-secondary"
+        @click="$emit('selected', { id: null, value: '' })"
       >
-        Submit
+        <div class="flex flex-row items-center">
+          <span>SKIP</span>
+          <ChevronRightIcon class="w-6 h-6" />
+        </div>
       </CoreButton>
     </div>
   </div>

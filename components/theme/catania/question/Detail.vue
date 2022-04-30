@@ -15,11 +15,19 @@ const submissionStore = useSubmissionStore();
 const question = computed(() => submissionStore.current.question);
 // auto apply next button if question hasNext or can select multi option
 const hasNext = computed(
-  () => question.value.hasNext || question.value.canSelectMulti || question.value.type === 'estimation'
+  () =>
+    // text input / area question type will not have next button
+    !["text_input", "text_area"].includes(question.value.type) &&
+    (question.value.hasNext ||
+      question.value.canSelectMulti ||
+      question.value.type === "estimation")
 );
 const options = computed(() => submissionStore.current.options);
 const canGoNext = computed(
-  () => question.value.canSelectNone || options.value.length || question.value.type === 'estimation'
+  () =>
+    question.value.canSelectNone ||
+    options.value.length ||
+    question.value.type === "estimation"
 );
 const nextMsg = "Please select at least one option";
 const topButtonTippy = computed(() => ({

@@ -163,7 +163,11 @@ function selectOption(opt: ISubmissionOption & { input?: string }) {
   // calculate total current estimate price
   updateCurrentEstimation();
   // if question has next button => wait for next button click
-  if (question.value.hasNext) {
+  // auto go next if question is input or area type
+  if (
+    question.value.hasNext &&
+    !["text_input", "text_area"].includes(question.value.type)
+  ) {
     return;
   }
   // otherwise goNext
