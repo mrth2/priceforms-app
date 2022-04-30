@@ -104,7 +104,7 @@ const QuestionOptionComponent = computed(() => {
     <div class="header-actions">
       <div v-if="!question.backButtonOnBottom">
         <a class="back" @click="$emit('back')">
-          <ChevronLeftIcon class="w-5 h-5 mt-1" />
+          <ChevronLeftIcon class="w-5 h-5" />
           BACK
         </a>
       </div>

@@ -16,6 +16,7 @@ defineEmits(["selected"]);
     :class="{
       narrowed: options.length > 10,
       condensed: options.length > 6,
+      scaled: options.length <= 3,
       'image-list': type === 'image_list',
     }"
   >
@@ -90,6 +91,17 @@ defineEmits(["selected"]);
     .option-item {
       @screen md {
         max-width: calc(25% - 16px);
+      }
+    }
+  }
+
+  &.scaled {
+    @apply !w-full max-w-none px-5;
+    .option-item {
+      @apply md:h-44;
+
+      .option-item-image {
+        @apply max-w-[100px] h-auto mb-4;
       }
     }
   }

@@ -26,7 +26,7 @@ const currentProgress = computed(() => useAppStore().currentProgress);
   /* @apply absolute inset-0 bottom-auto; */
   @apply flex flex-row justify-between items-center;
   .back {
-    @apply cursor-pointer text-catania-secondary font-semibold text-sm md:text-base flex flex-row gap-0.5 items-center;
+    @apply cursor-pointer text-catania-secondary font-semibold text-sm md:text-base leading-none flex flex-row gap-0.5 items-center;
   }
 }
 </style>
