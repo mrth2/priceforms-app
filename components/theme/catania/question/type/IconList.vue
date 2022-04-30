@@ -46,7 +46,11 @@ function onInput($event: Event, option: IFormQuestionOption) {
         @mouseenter="($event) => ($event.target as HTMLElement).classList.add('hovering')"
         @mouseleave="($event) => ($event.target as HTMLElement).classList.remove('hovering')"
       >
-        <div v-if="option.icon || option.iconActive" class="option-item-image">
+        <div
+          v-if="option.icon || option.iconActive"
+          class="option-item-image"
+          :class="{ hasActive: option.iconActive }"
+        >
           <img v-if="option.icon" class="icon" :src="option.icon.url" />
           <img
             v-if="option.iconActive"
@@ -91,7 +95,14 @@ function onInput($event: Event, option: IFormQuestionOption) {
 
         .icon,
         .icon-active {
-          @apply min-w-[60px];
+          @apply min-w-[60px] w-full h-40 object-cover;
+        }
+
+        &.hasActive {
+          .icon,
+          .icon-active {
+            @apply object-contain;
+          }
         }
       }
 
