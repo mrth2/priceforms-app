@@ -137,7 +137,7 @@ export interface IFormQuestion {
   id: number
   title: string
   question: string
-  type: 'yes_no' | 'yes_no_icon' | 'date_picker' | 'icon_list' | 'option_list' | 'image_list' | 'text_input' | 'text_area'
+  type: 'yes_no' | 'yes_no_icon' | 'date_picker' | 'icon_list' | 'option_list' | 'image_list' | 'text_input' | 'text_area' | 'estimation'
   description: string
   showEstimate: boolean
   hasNext: boolean
@@ -158,6 +158,7 @@ export interface IFormCategoryFlow {
   questions: IFormQuestion[]
   form: IForm
   category: IFormCategory
+  skipEstimation: boolean
 }
 
 export interface IFormSubmission extends IFormPricing {

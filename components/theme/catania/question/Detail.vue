@@ -6,6 +6,7 @@ import IconListVue from "./type/IconList.vue";
 import DatePickerVue from "./type/DatePicker.vue";
 import OptionListVue from "./type/OptionList.vue";
 import TextInputVue from "./type/TextInput.vue";
+import EstimationVue from "./type/Estimation.vue";
 import { useSubmissionStore } from "~~/store/submission";
 
 defineEmits(["selected", "next", "back"]);
@@ -14,11 +15,11 @@ const submissionStore = useSubmissionStore();
 const question = computed(() => submissionStore.current.question);
 // auto apply next button if question hasNext or can select multi option
 const hasNext = computed(
-  () => question.value.hasNext || question.value.canSelectMulti
+  () => question.value.hasNext || question.value.canSelectMulti || question.value.type === 'estimation'
 );
 const options = computed(() => submissionStore.current.options);
 const canGoNext = computed(
-  () => question.value.canSelectNone || options.value.length
+  () => question.value.canSelectNone || options.value.length || question.value.type === 'estimation'
 );
 const nextMsg = "Please select at least one option";
 const topButtonTippy = computed(() => ({
@@ -95,6 +96,8 @@ const QuestionOptionComponent = computed(() => {
     case "text_input":
     case "text_area":
       return TextInputVue;
+    case "estimation":
+      return EstimationVue;
   }
 });
 </script>
@@ -146,7 +149,10 @@ const QuestionOptionComponent = computed(() => {
         </strong>
       </span>
     </div>
-    <div class="question-content">
+    <div
+      class="question-content"
+      :class="{ 'mt-6': question.type === 'estimation' }"
+    >
       <!-- wrap h1 if more than 8 words -->
       <h1 :class="{ wrap: question.question.split(' ').length > 8 }">
         {{ question.question }}

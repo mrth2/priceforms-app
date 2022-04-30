@@ -247,7 +247,12 @@ const { event: gtagEvent } = useGtag();
 function goNext() {
   const options = submissionStore.current.options;
   // user must selected an option or question allow no answer
-  if (!options.length && !question.value.canSelectNone) {
+  // skip checking for estimation question type
+  if (
+    !options.length &&
+    !question.value.canSelectNone &&
+    question.value.type !== "estimation"
+  ) {
     // remove the answer of this question from data if found
     submissionStore.removeAnsweredQuestion(question.value.id);
     return;
@@ -328,23 +333,35 @@ function goNext() {
   }
 
   // add event to GA
-  isReady.value && gtagEvent("answer_question", {
-    question_id: question.value.id,
-    question_title: question.value.title,
-  });
-
+  isReady.value &&
+    gtagEvent("answer_question", {
+      question_id: question.value.id,
+      question_title: question.value.title,
+    });
+  console.log(currentFlow.value);
   // if there's option with endOfFlow set to true, then end of flow
   const isEndOfFlow = options.find((o) => o?.["endOfFlow"]);
   if (isEndOfFlow) {
-    router.push("/estimation");
+    if (!currentFlow.value.skipEstimation) {
+      router.push("/estimation");
+    } else {
+      submissionStore.setProgress(100);
+      submissionStore.saveSubmission();
+      router.push("/thank-you");
+    }
   }
   // go to nextQuestion
   else if (nextQuestion) {
     router.push(`/question/${nextQuestion.id}`);
   }
   // if still there's no next question in the flow => end form
-  else {
+  // only if next flow does not skip showing estimation
+  else if (!currentFlow.value.skipEstimation) {
     router.push("/estimation");
+  } else {
+    submissionStore.setProgress(100);
+    submissionStore.saveSubmission();
+    router.push("/thank-you");
   }
 }
 

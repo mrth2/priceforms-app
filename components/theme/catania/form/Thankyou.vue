@@ -21,12 +21,20 @@ const banner = computed(() => formStore.form.thankyouBanner);
       <ThemeCataniaFormBanner :banner="banner" class="!h-96 w-full" />
     </div>
     <div class="actions">
-      <a :href="translation.returnLink || '/'" target="_blank">
+      <a
+        v-if="translation.buttonReturn"
+        :href="translation.returnLink || '/'"
+        :target="translation.returnLink ? '_blank' : '_self'"
+      >
         <CoreButton class="bg-catania-primary">
           {{ translation.buttonReturn }}
         </CoreButton>
       </a>
-      <a :href="translation.promoLink || '/'" target="_blank">
+      <a
+        v-if="translation.buttonPromo"
+        :href="translation.promoLink || '/'"
+        target="_blank"
+      >
         <CoreButton>
           {{ translation.buttonPromo }}
         </CoreButton>

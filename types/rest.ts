@@ -8,6 +8,7 @@ const OnlyId = {
 
 export const FlowQuery = {
   ...OnlyId,
+  fields: ['skipEstimation'],
   populate: {
     category: OnlyId,
     questions: {
@@ -15,7 +16,7 @@ export const FlowQuery = {
       populate: {
         options: {
           fields: [
-            'id', 'value', 'minPrice', 'maxPrice', 'currency', 
+            'id', 'value', 'minPrice', 'maxPrice', 'currency',
             'unit', 'unitCapacity', 'isInput', 'dividePriceBy',
             'discountPercent', 'bonusPercent', 'endOfFlow'
           ],
