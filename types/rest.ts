@@ -14,7 +14,11 @@ export const FlowQuery = {
       fields: ['id', 'title', 'description', 'type', 'question', 'hasNext', 'nextButtonOnTop', 'backButtonOnBottom', 'showEstimate', 'canSelectMulti', 'canSelectNone'],
       populate: {
         options: {
-          fields: ['id', 'value', 'minPrice', 'maxPrice', 'currency', 'discountPercent', 'bonusPercent', 'endOfFlow'],
+          fields: [
+            'id', 'value', 'minPrice', 'maxPrice', 'currency', 
+            'unit', 'unitCapacity', 'isInput', 'dividePriceBy',
+            'discountPercent', 'bonusPercent', 'endOfFlow'
+          ],
           populate: {
             icon: MediaQuery,
             iconActive: MediaQuery,

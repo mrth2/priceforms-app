@@ -127,6 +127,10 @@ export interface IFormQuestionOption extends IFormPricing {
   bonusPercent: number
   nextFlow: IFormCategoryFlow
   endOfFlow: boolean
+  unit: 'Dollar' | 'SquareFeet' | 'DollarSquareFeet'
+  unitCapacity: number
+  isInput: boolean
+  dividePriceBy: number
 }
 
 export interface IFormQuestion {
