@@ -105,7 +105,7 @@ const QuestionOptionComponent = computed(() => {
       <div v-if="!question.backButtonOnBottom">
         <a class="back" @click="$emit('back')">
           <ChevronLeftIcon class="w-5 h-5" />
-          BACK
+          <span class="leading-none">BACK</span>
         </a>
       </div>
       <!-- has next button + button on Top -->
