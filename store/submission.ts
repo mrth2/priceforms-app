@@ -31,24 +31,45 @@ export const useSubmissionStore = defineStore('submission', {
         // get all questions in the current category
         const allQuestions = useFormStore().getAllQuestions();
         let totalMinPrice = 0, totalMaxPrice = 0, highestDiscount = 0, highestBonus = 0;
+        // filter out the excluded question
+        const filteredQuestions = state.submission.data.filter(d => !excludeQuestionId || d.qid !== excludeQuestionId);
+        // calculate total square feet if any
+        const totalSquareFeets = filteredQuestions.reduce((acc, d) => {
+          const question = allQuestions.find(q => q.id === d.qid);
+          if (question) {
+            const option = question?.options?.find(o => o.id === d.oid);
+            if (option) {
+              if (option.unit === 'SquareFeet') {
+                return [acc[0] + option.minPrice, acc[1] + option.maxPrice];
+              }
+              // const squareFeet = option.squareFeet || 0;
+              // return acc + squareFeet;
+            }
+          }
+          return acc;
+        }, [0, 0] as [number, number]);
         // add up all prices
-        state.submission.data
-          .filter(d => !excludeQuestionId || d.qid !== excludeQuestionId)
-          .forEach(d => {
-            const question = allQuestions.find(q => q.id === d.qid);
-            let minPrice = 0, maxPrice = 0;
-            if (question) {
-              const option = question?.options?.find(o => o.id === d.oid);
-              if (option) {
+        filteredQuestions.forEach(d => {
+          const question = allQuestions.find(q => q.id === d.qid);
+          let minPrice = 0, maxPrice = 0;
+          if (question) {
+            const option = question?.options?.find(o => o.id === d.oid);
+            if (option) {
+              if (option.unit === 'Dollar') {
                 minPrice = option.minPrice;
                 maxPrice = option.maxPrice;
               }
+              else if (option.unit === 'DollarSquareFeet') {
+                minPrice = option.minPrice * totalSquareFeets[0] / option.unitCapacity;
+                maxPrice = option.maxPrice * totalSquareFeets[1] / option.unitCapacity;
+              }
             }
-            totalMinPrice += minPrice;
-            totalMaxPrice += maxPrice;
-            if (d.discount > highestDiscount) highestDiscount = d.discount;
-            if (d.bonus > highestBonus) highestBonus = d.bonus;
-          });
+          }
+          totalMinPrice += minPrice;
+          totalMaxPrice += maxPrice;
+          if (d.discount > highestDiscount) highestDiscount = d.discount;
+          if (d.bonus > highestBonus) highestBonus = d.bonus;
+        });
         // apply discount if any
         let remain = 1;
         if (highestBonus > 0) {

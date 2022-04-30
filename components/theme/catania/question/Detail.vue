@@ -222,7 +222,7 @@ const QuestionOptionComponent = computed(() => {
       @apply hidden xs:inline-block;
     }
     strong {
-      @apply inline-block mt-0.5;
+      @apply inline-block;
     }
   }
   .price {

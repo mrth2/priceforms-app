@@ -14,8 +14,8 @@ defineEmits(["selected"]);
   <div
     class="options"
     :class="{
-      narrowed: options.length > 10,
-      condensed: options.length > 6,
+      narrowed: options.length >= 8,
+      condensed: options.length >= 6,
       scaled: options.length <= 3,
       'image-list': type === 'image_list',
     }"
@@ -59,10 +59,10 @@ defineEmits(["selected"]);
     @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 grid-flow-row-dense max-w-full;
 
     .option-item {
-      @apply !max-w-full !w-auto !h-auto !p-2;
+      @apply !max-w-full !w-auto !h-auto !max-h-max !p-2;
 
       .option-item-image {
-        @apply !w-full !max-w-none !h-full flex justify-center items-center;
+        @apply !w-full !max-w-none !h-full flex justify-center items-center pt-0;
 
         .icon,
         .icon-active {
@@ -71,7 +71,7 @@ defineEmits(["selected"]);
       }
 
       .option-item-title {
-        @apply mt-auto;
+        @apply mt-auto mb-0;
       }
     }
   }
