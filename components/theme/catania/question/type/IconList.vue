@@ -96,7 +96,7 @@ function onInput($event: Event, option: IFormQuestionOption) {
       }
 
       .option-item-title {
-        @apply mt-auto mb-0;
+        @apply mt-auto mb-0 h-8;
       }
     }
   }
