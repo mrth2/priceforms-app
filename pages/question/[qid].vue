@@ -121,7 +121,7 @@ const currentQuestionOrder = computed(() => {
   return 1;
 });
 
-function selectOption(opt: ISubmissionOption) {
+function selectOption(opt: ISubmissionOption & { input?: string }) {
   // always override for date picker
   if (opt instanceof Date) {
     if (question.value.type === "date_picker") {
@@ -144,6 +144,16 @@ function selectOption(opt: ISubmissionOption) {
     // can select multi
     else if (question.value.canSelectMulti) {
       submissionStore.setCurrentQuestionOptions([...currentOptions.value, opt]);
+    }
+    // option has user input
+    if (opt.isInput && opt.input !== "") {
+      const { input, ...optWithoutInput } = opt;
+      submissionStore.setCurrentQuestionOptions([
+        {
+          ...optWithoutInput,
+          value: input,
+        },
+      ]);
     }
     // can only select one
     else {

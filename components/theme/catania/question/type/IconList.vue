@@ -1,12 +1,25 @@
 <script setup lang="ts">
 import { IFormQuestion, IFormQuestionOption } from "~~/types/form";
 
-defineProps<{
+const props = defineProps<{
   type: IFormQuestion["type"];
   selected: IFormQuestionOption[];
   options: IFormQuestionOption[];
 }>();
-defineEmits(["selected"]);
+const emit = defineEmits(["selected"]);
+
+const hasInput = computed(() => !!props.options.find((o) => o.isInput));
+const timeout = ref(null);
+function onInput($event: Event, option: IFormQuestionOption) {
+  if (timeout.value) window.clearTimeout(timeout.value);
+  // timeout on input to prevent multiple emit
+  timeout.value = window.setTimeout(() => {
+    emit("selected", {
+      ...option,
+      input: ($event.target as HTMLInputElement).value,
+    });
+  }, 300);
+}
 </script>
 
 <template>
@@ -17,37 +30,49 @@ defineEmits(["selected"]);
       narrowed: options.length >= 8,
       condensed: options.length >= 6,
       scaled: options.length <= 3,
+      hasInput,
       'image-list': type === 'image_list',
     }"
   >
-    <div
-      v-for="option in options"
-      :key="option.id"
-      class="option-item"
-      :class="{
-        selected: selected.find((s) => s.id === option.id),
-      }"
-      @click="$emit('selected', option)"
-      @mouseenter="($event) => ($event.target as HTMLElement).classList.add('hovering')"
-      @mouseleave="($event) => ($event.target as HTMLElement).classList.remove('hovering')"
-    >
-      <div v-if="option.icon || option.iconActive" class="option-item-image">
-        <img v-if="option.icon" class="icon" :src="option.icon.url" />
-        <img
-          v-if="option.iconActive"
-          class="icon-active"
-          :src="option.iconActive.url"
-        />
-        <img
-          v-else-if="option.icon"
-          class="icon-active"
-          :src="option.icon.url"
+    <template v-for="option in options" :key="option.id">
+      <!-- regular icon / image -->
+      <div
+        v-if="!option.isInput"
+        class="option-item"
+        :class="{
+          selected: selected.find((s) => s.id === option.id),
+        }"
+        @click="$emit('selected', option)"
+        @mouseenter="($event) => ($event.target as HTMLElement).classList.add('hovering')"
+        @mouseleave="($event) => ($event.target as HTMLElement).classList.remove('hovering')"
+      >
+        <div v-if="option.icon || option.iconActive" class="option-item-image">
+          <img v-if="option.icon" class="icon" :src="option.icon.url" />
+          <img
+            v-if="option.iconActive"
+            class="icon-active"
+            :src="option.iconActive.url"
+          />
+          <img
+            v-else-if="option.icon"
+            class="icon-active"
+            :src="option.icon.url"
+          />
+        </div>
+        <div class="option-item-title">
+          <h2 v-html="option.value.replace(/\\n/g, '<br/>')" />
+        </div>
+      </div>
+      <!-- input field with label -->
+      <div v-else class="option-item-input">
+        <label>{{ option.value }}:</label>
+        <input
+          class="form-input"
+          type="text"
+          @keypress="($event) => onInput($event, option)"
         />
       </div>
-      <div class="option-item-title">
-        <h2 v-html="option.value.replace(/\\n/g, '<br/>')" />
-      </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -99,10 +124,13 @@ defineEmits(["selected"]);
     @apply !w-full max-w-none px-5;
     .option-item {
       @apply md:h-48 md:max-h-48;
+    }
+  }
+  &.hasInput {
+    @apply !max-w-lg;
 
-      .option-item-image {
-        /* @apply mb-4; */
-      }
+    .option-item {
+      @apply max-w-1/2;
     }
   }
 
@@ -141,6 +169,9 @@ defineEmits(["selected"]);
         @apply text-white;
       }
     }
+  }
+  .option-item-input {
+    @apply w-full flex flex-row items-center justify-center gap-3;
   }
 }
 </style>
