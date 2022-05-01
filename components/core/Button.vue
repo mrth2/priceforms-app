@@ -36,7 +36,7 @@ const buttonClass = computed(() => {
       result.push("bg-red-600", "hover:bg-red-400", "text-white");
       break;
     case "ghost":
-      result.push("bg-transparent", "shadow-none");
+      result.push("bg-transparent", "!shadow-none");
       break;
     case "outline":
       result.push("border-2", "border-gray-300", "hover:border-gray-600");
@@ -48,7 +48,7 @@ const buttonClass = computed(() => {
 <template>
   <button
     :type="isSubmit ? 'submit' : 'button'"
-    class="relative inline-flex justify-center items-center px-4 py-2 shadow text-sm font-medium rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+    class="relative inline-flex justify-center items-center px-4 py-2 text-sm font-medium rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
     :class="buttonClass"
     @click="$emit('click')"
   >
