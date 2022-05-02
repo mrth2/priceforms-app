@@ -29,7 +29,9 @@ const translation = computed(() => useFormStore().form.estimationPage);
         <span class="label">{{ translation.maximum }}</span>
       </div>
     </div>
-    <div v-if="translation.note" class="explaination">{{ translation.note }}</div>
+    <div v-if="translation.note" class="explaination">
+      {{ translation.note }}
+    </div>
   </div>
 </template>
 
@@ -38,13 +40,26 @@ const translation = computed(() => useFormStore().form.estimationPage);
   @apply flex-1 flex flex-col justify-center items-center px-4 relative w-full;
 }
 .result {
-  @apply flex flex-col xs:flex-row items-start w-max gap-0 xs:gap-3 text-catania-primary text-2xl xs:text-4xl sm:text-5xl lg:text-[52px] !leading-none font-extrabold;
+  @apply flex flex-col xs:flex-row items-center xs:items-start w-max gap-1 xs:gap-3;
+  @apply text-catania-primary text-3xl xs:text-4xl sm:text-5xl lg:text-[52px];
+  @apply !leading-none font-extrabold;
 
   .result-item {
-    @apply flex flex-col gap-3 items-center;
+    @apply flex flex-row-reverse xs:flex-col gap-3 items-center;
 
     .label {
-      @apply font-bold;
+      @apply font-bold !leading-none;
+
+      &:after {
+        content: ":";
+        @apply inline-block;
+      }
+
+      @screen xs {
+        &:after {
+          @apply hidden;
+        }
+      }
     }
     .price {
       @apply leading-none;
@@ -54,7 +69,7 @@ const translation = computed(() => useFormStore().form.estimationPage);
     }
   }
   .label {
-    @apply text-sm -mt-2;
+    @apply text-sm xs:-mt-2;
   }
 }
 .explaination {
