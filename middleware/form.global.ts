@@ -15,7 +15,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return;
   }
   const requireCategories = to.path.includes('/cases');
-  const requireLoadingFlows = to.path.includes('/question') || to.path.includes('/cases');
+  const requireLoadingFlows = to.path.includes('/question') || to.path.includes('/cases') || to.path.includes('/estimation');
   if (requireCategories || requireLoadingFlows) {
     requests.push(formStore.loadCategoriesRest());
   }
