@@ -1,13 +1,40 @@
-<script setup>
+<script setup lang="ts">
 import { useFormStore } from "~~/store/form";
 import { useSubmissionStore } from "~~/store/submission";
 
+const props = withDefaults(
+  defineProps<{
+    showDividedPrice: boolean;
+    includeDividedPrice: boolean;
+  }>(),
+  {
+    showDividedPrice: false,
+    includeDividedPrice: false,
+  }
+);
+
 const submissionStore = useSubmissionStore();
-const estimatedResult = computed(() => ({
-  minPrice: submissionStore.submission.minPrice,
-  maxPrice: submissionStore.submission.maxPrice,
-  currency: submissionStore.submission.currency,
-}));
+const estimatedResult = computed(() => {
+  const currentEstimation = submissionStore.getTotalEstimation();
+  // if estimated results contain dividePriceBy, then we need to divide the price by that number
+  let { minPrice, maxPrice } = currentEstimation;
+  if (props.showDividedPrice) {
+    minPrice /= currentEstimation.dividePriceBy;
+    maxPrice /= currentEstimation.dividePriceBy;
+  } else {
+    minPrice /= currentEstimation.dividePriceBy;
+    maxPrice /= currentEstimation.dividePriceBy;
+    if (props.includeDividedPrice) {
+      minPrice += currentEstimation.minPrice;
+      maxPrice += currentEstimation.maxPrice;
+    }
+  }
+  return {
+    minPrice,
+    maxPrice,
+    currency: currentEstimation.currency,
+  };
+});
 const translation = computed(() => useFormStore().form.estimationPage);
 </script>
 

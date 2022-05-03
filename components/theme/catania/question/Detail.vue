@@ -178,6 +178,7 @@ const QuestionOptionComponent = computed(() => {
         :type="question.type"
         :selected="options"
         :options="question.options"
+        :show-divided-price="question.showDividedPrice"
         @selected="$emit('selected', $event)"
       />
     </div>

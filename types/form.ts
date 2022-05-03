@@ -145,6 +145,7 @@ export interface IFormQuestion {
   backButtonOnBottom: boolean
   canSelectMulti: boolean
   canSelectNone: boolean
+  showDividedPrice: boolean
   options: IFormQuestionOption[]
   otherwiseFlow: IFormCategoryFlow
   // custom on front end only after load data

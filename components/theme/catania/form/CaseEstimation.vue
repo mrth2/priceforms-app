@@ -29,7 +29,7 @@ const showPrice = computed(
     </div>
     <h1>{{ translation.title }}</h1>
     <template v-if="showPrice">
-      <ThemeCataniaQuestionTypeEstimation />
+      <ThemeCataniaQuestionTypeEstimation :include-divided-price="true" />
     </template>
     <template v-else>
       <div class="text-center mb-8 text-base font-medium">

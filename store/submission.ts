@@ -24,9 +24,9 @@ export const useSubmissionStore = defineStore('submission', {
   getters: {
     getTotalEstimation: (state) => {
       // calculate total estimation, excluding current question
-      return (excludeQuestionId: number | null) => {
+      return (excludeQuestionId: number | null = null) => {
         if (!state.submission || !state.submission.data || !state.submission.data.length) {
-          return { minPrice: 0, maxPrice: 0, currency: 'usd' as IFormPricing['currency'] };
+          return { minPrice: 0, maxPrice: 0, dividePriceBy: 1, currency: 'usd' as IFormPricing['currency'] };
         }
         // get all questions in the current category
         const allQuestions = useFormStore().getAllQuestions();
@@ -86,8 +86,9 @@ export const useSubmissionStore = defineStore('submission', {
           remain = (100 - highestDiscount) / 100;
         }
         return {
-          minPrice: Math.ceil(totalMinPrice * remain / dividePriceBy),
-          maxPrice: Math.ceil(totalMaxPrice * remain / dividePriceBy),
+          minPrice: Math.ceil(totalMinPrice * remain),
+          maxPrice: Math.ceil(totalMaxPrice * remain),
+          dividePriceBy,
           currency: state.submission.currency
         }
       }
