@@ -6,40 +6,87 @@ const props = withDefaults(
   defineProps<{
     showDividedPrice: boolean;
     includeDividedPrice: boolean;
+    separatePrice: boolean;
   }>(),
   {
     showDividedPrice: false,
     includeDividedPrice: false,
+    separatePrice: false,
   }
 );
 
 const submissionStore = useSubmissionStore();
+const currentEstimation = computed(() => submissionStore.getTotalEstimation());
+const dividedPrice = computed(() => ({
+  minPrice:
+    currentEstimation.value.minPrice / currentEstimation.value.dividePriceBy,
+  maxPrice:
+    currentEstimation.value.maxPrice / currentEstimation.value.dividePriceBy,
+  currency: currentEstimation.value.currency,
+}));
 const estimatedResult = computed(() => {
-  const currentEstimation = submissionStore.getTotalEstimation();
   // if estimated results contain dividePriceBy, then we need to divide the price by that number
-  let { minPrice, maxPrice } = currentEstimation;
-  if (props.showDividedPrice) {
-    minPrice /= currentEstimation.dividePriceBy;
-    maxPrice /= currentEstimation.dividePriceBy;
+  let { minPrice, maxPrice } = currentEstimation.value;
+  if (props.showDividedPrice && !props.includeDividedPrice) {
+    return dividedPrice.value;
   } else {
-    minPrice /= currentEstimation.dividePriceBy;
-    maxPrice /= currentEstimation.dividePriceBy;
     if (props.includeDividedPrice) {
-      minPrice += currentEstimation.minPrice;
-      maxPrice += currentEstimation.maxPrice;
+      minPrice += dividedPrice.value.minPrice;
+      maxPrice += dividedPrice.value.maxPrice;
     }
+    return {
+      minPrice,
+      maxPrice,
+      currency: currentEstimation.value.currency,
+    };
   }
-  return {
-    minPrice,
-    maxPrice,
-    currency: currentEstimation.currency,
-  };
 });
 const translation = computed(() => useFormStore().form.estimationPage);
 </script>
 
 <template>
   <div class="current-estimation">
+    <template v-if="separatePrice">
+      <h5>Financing cost:</h5>
+      <div class="result breakdown mb-6">
+        <div class="result-item">
+          <span class="price">
+            {{ $formatPrice(dividedPrice.minPrice, dividedPrice.currency) }}
+          </span>
+        </div>
+        <div class="separator">-</div>
+        <div class="result-item">
+          <span class="price">
+            {{ $formatPrice(dividedPrice.maxPrice, dividedPrice.currency) }}
+          </span>
+        </div>
+      </div>
+      <h5>General Cost:</h5>
+      <div class="result breakdown mb-6">
+        <div class="result-item">
+          <span class="price">
+            {{
+              $formatPrice(
+                estimatedResult.minPrice - dividedPrice.minPrice,
+                dividedPrice.currency
+              )
+            }}
+          </span>
+        </div>
+        <div class="separator">-</div>
+        <div class="result-item">
+          <span class="price">
+            {{
+              $formatPrice(
+                estimatedResult.maxPrice - dividedPrice.maxPrice,
+                dividedPrice.currency
+              )
+            }}
+          </span>
+        </div>
+      </div>
+    </template>
+    <h4 v-if="separatePrice">Total Cost:</h4>
     <div class="result">
       <div class="result-item">
         <span class="price">
@@ -65,6 +112,17 @@ const translation = computed(() => useFormStore().form.estimationPage);
 <style scoped lang="postcss">
 .current-estimation {
   @apply flex-1 flex flex-col justify-center items-center px-4 relative w-full;
+
+  h4 {
+    @apply text-xl font-medium mb-4;
+  }
+  h5 {
+    @apply text-base font-medium mb-3 text-catania-secondary;
+  }
+
+  .result.breakdown {
+    @apply text-xl xs:text-2xl text-catania-secondary;
+  }
 }
 .result {
   @apply flex flex-col xs:flex-row items-center xs:items-start w-max gap-1 xs:gap-3;
