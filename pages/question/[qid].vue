@@ -14,7 +14,6 @@ import { useGtag, isReady } from "vue-gtag-next";
 
 definePageMeta({
   layout: "form",
-  title: "Question",
 });
 const router = useRouter();
 const route = useRoute();
@@ -26,6 +25,8 @@ const currentOptions = computed(() => submissionStore.current.options);
 const question = computed(() =>
   formStore.getQuestionById(parseInt(route.params.qid as string))
 );
+const appStore = useAppStore();
+appStore.setPageTitle(question.value.question);
 function initCurrentQuestionAndOption() {
   // direct back to home if there's no data
   if (!submission.value || !submission.value.data || !question.value) {
@@ -97,7 +98,7 @@ const allQuestions = computed(() => formStore.getAllQuestions());
 const progress = computed(() =>
   submissionStore.getCurrentProgress(question.value.id)
 );
-useAppStore().setCurrentProgress({
+appStore.setCurrentProgress({
   label: question.value.title,
   value: progress.value,
 });

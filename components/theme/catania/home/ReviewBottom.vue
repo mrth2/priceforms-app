@@ -12,7 +12,7 @@ const form = computed(() => formStore.form);
       <ThemeCataniaFormBanner :banner="form.introBanner" />
       <ThemeCataniaHomeFormZip />
     </div>
-    <ThemeCataniaHomeClientReviews />
+    <ThemeCataniaHomeClientReviews v-if="!$isEmbedMode" />
   </div>
 </template>
 

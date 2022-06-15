@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronLeftIcon, XIcon } from "@heroicons/vue/solid";
+import { XIcon } from "@heroicons/vue/solid";
 import { useFormStore } from "~~/store/form";
 import CoreButton from "~~/components/core/Button.vue";
 import { ISubscriber } from "~~/types/subscriber";

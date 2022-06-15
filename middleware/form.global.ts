@@ -1,8 +1,14 @@
 import { useFormStore } from "~~/store/form";
 
-export default defineNuxtRouteMiddleware(async (to) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
+  // skip middleware on 404 page
   const is404 = to.name === "404";
   if (is404) return;
+  // auto direct to embedded pages
+  const isEmbedMode = from.fullPath.includes('/embed');
+  if (isEmbedMode && !to.fullPath.includes('/embed')) {
+    return navigateTo(`/embed${to.fullPath}`);
+  }
   // always fetch forms & flows
   const formStore = useFormStore();
   const requests = [
