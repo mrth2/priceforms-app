@@ -56,7 +56,8 @@ export const useSubmissionStore = defineStore('submission', {
           if (question) {
             const option = question?.options?.find(o => o.id === d.oid);
             if (option) {
-              if (option.unit === 'Dollar') {
+              // Note: `unit` is added after that so database contains `null` as the unit value, count as default unit = 'Dollar'
+              if (option.unit === 'Dollar' || option.unit === null) {
                 minPrice = option.minPrice;
                 maxPrice = option.maxPrice;
               }

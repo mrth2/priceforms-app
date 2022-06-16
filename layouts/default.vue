@@ -4,7 +4,6 @@ import CataniaHeaderCenter from "~~/components/theme/catania/header/LogoCenter.v
 import CataniaHeaderLeft from "~~/components/theme/catania/header/LogoLeft.vue";
 import CataniaFooter from "~~/components/theme/catania/footer/Footer.vue";
 import { useAppStore } from "~~/store/app";
-
 useFavicon();
 const route = useRoute();
 const pageTitle = computed(() => useAppStore().pageTitle || route.meta.title);
@@ -46,16 +45,19 @@ const Footer = computed(() =>
       <Title>{{ pageTitle }} | PriceForms</Title>
     </Head>
     <!-- header -->
-    <Component :is="Header" />
+    <Component v-if="!$isEmbedMode" :is="Header" />
     <div
       class="page"
+      :class="{
+        embed: $isEmbedMode,
+      }"
       :style="{ backgroundImage: `url(/assets/images/catania/bg.png)` }"
     >
       <div class="max-w-form mx-auto">
         <slot />
       </div>
     </div>
-    <Component :is="Footer" />
+    <Component v-if="!$isEmbedMode" :is="Footer" />
 
     <CoreNotification />
   </div>
@@ -97,6 +99,9 @@ const Footer = computed(() =>
     min-height: calc(
       100vh - var(--header-height, 72px) - var(--footer-height, 88px)
     );
+    &.embed {
+      @apply !min-h-screen;
+    }
 
     :deep(h1) {
       @apply text-catania-primary font-extrabold text-center pt-6 md:pt-12 lg:pt-16 mb-4 md:mb-6 lg:mb-8 text-xl md:text-3xl uppercase;
