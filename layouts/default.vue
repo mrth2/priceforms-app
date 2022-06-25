@@ -53,7 +53,7 @@ const Footer = computed(() =>
       }"
       :style="{ backgroundImage: `url(/assets/images/catania/bg.png)` }"
     >
-      <div class="max-w-form mx-auto">
+      <div class="max-w-form m-auto w-full">
         <slot />
       </div>
     </div>
@@ -100,7 +100,7 @@ const Footer = computed(() =>
       100vh - var(--header-height, 72px) - var(--footer-height, 88px)
     );
     &.embed {
-      @apply !min-h-screen;
+      @apply !min-h-screen flex;
     }
 
     :deep(h1) {
