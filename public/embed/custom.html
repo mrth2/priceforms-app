@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Test Embed</title>
+  <style type="text/css">
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    #priceform-embed {
+      width: 80vw;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>PriceForms Embed On Page</h1>
+    <div id="priceform-embed"></div>
+  </div>
+
+  <script>(function () {var iframe = document.createElement('iframe');iframe.src = 'http://catania.priceforms.local:3000/embed';iframe.allowFullscreen = true;iframe.frameBorder = 0;iframe.width = "100%";iframe.height = "700";var container = document.getElementById('priceform-embed');container && (container.innerHTML = iframe.outerHTML);})();</script>
+</body>
+
+</html>
