@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Test Embed</title>
+  <style type="text/css">
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    button {
+      margin: auto;
+      font-size: 20px;
+      font-weight: bold;
+      background-color: white;
+      border: 1px solid dimgray;
+      border-radius: 5px;
+      padding: 5px 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>PriceForms Embed Modal Demo Page</h1>
+    <button onclick="openForm_pw5zhx();">Open Modal</button>
+  </div>
+
+  <script>function openForm_pw5zhx() {var iframe = document.createElement('iframe');iframe.src = 'http://catania.priceforms.local:3000/embed';iframe.allowFullscreen = true;iframe.frameBorder = 0;iframe.width = "100%";iframe.height = "700";var style = document.createElement('style');style.type = "text/css";style.innerHTML = ".backdrop_pw5zhx {align-items: center;bottom: -1000px;display: flex;justify-content: center;left: -1000px;padding: 1030px;pointer-events: none;position: fixed;right: -1000px;top: -1000px;transition: background-color 300ms ease-in-out, z-index 300ms step-end;z-index: -1;}.backdrop_pw5zhx.open_pw5zhx {background-color: rgba(119, 119, 119, 0.7);pointer-events: auto;transition: background-color 300ms ease-in-out;z-index: 1100;}.lightbox_pw5zhx {background-color: white;box-shadow: 0 0 12px rgb(0 0 0 / 30%), 0 1px 5px rgb(0 0 0 / 20%);max-height: 100%;max-width: 100%;position: relative;border-radius: 8px;}.iframeWrapper_pw5zhx {-webkit-overflow-scrolling: touch;overflow: auto;width: min(90vw, 680px);max-height: 100%;max-width: 100%;border-radius: 8px;}.close_pw5zhx {border: 3px solid dimgray;cursor: pointer;font-size: 0;height: 30px;position: absolute;right: -15px;top: -15px;width: 30px;border-radius: 100%;}.close_pw5zhx:after {content: '+';font-size: 30px;font-weight: normal;line-height: 1em;text-align: center;color: dimgray;position: absolute;top: -2px;right: 4px;transform: rotate(45deg);}";document.head.appendChild(style);var backdrop = document.createElement('div');backdrop.classList.add('backdrop_pw5zhx');var lightbox = document.createElement('div');lightbox.classList.add('lightbox_pw5zhx');var iframeWrapper = document.createElement('div');iframeWrapper.classList.add('iframeWrapper_pw5zhx');iframeWrapper.appendChild(iframe);var closeBtn = document.createElement('button');closeBtn.classList.add('close_pw5zhx');closeBtn.type = 'button';closeBtn.role = 'button';closeBtn.innerText = 'Close';closeBtn.addEventListener('click', function() {backdrop.classList.remove('open_pw5zhx');});lightbox.appendChild(iframeWrapper);lightbox.appendChild(closeBtn);backdrop.appendChild(lightbox);document.body.appendChild(backdrop);setTimeout(function() {backdrop.classList.add('open_pw5zhx');}, 50);}</script>
+</body>
+
+</html>
