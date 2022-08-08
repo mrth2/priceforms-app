@@ -7,6 +7,10 @@
 @tailwind variants;
 
 @layer base {
+  :root {
+    --catania-primary-color-default: #143050;
+  }
+
   html,
   body {
     font-family: var(--font-family, "Muli", sans-serif);

@@ -10,7 +10,7 @@ module.exports = {
     extend: {
       colors: {
         catania: {
-          primary: '#143050',
+          primary: 'var(--catania-primary-color)',
           secondary: '#929192',
           button: {
             blue: '#4690CB',

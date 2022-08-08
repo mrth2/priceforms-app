@@ -17,6 +17,7 @@ export interface IForm {
   thankyouBanner: IFormBanner
   font: 'Muli' | 'Poppins'
   color: {
+    primary: string
     button: 'blue' | 'red'
     progress: 'blue' | 'red'
   }
