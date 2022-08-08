@@ -22,14 +22,18 @@ const socials = computed(() => formStore.socialIcons);
           </a>
         </span>
         <div class="header-social">
-          <a
+          <template
             v-for="item in socials"
             :key="item.icon"
-            :href="formStore.getSocialUrl(item.type)"
-            target="_blank"
           >
-            <FaIcon class="social-icon" :icon="[item.prefix, item.icon]" size="xs" />
-          </a>
+            <a
+              v-if="form.socialLinks[item.type]"
+              :href="formStore.getSocialUrl(item.type)"
+              target="_blank"
+            >
+              <FaIcon class="social-icon" :icon="[item.prefix, item.icon]" size="xs" />
+            </a>
+          </template>
         </div>
       </div>
     </div>

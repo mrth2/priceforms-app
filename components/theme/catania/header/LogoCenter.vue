@@ -20,14 +20,18 @@ const socials = computed(() => formStore.socialIcons);
       <img v-if="logo" :src="logo" :alt="form?.title" />
     </NuxtLink>
     <div class="header-social">
-      <a
+      <template
         v-for="item in socials"
         :key="item.icon"
-        :href="formStore.getSocialUrl(item.type)"
-        target="_blank"
       >
-        <FaIcon class="social-icon" :icon="[item.prefix, item.icon]" size="xs" />
-      </a>
+        <a
+          v-if="form.socialLinks[item.type]"
+          :href="formStore.getSocialUrl(item.type)"
+          target="_blank"
+        >
+          <FaIcon class="social-icon" :icon="[item.prefix, item.icon]" size="xs" />
+        </a>
+      </template>
     </div>
   </div>
 </template>
@@ -47,7 +51,7 @@ const socials = computed(() => formStore.socialIcons);
     max-width: var(--max-side-width);
   }
   .header-logo {
-    @apply bg-catania-primary border-2 border-t-0 border-white w-28 md:w-40 px-2 md:px-0 pb-2 md:pb-4 pt-6 md:pt-12 mx-auto;
+    @apply bg-catania-primary border-2 border-t-0 border-white w-28 md:w-40 px-2 md:px-1.5 pb-2 md:pb-4 pt-6 md:pt-12 mx-auto;
     @apply absolute left-1/2 transform -translate-x-1/2;
 
     img {
