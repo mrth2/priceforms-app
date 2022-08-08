@@ -14,13 +14,7 @@ const props = withDefaults(
 
 const color = computed(() => useFormStore().form.color);
 const indicatorClasses = computed(() => {
-  const result = [];
-  if (color.value?.progress === "red") {
-    result.push("bg-catania-button-red");
-  } else {
-    result.push("bg-catania-button-blue");
-  }
-  return result;
+  return ["bg-catania-accent"];
 });
 const activeBarClasses = computed(() => indicatorClasses.value);
 

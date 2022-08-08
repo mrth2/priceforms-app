@@ -12,10 +12,7 @@ module.exports = {
         catania: {
           primary: 'var(--catania-primary-color)',
           secondary: '#929192',
-          button: {
-            blue: '#4690CB',
-            red: '#df2835',
-          },
+          accent: 'var(--catania-accent-color)', 
           review: '#F6E34D',
           outline: '#BFBFBF'
         }

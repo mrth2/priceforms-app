@@ -18,8 +18,8 @@ export interface IForm {
   font: 'Muli' | 'Poppins'
   color: {
     primary: string
-    button: 'blue' | 'red'
-    progress: 'blue' | 'red'
+    button: 'blue' | 'red' | 'primary'
+    progress: 'blue' | 'red' | 'primary'
   }
   zip: Array<{
     hint?: string

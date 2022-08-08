@@ -22,12 +22,7 @@ const buttonClass = computed(() => {
   if (props.loading) result.push("cursor-wait", "loading");
   switch (props.type) {
     case "primary":
-      if (color.value?.button === "red") {
-        result.push("bg-catania-button-red");
-      } else {
-        result.push("bg-catania-button-blue");
-      }
-      result.push("hover:bg-opacity-80", "text-white");
+      result.push("bg-catania-accent", "hover:bg-opacity-80", "text-white");
       break;
     case "secondary":
       result.push("bg-gray-300", "hover:bg-gray-600", "text-white");
