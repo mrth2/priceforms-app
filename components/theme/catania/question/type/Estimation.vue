@@ -16,7 +16,6 @@ const props = withDefaults(
 const submissionStore = useSubmissionStore();
 const estimatedResult = computed(() => {
   const currentEstimation = submissionStore.getTotalEstimation();
-  console.log(currentEstimation)
   // if estimated results contain dividePriceBy, then we need to divide the price by that number
   let { minPrice, maxPrice } = currentEstimation;
   if (props.showDividedPrice) {

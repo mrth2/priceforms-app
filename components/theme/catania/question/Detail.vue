@@ -50,6 +50,7 @@ const totalEstimation = computed<IFormPricing>(() =>
 const highestDiscount = computed(() => submissionStore.getHighestDiscount);
 // highest bonus in percentage
 const highestBonus = computed(() => submissionStore.getHighestBonus);
+console.log(highestDiscount.value);
 // remaining percent, use to multiply the price directly ( already calculated the remaining percent )
 const remainingPercent = computed(() => {
   if (highestBonus.value > 0) {
@@ -60,19 +61,21 @@ const remainingPercent = computed(() => {
 const estimation = computed<IFormPricing>(() => {
   return {
     minPrice: Math.ceil(
-      (totalEstimation.value.minPrice +
+      totalEstimation.value.minPrice +
         // plus the current estimate price if it's the same question
         (submissionStore.current.estimation.qid === question.value.id
           ? submissionStore.current.estimation.minPrice
-          : 0)) *
+          : 0) *
+        // add the current discount to current estimate price
         remainingPercent.value
     ),
     maxPrice: Math.ceil(
-      (totalEstimation.value.maxPrice +
+      totalEstimation.value.maxPrice +
         // plus the current estimate price if it's the same question
         (submissionStore.current.estimation.qid === question.value.id
           ? submissionStore.current.estimation.maxPrice
-          : 0)) *
+          : 0) *
+        // add the current discount to current estimate price
         remainingPercent.value
     ),
     currency: submission.value.currency,
@@ -149,7 +152,6 @@ const QuestionOptionComponent = computed(() => {
         <strong
           v-if="
             (highestDiscount > 0 || highestBonus > 0) &&
-            options.length &&
             (estimation.minPrice > 0 || estimation.maxPrice > 0)
           "
           v-tippy="discountNoteTippy"
