@@ -31,9 +31,11 @@ const Header = computed(() =>
 const Footer = computed(() =>
   theme.value === "catania" ? CataniaFooter : null
 );
+
+const hotJarIntegrated = ref(false);
 onMounted(() => {
   // add hotjar scripts
-  if (form.value.hotjarId) {
+  if (form.value.hotjarId && !hotJarIntegrated.value) {
     const script = document.createElement("script");
     script.innerHTML = `
       (function(h,o,t,j,a,r){
@@ -46,6 +48,7 @@ onMounted(() => {
       })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=')
     `
     document.head.appendChild(script);
+    hotJarIntegrated.value = true;
   }
 })
 </script>
