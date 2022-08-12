@@ -98,6 +98,7 @@ export interface IForm {
     at: string
   }>
   gtagId: string
+  hotjarId: string
 }
 
 export interface IFormCategory {
