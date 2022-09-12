@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { strapiParser } from "~~/services/helper";
-import { IForm, IFormQuestion, IFormQuestionOption, IFormSubmission, IFormPricing, ISubmissionEstimation, ISubmissionAnswer } from "~~/types/form";
+import { IForm, IFormQuestion, IFormSubmission, IFormPricing, ISubmissionEstimation, ISubmissionAnswer } from "~~/types/form";
 import type { ISubmissionOption } from "~~/types/form";
 import { useAppStore } from "./app";
 import { useFormStore } from "./form";
@@ -231,11 +231,18 @@ export const useSubmissionStore = defineStore('submission', {
         }
         this.setSubmission(response.data);
       } catch (e) {
-        useAppStore().pushNotification({
-          type: 'error',
-          title: 'Error saving submission!',
-          message: e.message
-        });
+        // submission not found => clean up submission & create new one
+        if (e?.error?.status === 404) {
+          this.setSubmission(submission); // id have been removed from above code
+          await this.saveSubmission();
+        }
+        else {
+          useAppStore().pushNotification({
+            type: 'error',
+            title: 'Error saving submission!',
+            message: e.message || e.error.details
+          });
+        }
       }
     },
     parseSubmission(submission) {
