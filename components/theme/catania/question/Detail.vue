@@ -8,9 +8,11 @@ import OptionListVue from "./type/OptionList.vue";
 import TextInputVue from "./type/TextInput.vue";
 import EstimationVue from "./type/Estimation.vue";
 import { useSubmissionStore } from "~~/store/submission";
+import { useFormStore } from "~~/store/form";
 
 defineEmits(["selected", "next", "back"]);
 
+const formStore = useFormStore();
 const submissionStore = useSubmissionStore();
 const question = computed(() => submissionStore.current.question);
 // auto apply next button if question hasNext or can select multi option
@@ -50,7 +52,6 @@ const totalEstimation = computed<IFormPricing>(() =>
 const highestDiscount = computed(() => submissionStore.getHighestDiscount);
 // highest bonus in percentage
 const highestBonus = computed(() => submissionStore.getHighestBonus);
-console.log(highestDiscount.value);
 // remaining percent, use to multiply the price directly ( already calculated the remaining percent )
 const remainingPercent = computed(() => {
   if (highestBonus.value > 0) {
@@ -113,12 +114,23 @@ const QuestionOptionComponent = computed(() => {
       return EstimationVue;
   }
 });
+const canGoBack = computed(() => {
+  switch(question.value.backButton) {
+    case 'form':
+      return formStore.form.hasBack;
+    case 'yes':
+      return true;
+    case 'no':
+      return false;
+  }
+  return false;
+})
 </script>
 
 <template>
   <div class="question-detail">
     <div class="header-actions">
-      <div v-if="!question.backButtonOnBottom">
+      <div v-if="canGoBack && !question.backButtonOnBottom">
         <a class="back" @click="$emit('back')">
           <ChevronLeftIcon class="w-5 h-5" />
           <span class="leading-none">BACK</span>
@@ -187,7 +199,7 @@ const QuestionOptionComponent = computed(() => {
     <div class="footer-actions">
       <!-- has back button on top -->
       <CoreButton
-        v-if="question.backButtonOnBottom"
+        v-if="formStore.form.hasBack && question.backButtonOnBottom"
         type="delete"
         class="action-button"
         @click="$emit('back')"
@@ -196,7 +208,7 @@ const QuestionOptionComponent = computed(() => {
       </CoreButton>
       <!-- has next button + button not on Top -->
       <CoreButton
-        v-if="hasNext && !question.nextButtonOnTop"
+        v-if="canGoBack && !question.nextButtonOnTop"
         v-tippy="bottomButtonTippy"
         class="action-button"
         :class="{ disabled: !canGoNext }"

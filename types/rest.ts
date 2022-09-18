@@ -12,7 +12,7 @@ export const FlowQuery = {
   populate: {
     category: OnlyId,
     questions: {
-      fields: ['id', 'title', 'description', 'type', 'question', 'hasNext', 'nextButtonOnTop', 'backButtonOnBottom', 'showEstimate', 'canSelectMulti', 'canSelectNone', 'showDividedPrice'],
+      fields: ['id', 'title', 'description', 'type', 'question', 'hasNext', 'nextButtonOnTop', 'backButton', 'backButtonOnBottom', 'showEstimate', 'canSelectMulti', 'canSelectNone', 'showDividedPrice'],
       populate: {
         options: {
           fields: [

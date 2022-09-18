@@ -133,7 +133,7 @@ export const useFormStore = defineStore('form', {
             $eq: useSubDomain()
           }
         },
-        fields: ['id', 'title', 'gtagId', 'hotjarId', 'theme', 'headerStyle', 'homeStyle', 'term', 'font'],
+        fields: ['id', 'title', 'gtagId', 'hotjarId', 'theme', 'headerStyle', 'homeStyle', 'term', 'font', 'hasBack'],
         populate: {
           color: {
             fields: ['button', 'progress', 'primary']
@@ -186,7 +186,7 @@ export const useFormStore = defineStore('form', {
               avatar: MediaQuery
             },
             sort: ['ordering:ASC'],
-          }
+          },
         }
       };
       try {

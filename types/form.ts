@@ -99,6 +99,7 @@ export interface IForm {
   }>
   gtagId: string
   hotjarId: string
+  hasBack: boolean
 }
 
 export interface IFormCategory {
@@ -144,6 +145,7 @@ export interface IFormQuestion {
   showEstimate: boolean
   hasNext: boolean
   nextButtonOnTop: boolean
+  backButton: 'form' | 'yes' | 'no'
   backButtonOnBottom: boolean
   canSelectMulti: boolean
   canSelectNone: boolean
