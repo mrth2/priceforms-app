@@ -79,6 +79,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="form-zip">
     <form @submit.prevent="checkZip">
+      <img class="red-arrow" src="@/assets/images/arrow.svg" />
       <h3>ENTER YOUR ZIP CODE TO BEGIN</h3>
       <div class="form-group">
         <input
@@ -121,7 +122,23 @@ onBeforeUnmount(() => {
 
 <style scoped lang="postcss">
 .form-zip {
-  @apply text-center;
+  @apply text-center relative;
+
+  .red-arrow {
+    @apply absolute mt-1 -rotate-12;
+    @screen xs {
+      @apply h-14 -top-8 left-14;
+    }
+    @screen sm {
+      @apply h-20 -top-12 left-20;
+    }
+    @screen md {
+      @apply left-6;
+    }
+    @screen lg {
+      @apply h-36 -top-24 left-6;
+    }
+  }
 
   h3 {
     @apply text-catania-primary font-extrabold md:text-lg;
