@@ -2,10 +2,10 @@
 import { useFormStore } from "./store/form";
 
 const formStore = useFormStore();
-const font = computed(() => formStore.form.font);
-const primaryColor = computed(() => formStore.form.color?.primary || 'var(--catania-primary-color-default)');
+const font = computed(() => formStore.form?.font);
+const primaryColor = computed(() => formStore.form?.color?.primary || 'var(--catania-primary-color-default)');
 const accentColor = computed(() => {
-  switch(formStore.form.color?.button) {
+  switch(formStore.form?.color?.button) {
     case 'primary':
       return primaryColor.value;
     case 'blue':
