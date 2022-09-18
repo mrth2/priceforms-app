@@ -31,8 +31,7 @@ useAppStore().setCurrentProgress({
 });
 
 const userInput = reactive({
-  firstName: submission.value?.subscriber?.firstName || "",
-  lastName: submission.value?.subscriber?.lastName || "",
+  fullName: submission.value?.subscriber?.fullName || "",
   phone: submission.value?.subscriber?.phone || "",
   email: submission.value?.subscriber?.email || "",
 });
@@ -41,8 +40,7 @@ const errors = reactive({
   email: null,
 });
 const focusing = reactive({
-  firstName: false,
-  lastName: false,
+  fullName: false,
   phone: false,
   email: false,
 });
@@ -158,32 +156,17 @@ async function signUp() {
     <form>
       <div class="form-group">
         <input
-          v-model.trim="userInput.firstName"
+          v-model.trim="userInput.fullName"
           class="form-input"
-          :class="{ focusing: focusing.firstName }"
+          :class="{ focusing: focusing.fullName }"
           type="text"
           required
-          :placeholder="registerForm.placeholder.firstName"
-          @focus="focusing.firstName = true"
-          @blur="focusing.firstName = false"
+          :placeholder="registerForm.placeholder.fullName"
+          @focus="focusing.fullName = true"
+          @blur="focusing.fullName = false"
         />
-        <span v-if="focusing.firstName" class="placeholder">
-          {{ registerForm.placeholder.firstName }}
-        </span>
-      </div>
-      <div class="form-group">
-        <input
-          v-model.trim="userInput.lastName"
-          class="form-input"
-          :class="{ focusing: focusing.lastName }"
-          type="text"
-          required
-          :placeholder="registerForm.placeholder.lastName"
-          @focus="focusing.lastName = true"
-          @blur="focusing.lastName = false"
-        />
-        <span v-if="focusing.lastName" class="placeholder">
-          {{ registerForm.placeholder.lastName }}
+        <span v-if="focusing.fullName" class="placeholder">
+          {{ registerForm.placeholder.fullName }}
         </span>
       </div>
       <div class="form-group">

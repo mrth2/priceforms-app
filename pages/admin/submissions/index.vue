@@ -32,7 +32,7 @@ const sortParams = computed(() => {
   }
   switch (sortBy.value) {
     case "name":
-      return [`subscriber.firstName:${order}`, `subscriber.lastName:${order}`];
+      return [`subscriber.fullName:${order}`];
     case "progress":
       return [`progress:${order}`];
     case "status":

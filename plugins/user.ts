@@ -5,14 +5,17 @@ export default defineNuxtPlugin(nuxtApp => {
     provide: {
       fullname: (user: IUser | ISubscriber) => {
         if (!user) return '';
-        if (user.firstName && user.lastName) {
-          return user.firstName + ' ' + user.lastName;
+        if (user['fullName']) {
+          return user['fullName'];
         }
-        if (user.firstName) {
-          return user.firstName
+        if (user['firstName'] && user['lastName']) {
+          return user['firstName'] + ' ' + user['lastName'];
         }
-        if (user.lastName) {
-          return user.lastName
+        if (user['firstName']) {
+          return user['firstName']
+        }
+        if (user['lastName']) {
+          return user['lastName']
         }
         if (user['username']) {
           return user['username']

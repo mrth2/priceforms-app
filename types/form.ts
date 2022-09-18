@@ -36,8 +36,7 @@ export interface IForm {
     title: string
     description: string
     placeholder: {
-      firstName: string
-      lastName: string
+      fullName: string
       phone: string
       email: string
     }

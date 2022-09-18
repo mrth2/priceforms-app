@@ -38,7 +38,7 @@ const { pending, data } = useAsyncData<{ data: any }>("submission", () =>
           fields: ["title"],
         },
         subscriber: {
-          fields: ["firstName", "lastName", "email", "phone"],
+          fields: ["fullName", "email", "phone"],
         },
       },
     },
