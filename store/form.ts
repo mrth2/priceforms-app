@@ -51,7 +51,7 @@ export const useFormStore = defineStore('form', {
   getters: {
     getTheme: (state) => state.form.theme,
     getHeaderStyle: (state) => state.form.headerStyle,
-    getHomeStyle: (state) => state.form.homeStyle,
+    getHomeStyle: (state) => /* state.form.homeStyle */'reviewRight',
     getSocialUrl: (state) => {
       return (type: keyof IForm['socialLinks']): string => state.form.socialLinks?.[type]
     },

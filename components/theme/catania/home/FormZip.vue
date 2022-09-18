@@ -74,10 +74,15 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("resize", autoScrollDownOnMobile);
 });
+
+const homeStyle = computed(() => formStore.getHomeStyle);
 </script>
 
 <template>
-  <div class="form-zip">
+  <div class="form-zip" :class="{
+    reviewRight: homeStyle === 'reviewRight',
+    reviewBottom: homeStyle === 'reviewBottom',
+  }">
     <form @submit.prevent="checkZip">
       <img class="red-arrow" src="@/assets/images/arrow.svg" />
       <h3>ENTER YOUR ZIP CODE TO BEGIN</h3>
@@ -126,6 +131,9 @@ onBeforeUnmount(() => {
 
   .red-arrow {
     @apply absolute mt-1 -rotate-12;
+  }
+
+  &.reviewBottom .red-arrow {
     @screen xs {
       @apply h-14 -top-8 left-14;
     }
@@ -137,6 +145,17 @@ onBeforeUnmount(() => {
     }
     @screen lg {
       @apply h-36 -top-24 left-6;
+    }
+  }
+  &.reviewRight .red-arrow {
+    @screen xs {
+      @apply h-14 -top-8 left-14;
+    }
+    @screen sm {
+      @apply h-16 left-20;
+    }
+    @screen lg {
+      @apply h-14 -top-7 left-6;
     }
   }
 
