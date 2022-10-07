@@ -120,7 +120,9 @@ async function signUp() {
       stopAt: submission?.stopAt || "Just Signed Up",
       subscriber,
     });
-    submissionStore.saveSubmission();
+    submissionStore.saveSubmission().catch(() => {
+      router.push('/');
+    });
     console.log(subscriber);
     // config gtag with user id
     if (isReady.value) {

@@ -240,8 +240,10 @@ export const useSubmissionStore = defineStore('submission', {
           useAppStore().pushNotification({
             type: 'error',
             title: 'Error saving submission!',
-            message: e.message || e.error.details
+            message: e.message || e.error.details?.[0]?.message || e.error.message,
+            duration: 10000,
           });
+          throw new Error('Error saving submission!');
         }
       }
     },
