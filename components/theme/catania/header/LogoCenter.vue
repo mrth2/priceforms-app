@@ -25,7 +25,7 @@ const socials = computed(() => formStore.socialIcons);
         :key="item.icon"
       >
         <a
-          v-if="form.socialLinks[item.type]"
+          v-if="form.socialLinks?.[item.type]"
           :href="formStore.getSocialUrl(item.type)"
           target="_blank"
         >
