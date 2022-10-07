@@ -208,7 +208,7 @@ const canGoBack = computed(() => {
       </CoreButton>
       <!-- has next button + button not on Top -->
       <CoreButton
-        v-if="canGoBack && !question.nextButtonOnTop"
+        v-if="hasNext && !question.nextButtonOnTop"
         v-tippy="bottomButtonTippy"
         class="action-button"
         :class="{ disabled: !canGoNext }"
