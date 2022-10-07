@@ -133,7 +133,7 @@ export const useFormStore = defineStore('form', {
             $eq: useSubDomain()
           }
         },
-        fields: ['id', 'title', 'gtagId', 'hotjarId', 'theme', 'headerStyle', 'homeStyle', 'term', 'font', 'hasBack'],
+        fields: ['id', 'title', 'gtagId', 'hotjarId', 'theme', 'headerStyle', 'homeStyle', 'term', 'font', 'hasBack', 'registerFormPosition'],
         populate: {
           color: {
             fields: ['button', 'progress', 'primary']

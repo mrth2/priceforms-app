@@ -14,8 +14,15 @@ useAppStore().setCurrentProgress({
 const router = useRouter();
 const submissionStore = useSubmissionStore();
 // if no subscriber, go back to home
+const form = computed(() => useFormStore().form);
 if (!submissionStore.submission?.subscriber) {
-  router.push("/");
+  // if form has register form before estimation, go back to register form
+  if (form.value.registerFormPosition === "beforeEstimation") {
+    router.push("/signup");
+  }
+  else {
+    router.push("/");
+  }
 }
 // auto set progress to 100%
 onMounted(() => {
@@ -25,6 +32,10 @@ onMounted(() => {
 });
 
 function goBack() {
+  if (form.value.registerFormPosition === 'beforeEstimation') {
+    router.push('/signup');
+    return;
+  }
   // find the last answered question and direct to it
   const lastQuestionAnswered = submissionStore.submission.data.sort(
     (a, b) => b.order - a.order

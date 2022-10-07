@@ -25,10 +25,12 @@ if (!submission.value.zip) {
   router.push("/");
 }
 
-useAppStore().setCurrentProgress({
-  label: registerForm.value.progress,
-  value: 5,
-});
+if (form.value.registerFormPosition !== 'beforeEstimation') {
+  useAppStore().setCurrentProgress({
+    label: registerForm.value.progress,
+    value: 5,
+  });
+}
 
 const userInput = reactive({
   fullName: submission.value?.subscriber?.fullName || "",
@@ -137,8 +139,14 @@ async function signUp() {
         user_name: useNuxtApp().$fullname(subscriber),
       });
     }
+    // after signup, if the register form position is before estimation, direct to estimation
+    if (form.value.registerFormPosition === 'beforeEstimation') {
+      router.push('/estimation');
+    }
     // direct to cases
-    router.push("/cases");
+    else {
+      router.push("/cases");
+    }
   } catch (e) {
     console.dir(e);
     error.value = e.error?.message || e.message;

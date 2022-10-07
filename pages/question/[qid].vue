@@ -18,6 +18,7 @@ definePageMeta({
 const router = useRouter();
 const route = useRoute();
 const formStore = useFormStore();
+const form = computed(() => formStore.form);
 const submissionStore = useSubmissionStore();
 const submission = computed(() => submissionStore.submission);
 const currentOptions = computed(() => submissionStore.current.options);
@@ -358,13 +359,7 @@ function goNext() {
   // if there's option with endOfFlow set to true, then end of flow
   const isEndOfFlow = options.find((o) => o?.["endOfFlow"]);
   if (isEndOfFlow) {
-    if (!currentFlow.value.skipEstimation) {
-      router.push("/estimation");
-    } else {
-      submissionStore.setProgress(100);
-      submissionStore.saveSubmission();
-      router.push("/thank-you");
-    }
+    goFinalize();
   }
   // go to nextQuestion
   else if (nextQuestion) {
@@ -372,9 +367,27 @@ function goNext() {
   }
   // if still there's no next question in the flow => end form
   // only if next flow does not skip showing estimation
-  else if (!currentFlow.value.skipEstimation) {
-    router.push("/estimation");
-  } else {
+  else {
+    goFinalize();
+  }
+}
+
+function goFinalize() {
+  if (!currentFlow.value.skipEstimation) {
+    // before go to estimation, check if form require sign up before estimation
+    if (form.value.registerFormPosition === 'beforeEstimation') {
+      router.push('/signup');
+    }
+    else {
+      router.push("/estimation");
+    }
+  } 
+  // if skip estimation but require sign up => go to sign up
+  else if (form.value.registerFormPosition === 'beforeEstimation') {
+    router.push('/signup');
+  }
+  // else go thank you
+  else {
     submissionStore.setProgress(100);
     submissionStore.saveSubmission();
     router.push("/thank-you");

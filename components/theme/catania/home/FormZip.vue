@@ -43,9 +43,17 @@ async function checkZip() {
     const submissionStore = useSubmissionStore();
     submissionStore.setSubmission({
       ...submissionStore.submission,
+      form: form.value,
+      status: "register",
+      progress: 0,
       zip: inputCode.value,
     });
-    router.push("/signup");
+    // check sign up screen position first
+    if (form.value.registerFormPosition === 'beforeEstimation') {
+      router.push("/cases");
+    } else {
+      router.push("/signup");
+    }
   } else {
     useAppStore().pushNotification({
       type: "error",
@@ -87,33 +95,20 @@ const homeStyle = computed(() => formStore.getHomeStyle);
       <img class="red-arrow" src="@/assets/images/arrow.svg" />
       <h3>ENTER YOUR ZIP CODE TO BEGIN</h3>
       <div class="form-group">
-        <input
-          ref="formInput"
-          class="form-input"
-          v-tippy="{
-            content: zipHint,
-            placement: 'bottom',
-            trigger: 'manual',
-            interactive: true,
-          }"
-          v-model.trim="inputCode"
-          type="text"
-          placeholder="Enter zip code"
-          @focus="inputFocusing = true"
-          @blur="inputFocusing = false"
-        />
-        <CoreButton
-          :is-submit="true"
-          class="uppercase"
-          :class="{ 'opacity-50': !termAgreed }"
-          v-tippy="{
-            content: !termAgreed
-              ? 'Please agree to the terms and conditions'
-              : null,
-            trigger: 'mouseenter',
-            placement: 'top',
-          }"
-        >
+        <input ref="formInput" class="form-input" v-tippy="{
+          content: zipHint,
+          placement: 'bottom',
+          trigger: 'manual',
+          interactive: true,
+        }" v-model.trim="inputCode" type="text" placeholder="Enter zip code" @focus="inputFocusing = true"
+          @blur="inputFocusing = false" />
+        <CoreButton :is-submit="true" class="uppercase" :class="{ 'opacity-50': !termAgreed }" v-tippy="{
+          content: !termAgreed
+            ? 'Please agree to the terms and conditions'
+            : null,
+          trigger: 'mouseenter',
+          placement: 'top',
+        }">
           {{ zipButton }}
         </CoreButton>
       </div>
@@ -137,23 +132,29 @@ const homeStyle = computed(() => formStore.getHomeStyle);
     @screen xs {
       @apply h-14 -top-8 left-14;
     }
+
     @screen sm {
       @apply h-20 -top-12 left-20;
     }
+
     @screen md {
       @apply left-6;
     }
+
     @screen lg {
       @apply h-36 -top-24 left-6;
     }
   }
+
   &.reviewRight .red-arrow {
     @screen xs {
       @apply h-14 -top-8 left-14;
     }
+
     @screen sm {
       @apply h-16 left-20;
     }
+
     @screen lg {
       @apply h-14 -top-7 left-6;
     }
@@ -174,6 +175,7 @@ const homeStyle = computed(() => formStore.getHomeStyle);
       }
     }
   }
+
   .agreement {
     @apply mt-4 relative;
 

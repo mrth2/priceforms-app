@@ -99,6 +99,7 @@ export interface IForm {
   gtagId: string
   hotjarId: string
   hasBack: boolean
+  registerFormPosition: 'beforeCases' | 'beforeEstimation'
 }
 
 export interface IFormCategory {

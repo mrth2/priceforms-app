@@ -115,20 +115,19 @@ const QuestionOptionComponent = computed(() => {
   }
 });
 const canGoBack = computed(() => {
-  switch(question.value.backButton) {
-    case 'form':
-      return formStore.form.hasBack;
+  switch(question.value?.backButton) {
     case 'yes':
       return true;
     case 'no':
       return false;
+    default: // default is "form", use form configuration
+      return formStore.form.hasBack;
   }
-  return false;
 })
 </script>
 
 <template>
-  <div class="question-detail">
+  <div v-if="question" class="question-detail">
     <div class="header-actions">
       <div v-if="canGoBack && !question.backButtonOnBottom">
         <a class="back" @click="$emit('back')">

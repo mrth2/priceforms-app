@@ -20,8 +20,12 @@ const submissionStore = useSubmissionStore();
 const form = computed(() => formStore.form);
 const categoryForm = computed(() => form.value.categoryForm);
 const submission = computed(() => submissionStore.submission);
-// if submission has no saved zip or subscriber, go back to home
-if (!submission.value?.zip || !submission.value?.subscriber) {
+// if submission is not existed or submission has no saved zip, go back to home
+if (!submission.value || !submission.value.zip) {
+  router.push("/");
+}
+// if submission has no saved subscriber, consider go home if register form is before cases
+else if (!submission.value.subscriber && form.value.registerFormPosition === "beforeCases") {
   router.push("/");
 }
 
@@ -51,6 +55,14 @@ function selectCategory(category: IFormCategory) {
 }
 
 const { event: gtagEvent } = useGtag();
+
+async function goBack() {
+  if (form.value.registerFormPosition === 'beforeEstimation') {
+    router.push("/");
+  } else {
+    router.push("/signup");
+  }
+}
 async function goNext() {
   if (!selectedCategory.value) return;
   // set main category
@@ -75,7 +87,7 @@ async function goNext() {
   <div class="py-4 lg:p-6">
     <div v-if="categoryForm.buttonOnTop" class="cta header-actions">
       <div>
-        <a class="back" @click="$emit('back')">
+        <a class="back" @click="goBack">
           <ChevronLeftIcon class="w-5 h-5 mt-1" />
           BACK
         </a>
