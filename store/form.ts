@@ -299,7 +299,7 @@ export const useFormStore = defineStore('form', {
         return {
           ...category,
           flows: category.flows.map(item => ({
-            flow: (this.flows as IFormCategoryFlow[]).find(f => f.id === item.flow.id),
+            flow: (this.flows as IFormCategoryFlow[]).find(f => item.flow && f.id === item.flow.id),
           })),
         }
       });

@@ -20,7 +20,7 @@ const reviews = computed(() => formStore.form.reviews);
         <div class="review-header">
           <div class="flex flex-row items-center">
             <div class="avatar">
-              <img :src="item.avatar.url" />
+              <img v-if="item.avatar" :src="item.avatar.url" />
             </div>
             <div class="flex flex-col">
               <span class="name">{{ item.name }}</span>
